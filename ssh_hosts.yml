@@ -1,0 +1,34 @@
+---
+- name: "Add home servers to local SSH config" 
+  hosts: localhost
+
+  vars:
+    ssh_hosts:
+      - alias: homepi
+        ip: 192.168.3.50
+        user: almalinux
+      - alias: mediapi
+        ip: 192.168.3.60
+        user: almalinux
+
+  tasks:
+    - name: Set SSH config for home servers
+      community.general.ssh_config:
+        user: mbc
+        host: "{{ item.alias }}"
+        hostname: "{{ item.ip }}"
+        remote_user: "{{ item.user }}"
+        port: "22"
+        controlmaster: "yes"
+        controlpath: "~/.ssh/cm_socket/%r@%h:%p"
+        controlpersist: "30m"
+        state: present
+      loop: "{{ ssh_hosts }}"
+      register: output
+      notify: Display config file
+
+  handlers:
+    - name: Display config file
+      ansible.builtin.debug:
+        var: output
+      when: output is defined
