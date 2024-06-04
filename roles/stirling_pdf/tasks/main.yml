@@ -1,0 +1,26 @@
+---
+- name: Install podman
+  ansible.builtin.dnf:
+    name: podman
+    state: present
+- name: Create Stirling PDF quadlet file
+  containers.podman.podman_container:
+    name: stirling-pdf
+    image: docker.io/frooodle/s-pdf:latest
+    state: quadlet
+    quadlet_filename: kavita
+    quadlet_dir: ~/.config/containers/systemd/
+    ports:
+      - 8080:8080
+    volumes:
+      - "/home/almalinux/s_pdf_trainingdata:/usr/share/tessdata:z"
+      - "/home/almalinux/s_pdf_extra_configs:/configs:z"
+    quadlet_options:
+      - "AutoUpdate=registry"
+      - "Environment=DOCKER_ENABLE_SECURITY=false INSTALL_BOOK_AND_ADVANCED_HTML_OPS=false"
+      - |
+        [Service]
+        Restart=always
+        [Install]
+        WantedBy=default.target
+  notify: Start Systemd unit file

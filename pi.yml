@@ -1,0 +1,10 @@
+---
+- name: Provision Pi servers
+  hosts: home
+  become: true
+
+  roles:
+    - all_pis
+    - { role: homepi, when: inventory_hostname == "homepi"}
+    - { role: uptime_kuma, when: inventory_hostname == "homepi" }
+    - { role: mediapi, when: inventory_hostname == "mediapi"}

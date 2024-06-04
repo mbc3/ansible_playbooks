@@ -1,0 +1,20 @@
+---
+- name: Create /var/www directory
+  ansible.builtin.file:
+    path: /var/www/
+    state: directory
+    mode: "0755"
+    owner: root
+    group: nginx
+    setype: httpd_sys_content_t
+  notify: Restorecon
+- name: Create /var/www/html directory
+  ansible.builtin.file:
+    path: /var/www/html/
+    state: directory
+    mode: "0755"
+    owner: nginx
+    group: nginx
+    setype: httpd_sys_content_t
+  notify: Restorecon
+

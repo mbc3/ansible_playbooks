@@ -1,0 +1,15 @@
+---
+- name: Install and enable SSH
+  ansible.builtin.package:
+    name: sshd
+    state: present
+  notify: Enable SSHD
+- name: Copy config
+  ansible.builtin.file:
+    src: 10-pw.conf
+    dest: /etc/ssh/sshd_config.d
+    mode: "0644"
+    owner: root
+    group: root
+  notify: Restart SSHD
+

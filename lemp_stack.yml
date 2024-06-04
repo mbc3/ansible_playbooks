@@ -1,0 +1,16 @@
+---
+hosts: all
+become: true
+roles:
+  - nginx
+  - mariadb
+  - php
+tasks:
+  - name: Test Nginx Website
+    ansible.builtin.uri:
+      url: http://localhost
+      status_code: 200
+  - name: Test PHP
+    ansible.builtin.uri:
+      url: http://localhost/test.php
+      status_code: 200

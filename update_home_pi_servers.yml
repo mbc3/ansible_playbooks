@@ -1,0 +1,42 @@
+---
+- name: Update home servers
+  hosts: home
+  gather_facts: true
+  become: true
+
+  tasks:
+    - name: Update all packages
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest
+        update_cache: true
+      register: dnf_updates
+      notify: Display updated packages
+
+    - name: Run Gravity-sync to sync Pi-Holes
+      ansible.builtin.command: /usr/local/bin/gravity-sync
+      when: inventory_hostname == "homepi"
+      changed_when: false
+      register: gravity_sync_output
+
+    - name: Display Gravity-sync results
+      ansible.builtin.debug:
+        var: gravity_sync_output
+      when: gravity_sync_output is defined
+
+    - name: Update flatpaks
+      ansible.builtin.command: /usr/bin/flatpak update --noninteractive
+      register: flatpak_output
+      notify: Display updated flatpaks
+      when: inventory_hostname == "mediapi"
+      changed_when: not "'nothing to do' in flatpak_output.stdout"
+
+  handlers:
+    - name: Display updated packages
+      ansible.builtin.debug:
+        var: dnf_updates
+      when: dnf_updates is defined
+    - name: Display updated flatpaks
+      ansible.builtin.debug:
+        var: flatpak_output
+      when: flatpak_output is defined

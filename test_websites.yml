@@ -1,0 +1,15 @@
+---
+- name: Test all websites
+  hosts: localhost
+
+  tasks:
+    - name: Get response from websites
+      ansible.builtin.uri:
+        url: "{{ item }}"
+        status_code: 200
+      loop:
+        - "https://stupidwaytodie.com"
+        - "https://sleepycow.fun/linux"
+        - "https://www.functionallydead.com"
+        - "https://matthewbriancohen.art"
+        - "https://matthewcohenportfolio.xyz"

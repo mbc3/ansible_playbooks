@@ -1,0 +1,22 @@
+---
+
+- name: Install fail2ban
+  ansible.builtin.package:
+    name: fail2ban
+    state: present
+  notify: Enable Fail2Ban
+- name: Allow IPv6
+  ansible.builtin.file:
+    src: 10-ipv6.conf
+    dest: /etc/fail2ban/fail2ban.d
+    mode: "0644"
+    owner: root
+    group: root
+- name: Configure fail2ban for SSH
+  ansible.builtin.file:
+    src: 10-ssh.conf
+    dest: /etc/fail2ban/jail.d
+    mode: "0644"
+    owner: root
+    group: root
+  notify: Restart Fail2Ban

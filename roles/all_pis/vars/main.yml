@@ -1,0 +1,9 @@
+---
+user: almalinux
+pihole_ports:
+  - dns
+  - dhcp
+  - dhcpv6
+syncthing_ports:
+  - 8384
+  - 22000

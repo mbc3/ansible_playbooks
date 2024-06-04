@@ -1,0 +1,59 @@
+---
+- name: Get service facts
+  ansible.builtin.service_facts:
+- name: Create /var/www directory with correct SELinux label
+  import_tasks: var_www.yml
+
+- name: Install Nginx
+  ansible.builtin.dnf:
+    name: nginx
+    state: present
+  notify: Enable Nginx
+- name: Enable HTTP and HTTPS traffic with firewalld
+  ansible.posix.firewalld:
+    service: "{{ item }}"
+    permanent: true
+    immediate: true
+    state: enabled
+  loop:
+    - http
+    - https
+  when: ansible_facts.services['firewalld'] is defined
+- name: Copy Nginx config
+  ansible.builtin.template:
+    src: server.conf.j2
+    dest: /etc/nginx/conf.d/server.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart Nginx
+- name: Add Nginx performance tweaks
+  ansible.builtin.copy:
+    src: 99-config_changes.conf
+    dest: /etc/nginx/default.d
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart Nginx
+- name: Copy new test html page
+  ansible.builtin.copy:
+    src: index.html
+    dest: /var/www/html
+    owner: nginx
+    group: nginx
+    mode: "0644"
+- name: Make cache directory
+  ansible.builtin.file:
+    path: /var/cache/"{website}"
+    state: directory
+    owner: nginx
+    group: root
+    mode: "0700"
+- name: Add nginx cache config file
+  ansible.builtin.template:
+    src: 10-cache.conf.j2
+    dest: /etc/nginx/conf.d/10-cache.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart Nginx

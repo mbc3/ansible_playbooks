@@ -1,0 +1,6 @@
+---
+- name: Start Systemd unit file
+  ansible.builtin.systemd_service:
+    name: uptime-kuma
+    state: started
+    scope: user

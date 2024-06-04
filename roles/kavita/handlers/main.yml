@@ -1,0 +1,6 @@
+---
+- name: Start Systemd unit file
+  ansible.builtin.systemd_service:
+    name: kavita
+    state: started
+    scope: user

@@ -1,0 +1,26 @@
+---
+- name: Install podman
+  ansible.builtin.dnf:
+    name: podman
+    state: present
+- name: Create Kavita quadlet file
+  containers.podman.podman_container:
+    name: uptime-kuma
+    image: docker.io/linuxserver/kavita:latest
+    state: quadlet
+    quadlet_filename: kavita
+    quadlet_dir: ~/.config/containers/systemd/
+    ports:
+      - 5000:5000
+    volumes:
+      - "/home/almalinux/kavita_config:/config:z"
+      - "/home/almalinux/books_for_kavita:/data:z"
+    quadlet_options:
+      - "AutoUpdate=registry"
+      - "Environment=PUID=1000 PGID=1000 TZ=America/Los_Angeles"
+      - |
+        [Service]
+        Restart=always
+        [Install]
+        WantedBy=default.target
+  notify: Start Systemd unit file

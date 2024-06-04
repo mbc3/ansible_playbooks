@@ -1,0 +1,3 @@
+sleepycow_password: "{{ vault_sleepycow_password }}"
+charon_password: "{{ vault_charon_password }}"
+ansible_user: "cohenma"

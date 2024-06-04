@@ -1,0 +1,6 @@
+---
+- name: Adding Desktop SSH Key
+  ansible.posix.authorized_key:
+    user: "{{ ansible_user_id }}"
+    state: present
+    key: "{{ lookup('file', '/home/mbc/.ssh/id_ed25519.pub') }}"

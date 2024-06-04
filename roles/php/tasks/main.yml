@@ -1,0 +1,25 @@
+---
+- name: Install PHP
+  ansible.builtin.dnf:
+    name:
+      - php-fpm
+      - php-mysqlnd
+  notify: Enable PHP FPM
+- name: Edit PHP-FPM settings
+  ansible.builtin.replace:
+    path: /etc/php-fpm.d/www.conf
+    regexp: "apache$"
+    replace: "nginx"
+- name: Give nginx user/group ownership of /var/www/html
+  ansible.builtin.file:
+    path: /var/www/html
+    owner: nginx
+    group: nginx
+  notify: Restart nginx
+- name: Copy test PHP page
+  ansible.builtin.copy:
+    dest: /var/www/html/test.php
+    owner: nginx
+    group: nginx
+    mode: "0775"
+    content: '<?php phpinfo(); ?>'

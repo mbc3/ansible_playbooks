@@ -1,0 +1,26 @@
+---
+- name: Update all servers to latest packages
+  hosts: personal
+  gather_facts: true
+  become: true
+  tasks:
+    - name: Update all packages (with apt)
+      ansible.builtin.apt:
+        update-cache: true
+        upgrade: true
+      when: ansible_distribution == "Debian"
+      register: updates
+      notify: Display updated packages
+    - name: Update all packages (with dnf)
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest
+        update_cache: true
+      when: ansible_distribution == "AlmaLinux"
+      register: updates
+      notify: Display updated packages
+  handlers:
+    - name: Display updated packages
+      ansible.builtin.debug:
+        var: updates
+      when: updates is defined
