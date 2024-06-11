@@ -1,14 +1,17 @@
 ---
 - name: Install MiniDLNA
+  become: true
   ansible.builtin.dnf:
     name: minidlna
     state: present
 - name: Enable MiniDLNA service
+  become: true
   ansible.builtin.systemd_service:
     name: minidlna
     enabled: true
     state: started
 - name: Open MiniDLNA ports on firewall
+  become: true
   ansible.posix.firewalld:
     port: 8200/tcp
     permanent: true

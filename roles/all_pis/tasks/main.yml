@@ -1,5 +1,6 @@
 ---
 - name: Set timezone to Los Angeles
+  become: true
   community.general.timezone:
     name: America/Los_Angeles
 - name: Check if EPEL is installed
@@ -7,33 +8,40 @@
     path: /etc/yum.repos.d/epel.repo
   register: epel
 - name: Install EPEL repo
+  become: true
   ansible.builtin.dnf:
     name: epel-release
     state: present
 - name: Enable EPEL CRB
+  become: true
   ansible.builtin.command: dnf config-manager --set-enabled crb
   register: crb_output
   changed_when: crb.rc != 0
   when: not epel.stat.exists
 - name: Set SELinux in permissive mode
+  become: true
   ansible.posix.selinux:
     policy: targeted
     state: permissive
 - name: Update hostname
+  become: true
   ansible.builtin.hostname:
     name: "{{ inventory_hostname }}"
     use: systemd
 - name: Install mosh
+  become: true
   ansible.builtin.dnf:
     name: mosh
     state: present
 - name: Open mosh ports
+  become: true
   ansible.posix.firewalld:
     service: mosh
     permanent: true
     immediate: true
     state: enabled
 - name: Open PiHole ports
+  become: true
   ansible.posix.firewalld:
     service: "{{ item }}"
     permanent: true
@@ -45,65 +53,79 @@
   register: ftl_output
   changed_when: false
 - name: Create firewalld ftl zone for PiHole
+  become: true
   ansible.builtin.command: firewall-cmd --permanent --new-zone ftl
   register: ftl_zone_output
   when: '"ftl" in ftl_output'
   changed_when: ftl_zone_output.rc == 0
 - name: Reload firewalld to use ftl zone
+  become: true
   ansible.builtin.command: firewall-cmd --reload
   when: ftl_zone_output is defined
   changed_when: false
 - name: Open local zone port for PiHole
+  become: true
   ansible.posix.firewalld:
     zone: ftl
     port: 4711/tcp
     permanent: true
     immediate: true
     state: enabled
-  loop: "{{ pihole_ports }}"
+  loop: "{{ all_pis_pihole_ports }}"
 - name: Install Prometheus node exporter
+  become: true
   ansible.builtin.dnf:
     name: golang-github-prometheus-node-exporter
     state: present
 - name: Enable Prometheus node exporter service
+  become: true
   ansible.builtin.systemd_service:
     name: prometheus-node-exporter
     enabled: true
     state: started
 - name: Open Prometheus port on firewall
+  become: true
   ansible.posix.firewalld:
     port: 9100/tcp
     permanent: true
     immediate: true
     state: enabled
 - name: Install Syncthing
+  become: true
   ansible.builtin.dnf:
     name: syncthing
     state: present
-- name: Enable Syncthing service
-  become: true
-  become_user: "{{ user }}"
-  ansible.builtin.systemd_service:
-    name: syncthing
-    enabled: true
-    state: started
-    scope: user
 - name: Open Syncthing firewall ports
+  become: true
   ansible.posix.firewalld:
     port: "{{ item }}/tcp"
     permanent: true
     immediate: true
     state: enabled
-  loop: "{{ syncthing_ports }}"
+  loop: "{{ all_pis_syncthing_ports }}"
 - name: Set Syncthing to listen on all interfaces
-  become: true
-  become_user: "{{ user }}"
   ansible.builtin.replace:
     path: "~/.local/state/syncthing/config.xml"
     regexp: 127\.0\.0\.1:8384
     replace: 0\.0\.0\.0:8384
     backup: true
-- name: Enable linger (for podman containers)
+- name: Enable Syncthing service
+  ansible.builtin.systemd_service:
+    name: syncthing
+    enabled: true
+    state: started
+    scope: user
+- name: Install polkit (needed for linger to work)
   become: true
-  ansible.builtin.command: loginctl enable-linger {{ user }}
+  ansible.builtin.dnf:
+    name: polkit
+    state: present
+- name: Enable linger (for podman containers)
+  ansible.builtin.command: loginctl enable-linger
   changed_when: false
+- name: Enable podman auto update systemd timer
+  ansible.builtin.systemd_service:
+    name: podman-auto-update.timer
+    enabled: true
+    state: started
+    scope: user

@@ -1,0 +1,13 @@
+---
+- name: Put file in S3
+  hosts: localhost
+  gather_facts: true
+  vars:
+    file: "~/test.txt"
+  tasks:
+    - name: Example
+      amazon.aws.s3_object:
+        mode: put
+        bucket: mbc-backups-main
+        src: "{{ file }}"
+        object: "files/test.txt"

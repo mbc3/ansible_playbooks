@@ -1,5 +1,6 @@
 ---
 - name: Install podman
+  become: true
   ansible.builtin.dnf:
     name: podman
     state: present
@@ -8,7 +9,7 @@
     path: "{ item }"
     state: present
     mode: "0751"
-  loop: "{{ directories }}"
+  loop: "{{ stirling_pdf_directories }}"
 - name: Create Stirling PDF quadlet file
   containers.podman.podman_container:
     name: stirling-pdf

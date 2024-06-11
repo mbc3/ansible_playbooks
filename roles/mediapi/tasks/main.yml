@@ -1,19 +1,23 @@
 ---
 - name: Install python pexpect
+  become: true
   ansible.builtin.dnf:
     name: python3-pexpect
     state: present
 - name: Install flatpak
+  become: true
   ansible.builtin.dnf:
     name: flatpak
     state: present
 - name: Add the flathub flatpak repository
+  become: true
   community.general.flatpak_remote:
     name: flathub
     state: present
     flatpakrepo_url: https://dl.flathub.org/repo/flathub.flatpakrepo
     method: system
 - name: Install RetroArch
+  become: true
   community.general.flatpak:
     name: org.libretro.RetroArch
     state: present

@@ -1,5 +1,5 @@
 ---
-- name: "Add home servers to local SSH config" 
+- name: "Add home servers to local SSH config"
   hosts: localhost
 
   vars:
