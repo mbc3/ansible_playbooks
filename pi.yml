@@ -2,10 +2,29 @@
 - name: Provision Pi servers
   hosts: home
 
+  pre_tasks:
+    - name: Update all packages
+      become: true
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest
+        update_cache: true
+      register: packages
+      notify: Display updated packages
   roles:
-    - all_pis
-    - { role: homepi, when: inventory_hostname == "homepi"}
-    - { role: uptime_kuma, when: inventory_hostname == "homepi" }
-    - { role: mediapi, when: inventory_hostname == "mediapi"}
-    - { role: kavita, when: inventory_hostname == "mediapi" }
-    - { role: stirling_pdf, when: inventory_hostname == "mediapi" }
+    - role: all_pis
+    - role: homepi
+      when: inventory_hostname == "homepi"
+    - role: uptime_kuma
+      when: inventory_hostname == "homepi"
+    - role: mediapi
+      when: inventory_hostname == "mediapi"
+    - role: kavita
+      when: inventory_hostname == "mediapi"
+    - role: stirling_pdf
+      when: inventory_hostname == "mediapi"
+  handlers:
+    - name: Display updated packages
+      ansible.builtin.debug:
+        var: packages
+      when: pacakges is defined

@@ -1,0 +1,43 @@
+---
+- name: Set timezone to Los Angeles
+  become: true
+  community.general.timezone:
+    name: America/Los_Angeles
+- name: Check if EPEL is installed
+  ansible.builtin.stat:
+    path: /etc/yum.repos.d/epel.repo
+  register: epel
+- name: Install EPEL repo
+  become: true
+  ansible.builtin.dnf:
+    name: epel-release
+    state: present
+- name: Enable EPEL CRB
+  become: true
+  ansible.builtin.command: dnf config-manager --set-enabled crb
+  register: crb_output
+  changed_when: crb.rc != 0
+  when: not epel.stat.exists
+- name: Set SELinux in permissive mode
+  become: true
+  ansible.posix.selinux:
+    policy: targeted
+    state: permissive
+- name: Update hostname
+  become: true
+  ansible.builtin.hostname:
+    name: "{{ inventory_hostname }}"
+    use: systemd
+- name: Install necessary packages
+  become: true
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ all_pis_packages }}"
+- name: Open mosh ports
+  become: true
+  ansible.posix.firewalld:
+    service: mosh
+    permanent: true
+    immediate: true
+    state: enabled

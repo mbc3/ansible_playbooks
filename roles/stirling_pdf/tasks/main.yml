@@ -4,24 +4,30 @@
   ansible.builtin.dnf:
     name: podman
     state: present
+- name: Check if directory mounts exist
+  ansible.builtin.stat:
+    path: "{{ item }}"
+  loop: "{{ stirling_pdf_directories }}"
+  register: dir_output
 - name: Create directories for volume mount
   ansible.builtin.file:
-    path: "{ item }"
-    state: present
+    path: "{{ item }}"
+    state: directory
     mode: "0751"
-  loop: "{{ stirling_pdf_directories }}"
+  loop: "{{ dir_output.results }}"
+  when: item.stat.uid != 100999
 - name: Create Stirling PDF quadlet file
   containers.podman.podman_container:
     name: stirling-pdf
     image: docker.io/frooodle/s-pdf:latest
     state: quadlet
-    quadlet_filename: kavita
-    quadlet_dir: ~/.config/containers/systemd/
+    quadlet_filename: stirling-pdf
+    quadlet_dir: "{{ ansible_user_dir }}/.config/containers/systemd"
     ports:
       - 8080:8080
     volumes:
-      - "~/s_pdf_trainingdata:/usr/share/tessdata:z"
-      - "~/s_pdf_extra_configs:/configs:z"
+      - "{{ ansible_user_dir }}/s_pdf_trainingdata:/usr/share/tessdata:z"
+      - "{{ ansible_user_dir }}/s_pdf_extra_configs:/configs:z"
     quadlet_options:
       - "AutoUpdate=registry"
       - "Environment=DOCKER_ENABLE_SECURITY=false INSTALL_BOOK_AND_ADVANCED_HTML_OPS=false"

@@ -6,7 +6,7 @@
     state: present
 - name: Create Kavita quadlet file
   containers.podman.podman_container:
-    name: uptime-kuma
+    name: kavita
     image: docker.io/linuxserver/kavita:latest
     state: quadlet
     quadlet_filename: kavita
@@ -14,8 +14,8 @@
     ports:
       - 5000:5000
     volumes:
-      - "/home/almalinux/kavita_config:/config:z"
-      - "/home/almalinux/books_for_kavita:/data:z"
+      - "{{ ansible_user_dir }}/kavita_config:/config:z"
+      - "{{ ansible_user_dir }}/books_for_kavita:/data:z"
     quadlet_options:
       - "AutoUpdate=registry"
       - "Environment=PUID=1000 PGID=1000 TZ=America/Los_Angeles"

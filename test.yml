@@ -1,11 +1,7 @@
 ---
 - name: Test
-  hosts: localhost
-  gather_facts: false
-
+  hosts: home
   tasks:
-    - name: Systemd Test
-      ansible.builtin.systemd_service:
-        state: stopped
-        scope: user
-        name: language-server
+    - name: Test
+      ansible.builtin.debug:
+        var: ansible_user_id

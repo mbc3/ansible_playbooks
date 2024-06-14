@@ -1,0 +1,19 @@
+---
+- name: Install Prometheus node exporter
+  become: true
+  ansible.builtin.dnf:
+    name: golang-github-prometheus-node-exporter
+    state: present
+- name: Enable Prometheus node exporter service
+  become: true
+  ansible.builtin.systemd_service:
+    name: prometheus-node-exporter
+    enabled: true
+    state: started
+- name: Open Prometheus port on firewall
+  become: true
+  ansible.posix.firewalld:
+    port: 9100/tcp
+    permanent: true
+    immediate: true
+    state: enabled
