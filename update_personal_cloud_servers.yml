@@ -3,14 +3,14 @@
   hosts: personal
   gather_facts: true
   become: true
-  
+
   tasks:
     - name: Update all packages (with apt)
       ansible.builtin.apt:
         update-cache: true
         upgrade: true
       when: ansible_distribution == "Debian"
-      register: updates
+      register: apt_updates
       notify: Display updated packages
     - name: Update all packages (with dnf)
       ansible.builtin.dnf:
@@ -18,11 +18,15 @@
         state: latest
         update_cache: true
       when: ansible_distribution == "AlmaLinux"
-      register: updates
+      register: dnf_updates
       notify: Display updated packages
 
   handlers:
-    - name: Display updated packages
+    - name: Display updated apt packages
       ansible.builtin.debug:
-        var: updates
-      when: updates is defined
+        var: apt_updates
+      when: apt_updates is defined
+    - name: Display updated dnf packages
+      ansible.builtin.debug:
+        var: dnf_updates
+      when: dnf_updates is defined
