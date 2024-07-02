@@ -11,7 +11,7 @@
         upgrade: true
       when: ansible_distribution == "Debian"
       register: apt_updates
-      notify: Display updated packages
+      notify: Display updated apt packages
     - name: Update all packages (with dnf)
       ansible.builtin.dnf:
         name: "*"
@@ -19,7 +19,7 @@
         update_cache: true
       when: ansible_distribution == "AlmaLinux"
       register: dnf_updates
-      notify: Display updated packages
+      notify: Display updated dnf packages
 
   handlers:
     - name: Display updated apt packages
