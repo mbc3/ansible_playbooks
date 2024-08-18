@@ -1,5 +1,10 @@
 ---
+nfs_firewall_ports:
+  - nfs
+  - nfs3
+  - mountd
+  - rpc-bind
 nfs_directory: "/home/vagrant/tmp"
-ip_range: "0.0.0.0/24"
+nfs_ip_range: "0.0.0.0/24"
 nfs_user: "vagrant"
 nfs_group: "vagrant"

@@ -8,5 +8,5 @@ all_pis_pihole_ports:
   - dhcp
   - dhcpv6
 all_pis_syncthing_ports:
-  - 8384
-  - 22000
+  - syncthing
+  - syncthing-relay
