@@ -9,4 +9,5 @@ all_pis_pihole_ports:
   - dhcpv6
 all_pis_syncthing_ports:
   - syncthing
+  - syncthing-gui
   - syncthing-relay
