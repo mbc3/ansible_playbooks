@@ -1,0 +1,37 @@
+---
+- name: Install podman
+  become: true
+  ansible.builtin.dnf:
+    name: podman
+    state: present
+- name: Enable Gerbera port on firewall
+  become: true
+  ansible.posix.firewalld:
+    port: "{{ item }}"
+    state: enabled
+    permanent: true
+    immediate: true
+  loop: "{{ gerbera_port }}"
+- name: Create Gerbera quadlet file
+  containers.podman.podman_container:
+    name: gerbera
+    image: docker.io/gerbera/gerbera:latest
+    state: quadlet
+    quadlet_filename: gerbera
+    quadlet_dir: "{{ ansible_user_dir }}/.config/containers/systemd"
+    ports:
+      - 1900:1900
+      - 49494:49494
+    network:
+      - host
+    volumes:
+      - "gerbera-config:/var/run/gerbera:z"
+      - "{{ ansible_user_dir }}/external/dlna:/mnt/content:ro,z"
+    quadlet_options:
+      - "AutoUpdate=registry"
+      - |
+        [Service]
+        Restart=always
+        [Install]
+        WantedBy=default.target
+  notify: Start Gerbera Systemd unit file

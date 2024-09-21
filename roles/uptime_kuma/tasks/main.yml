@@ -10,7 +10,7 @@
     image: docker.io/louislam/uptime-kuma:1
     state: quadlet
     quadlet_filename: uptime-kuma
-    quadlet_dir: ~/.config/containers/systemd/
+    quadlet_dir: "{{ ansible_user_dir }}/.config/containers/systemd"
     ports:
       - 3001:3001
     volumes:
@@ -22,4 +22,4 @@
         Restart=always
         [Install]
         WantedBy=default.target
-  notify: Start Systemd unit file
+  notify: Start Uptime Kuma Systemd unit file

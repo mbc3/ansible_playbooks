@@ -36,4 +36,4 @@
         Restart=always
         [Install]
         WantedBy=default.target
-  notify: Start Systemd unit file
+  notify: Start Stirling PDF Systemd unit file

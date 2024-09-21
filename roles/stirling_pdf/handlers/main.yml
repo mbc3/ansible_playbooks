@@ -1,5 +1,5 @@
 ---
-- name: Start Systemd unit file
+- name: Start Stirling PDF Systemd unit file
   ansible.builtin.systemd_service:
     name: stirling-pdf
     state: started

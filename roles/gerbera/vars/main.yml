@@ -1,0 +1,4 @@
+---
+gerbera_port:
+  - "1900/udp"
+  - "49494/tcp"

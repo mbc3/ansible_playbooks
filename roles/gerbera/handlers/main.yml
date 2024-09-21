@@ -1,6 +1,6 @@
 ---
-- name: Start Uptime Kuma Systemd unit file
+- name: Start Gerbera Systemd unit file
   ansible.builtin.systemd_service:
-    name: uptime-kuma
+    name: gerbera
     state: started
     scope: user
