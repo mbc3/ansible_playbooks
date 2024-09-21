@@ -9,3 +9,4 @@
     state: restarted
 - name: Restorecon
   ansible.builtin.command: restorecon -v /var/www
+  changed_when: false

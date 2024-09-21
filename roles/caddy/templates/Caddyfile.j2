@@ -1,0 +1,6 @@
+books.localdomain {
+    reverse_proxy http://mediapi:5000/home
+}
+pdf.localdomain {
+    reverse_proxy http://mediapi:8080
+}

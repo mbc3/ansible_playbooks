@@ -2,7 +2,7 @@
 - name: Get service facts
   ansible.builtin.service_facts:
 - name: Create /var/www directory with correct SELinux label
-  import_tasks: var_www.yml
+  ansible.builtin.import_tasks: var_www.yml
 
 - name: Install Nginx
   ansible.builtin.dnf:
@@ -44,7 +44,7 @@
     mode: "0644"
 - name: Make cache directory
   ansible.builtin.file:
-    path: /var/cache/"{website}"
+    path: /var/cache/"{nginx_website}"
     state: directory
     owner: nginx
     group: root

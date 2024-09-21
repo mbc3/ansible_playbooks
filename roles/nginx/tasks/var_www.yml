@@ -17,4 +17,3 @@
     group: nginx
     setype: httpd_sys_content_t
   notify: Restorecon
-

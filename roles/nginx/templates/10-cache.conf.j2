@@ -1,2 +1,2 @@
 # proxy cache
-proxy_cache_path /var/cache/{{ website }}/ levels=1:2 keys_zone={{ website_base }}_cache:10m max_size=1g inactive=240m use_temp_path=off;
+proxy_cache_path /var/cache/{{ nginx_website }}/ levels=1:2 keys_zone={{ nginx_website_base }}_cache:10m max_size=1g inactive=240m use_temp_path=off;

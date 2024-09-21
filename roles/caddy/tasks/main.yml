@@ -1,0 +1,16 @@
+---
+- name: Install Caddy
+  ansible.builtin.dnf:
+    name: caddy
+    state: present
+  notify: Enable Caddy
+- name: Copy Caddyfile
+  ansible.builtin.template:
+    src: Caddyfile.j2
+    dest: /etc/caddy/Caddyfile
+    mode: "0644"
+  notify: Restart Caddy
+- name: Enable Caddy Trust
+  become: true
+  ansible.builtin.command: caddy trust
+  changed_when: false
