@@ -4,3 +4,4 @@
     name: flyimg
     state: started
     scope: user
+    daemon_reload: true

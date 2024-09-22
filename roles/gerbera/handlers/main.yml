@@ -4,3 +4,4 @@
     name: gerbera
     state: started
     scope: user
+    daemon_reload: true

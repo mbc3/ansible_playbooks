@@ -25,6 +25,8 @@
       when: inventory_hostname == "mediapi"
     - role: stirling_pdf
       when: inventory_hostname == "mediapi"
+    - role: flyimg
+      when: inventory_hostname == "mediapi"
   handlers:
     - name: Display updated packages
       ansible.builtin.debug:

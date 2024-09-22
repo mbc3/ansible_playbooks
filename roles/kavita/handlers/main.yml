@@ -4,3 +4,4 @@
     name: kavita
     state: started
     scope: user
+    daemon_reload: true

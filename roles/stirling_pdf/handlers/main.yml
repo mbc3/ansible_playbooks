@@ -4,3 +4,4 @@
     name: stirling-pdf
     state: started
     scope: user
+    daemon_reload: true

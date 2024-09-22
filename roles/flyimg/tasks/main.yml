@@ -11,7 +11,7 @@
     state: enabled
     permanent: true
     immediate: true
-  loop: "{{ gerbera_port }}"
+  loop: "{{ flyimg_port }}"
 - name: Create Flyimg quadlet file
   containers.podman.podman_container:
     name: flyimg
@@ -20,7 +20,7 @@
     quadlet_filename: flyimg
     quadlet_dir: "{{ ansible_user_dir }}/.config/containers/systemd"
     ports:
-      - 8080:80
+      - 8000:80
     quadlet_options:
       - "AutoUpdate=registry"
       - |

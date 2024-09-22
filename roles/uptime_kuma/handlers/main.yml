@@ -4,3 +4,4 @@
     name: uptime-kuma
     state: started
     scope: user
+    daemon_reload: true
