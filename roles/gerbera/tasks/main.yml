@@ -19,19 +19,18 @@
     state: quadlet
     quadlet_filename: gerbera
     quadlet_dir: "{{ ansible_user_dir }}/.config/containers/systemd"
-    ports:
-      - 1900:1900
-      - 49494:49494
     network:
       - host
     volumes:
-      - "gerbera-config:/var/run/gerbera:z"
-      - "{{ ansible_user_dir }}/external/dlna:/mnt/content:ro,z"
+      - "gerbera-config:/var/run/gerbera"
+      - "{{ ansible_user_dir }}/external/dlna:/mnt/content:ro"
     quadlet_options:
       - "AutoUpdate=registry"
       - |
         [Service]
         Restart=always
+        [Unit]
+        After=network-online.target
         [Install]
         WantedBy=default.target
   notify: Start Gerbera Systemd unit file
