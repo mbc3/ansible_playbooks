@@ -1,0 +1,3 @@
+---
+flyimg_port:
+  - "8080/tcp"

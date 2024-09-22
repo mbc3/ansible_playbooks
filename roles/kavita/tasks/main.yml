@@ -10,7 +10,7 @@
     image: docker.io/linuxserver/kavita:latest
     state: quadlet
     quadlet_filename: kavita
-    quadlet_dir: ~/.config/containers/systemd/
+    quadlet_dir: "{{ ansible_user_dir }}/.config/containers/systemd/"
     ports:
       - 5000:5000
     volumes:
