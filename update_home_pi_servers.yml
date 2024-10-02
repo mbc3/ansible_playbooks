@@ -3,7 +3,7 @@
   hosts: home
   gather_facts: true
   become: true
-  
+
   tasks:
     - name: Update all packages
       ansible.builtin.dnf:

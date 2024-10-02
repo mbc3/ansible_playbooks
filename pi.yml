@@ -13,20 +13,50 @@
       notify: Display updated packages
   roles:
     - role: all_pis
+      tags: setup
+
     - role: homepi
       when: inventory_hostname == "homepi"
+      tags:
+        - homepi
+        - container
+
     - role: uptime_kuma
       when: inventory_hostname == "homepi"
+      tags:
+        - homepi
+        - container
+
     - role: gerbera
       when: inventory_hostname == "homepi"
+      tags:
+        - homepi
+        - container
+
     - role: mediapi
       when: inventory_hostname == "mediapi"
+      tags:
+        - mediapi
+        - container
+
     - role: kavita
       when: inventory_hostname == "mediapi"
+      tags:
+        - mediapi
+        - container
+
     - role: stirling_pdf
       when: inventory_hostname == "mediapi"
+      tags:
+        - mediapi
+        - container
+
     - role: flyimg
       when: inventory_hostname == "mediapi"
+      tags:
+        - mediapi
+        - container
+
   handlers:
     - name: Display updated packages
       ansible.builtin.debug:
