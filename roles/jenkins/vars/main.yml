@@ -1,0 +1,6 @@
+---
+jenkins_server_name: "tasks.sleepycow.fun"
+jenkins_server: "sleepycow.fun"
+jenkins_dependencies:
+  - java-17-openjdk-headless
+  - fontconfig
