@@ -3,5 +3,9 @@
   hosts: home
   tasks:
     - name: Test
+      ansible.builtin.command: "/usr/bin/echo 10.110.102.{{ (ansible_default_ipv4.address | split('.')).3 }}"
+      changed_when: false
+      register: output
+    - name: Display results
       ansible.builtin.debug:
-        var: ansible_user_id
+        var: output.stdout
