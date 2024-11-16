@@ -1,11 +1,27 @@
 ---
 - name: Test
-  hosts: home
+  hosts: localhost
   tasks:
-    - name: Test
-      ansible.builtin.command: "/usr/bin/echo 10.110.102.{{ (ansible_default_ipv4.address | split('.')).3 }}"
-      changed_when: false
-      register: output
-    - name: Display results
+    # - name: Test URI
+    #   ansible.builtin.uri:
+    #     url: https://matthewbriancohen.art
+    #     return_content: true
+    #   register: url_output
+    # - name: Display
+    #   ansible.builtin.debug:
+    #     msg: "{{ url_output }}"
+    #   when: url_output.status != 200 or "'Cohen' in url_output.content"
+    - name: Register test file info
+      ansible.builtin.stat:
+        path: /home/mbc/test_file.txt
+      register: test_file
+    - name: Display test file info
       ansible.builtin.debug:
-        var: output.stdout
+        var: test_file
+    - name: Sort test file
+      ansible.builtin.command: sort --unique --output=/home/mbc/test_file.txt /home/mbc/test_file.txt
+      register: test_output
+      changed_when: false
+    - name: Display Test File Output
+      ansible.builtin.debug:
+        var: test_output
