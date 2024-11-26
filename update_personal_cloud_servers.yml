@@ -4,6 +4,12 @@
   gather_facts: true
   become: true
 
+  vars:
+    podman_containers:
+      - url
+      - listmonk_db
+      - listmonk_app
+
   tasks:
     - name: Update all packages (with apt)
       ansible.builtin.apt:
@@ -30,3 +36,13 @@
       ansible.builtin.debug:
         var: dnf_updates
       when: dnf_updates is defined
+    - name: Reboot server
+      ansible.builtin.reboot:
+        msg: "Rebooting system for kernel updates..."
+      when: dnf_updates is defined and '"kernel" in dnf_updates.stdout'
+      notify: Restart containers
+    - name: Restart containers
+      containers.podman.podman_container:
+        name: "{{ item }}"
+        state: started
+      loop: "{{ podman_containers }}"
