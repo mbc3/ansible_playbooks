@@ -39,7 +39,7 @@
     - name: Reboot server
       ansible.builtin.reboot:
         msg: "Rebooting system for kernel updates..."
-      when: dnf_updates is defined and '"kernel" in dnf_updates.stdout'
+      when: (dnf_updates is defined or apt_updates is defined) and '"kernel" in dnf_updates.stdout'
       notify: Restart containers
     - name: Restart containers
       containers.podman.podman_container:
