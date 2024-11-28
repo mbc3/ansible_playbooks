@@ -40,7 +40,7 @@
       ansible.builtin.debug:
         var: flatpak_output
       when: flatpak_output is defined
-    - name: Reboot server
+    - name: Reboot machine
       ansible.builtin.reboot:
         msg: "Rebooting system for kernel updates..."
       when: dnf_updates is defined and '"kernel" in dnf_updates.stdout'

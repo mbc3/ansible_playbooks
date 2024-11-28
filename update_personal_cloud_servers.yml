@@ -17,7 +17,9 @@
         upgrade: true
       when: ansible_distribution == "Debian"
       register: apt_updates
-      notify: Display updated apt packages
+      notify:
+        - Display updated apt packages
+        - Reboot machine
     - name: Update all packages (with dnf)
       ansible.builtin.dnf:
         name: "*"
@@ -25,7 +27,9 @@
         update_cache: true
       when: ansible_distribution == "AlmaLinux"
       register: dnf_updates
-      notify: Display updated dnf packages
+      notify:
+        - Display updated dnf packages
+        - Reboot machine
 
   handlers:
     - name: Display updated apt packages
@@ -36,13 +40,13 @@
       ansible.builtin.debug:
         var: dnf_updates
       when: dnf_updates is defined
-    - name: Reboot server
-      ansible.builtin.reboot:
-        msg: "Rebooting system for kernel updates..."
-      when: (dnf_updates is defined or apt_updates is defined) and ('"kernel" in dnf_updates.stdout' or '"kernel" in apt_updates.stdout')
-      notify: Restart containers
     - name: Restart containers
       containers.podman.podman_container:
         name: "{{ item }}"
         state: started
       loop: "{{ podman_containers }}"
+    - name: Reboot machine
+      ansible.builtin.reboot:
+        msg: "Rebooting system for kernel updates..."
+      when: (dnf_updates is defined or apt_updates is defined) and ('"kernel" in dnf_updates.stdout' or '"kernel" in apt_updates.stdout')
+      notify: Restart containers
