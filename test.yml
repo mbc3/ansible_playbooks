@@ -1,6 +1,11 @@
 ---
 - name: Test
   hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    apt_updates: "kernel"
+    dnf_updates: "no"
   tasks:
     # - name: Test URI
     #   ansible.builtin.uri:
@@ -11,17 +16,27 @@
     #   ansible.builtin.debug:
     #     msg: "{{ url_output }}"
     #   when: url_output.status != 200 or "'Cohen' in url_output.content"
-    - name: Register test file info
-      ansible.builtin.stat:
-        path: /home/mbc/test_file.txt
-      register: test_file
-    - name: Display test file info
+    # - name: Register test file info
+    #   ansible.builtin.stat:
+    #     path: /home/mbc/test_file.txt
+    #   register: test_file
+    # - name: Display test file info
+    #   ansible.builtin.debug:
+    #     var: test_file
+    # - name: Sort test file
+    #   ansible.builtin.command: sort --unique --output=/home/mbc/test_file.txt /home/mbc/test_file.txt
+    #   register: test_output
+    #   changed_when: false
+    # - name: Display Test File Output
+    #   ansible.builtin.debug:
+    #     var: test_output
+    - name: Display Kernel string
       ansible.builtin.debug:
-        var: test_file
-    - name: Sort test file
-      ansible.builtin.command: sort --unique --output=/home/mbc/test_file.txt /home/mbc/test_file.txt
-      register: test_output
-      changed_when: false
-    - name: Display Test File Output
+        msg: "kernel"
+      notify: Restart
+      changed_when: true
+  handlers:
+    - name: Restart
       ansible.builtin.debug:
-        var: test_output
+        msg: "yes"
+      when: (dnf_updates is defined or apt_updates is defined) and ('kernel' in dnf_updates or 'kernel' in apt_updates)

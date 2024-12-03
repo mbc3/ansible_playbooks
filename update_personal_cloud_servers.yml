@@ -43,10 +43,11 @@
     - name: Restart containers
       containers.podman.podman_container:
         name: "{{ item }}"
+        image: 
         state: started
       loop: "{{ podman_containers }}"
     - name: Reboot machine
       ansible.builtin.reboot:
         msg: "Rebooting system for kernel updates..."
-      when: (dnf_updates is defined or apt_updates is defined) and ('"kernel" in dnf_updates.stdout' or '"kernel" in apt_updates.stdout')
+      when: (dnf_updates is defined or apt_updates is defined) and ("kerne" in dnf_updates.stdout or "kernel" in apt_updates.stdout)
       notify: Restart containers
