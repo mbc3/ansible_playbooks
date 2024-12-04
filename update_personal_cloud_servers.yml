@@ -4,12 +4,6 @@
   gather_facts: true
   become: true
 
-  vars:
-    podman_containers:
-      - url
-      - listmonk_db
-      - listmonk_app
-
   tasks:
     - name: Update all packages (with apt)
       ansible.builtin.apt:
@@ -19,7 +13,7 @@
       register: apt_updates
       notify:
         - Display updated apt packages
-        - Reboot machine
+        - Reboot Debian machine
     - name: Update all packages (with dnf)
       ansible.builtin.dnf:
         name: "*"
@@ -29,7 +23,7 @@
       register: dnf_updates
       notify:
         - Display updated dnf packages
-        - Reboot machine
+        - Reboot AlmaLinux machine
 
   handlers:
     - name: Display updated apt packages
@@ -40,14 +34,18 @@
       ansible.builtin.debug:
         var: dnf_updates
       when: dnf_updates is defined
-    - name: Restart containers
-      containers.podman.podman_container:
-        name: "{{ item }}"
-        image: 
-        state: started
-      loop: "{{ podman_containers }}"
-    - name: Reboot machine
+    - name: Restart AlmaLinux containers
+      containers.podman.podman_containers:
+        containers:
+          - name: url
+          - name: listmonk_db
+          - name: listmonk_app
+    - name: Reboot AlmaLinux machine
       ansible.builtin.reboot:
         msg: "Rebooting system for kernel updates..."
-      when: (dnf_updates is defined or apt_updates is defined) and ("kerne" in dnf_updates.stdout or "kernel" in apt_updates.stdout)
-      notify: Restart containers
+      when: dnf_updates is defined and 'kernel' in dnf_updates.stdout
+      notify: Restart AlmaLinux containers
+    - name: Reboot Debian machine
+      ansible.builtin.reboot:
+        msg: "Rebooting system for kernel updates..."
+      when: apt_updates is defined and 'kernel' in apt_updates.stdout

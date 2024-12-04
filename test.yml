@@ -3,9 +3,6 @@
   hosts: localhost
   connection: local
   gather_facts: false
-  vars:
-    apt_updates: "kernel"
-    dnf_updates: "no"
   tasks:
     # - name: Test URI
     #   ansible.builtin.uri:
@@ -30,13 +27,18 @@
     # - name: Display Test File Output
     #   ansible.builtin.debug:
     #     var: test_output
-    - name: Display Kernel string
-      ansible.builtin.debug:
-        msg: "kernel"
+    - name: Resgister test string dnf
+      ansible.builtin.command: echo kernel
+      register: dnf_updates
+      notify: Restart
+      changed_when: true
+    - name: Resgister test string apt
+      ansible.builtin.command: echo kernel
+      register: apt_updates
       notify: Restart
       changed_when: true
   handlers:
     - name: Restart
       ansible.builtin.debug:
-        msg: "yes"
-      when: (dnf_updates is defined or apt_updates is defined) and ('kernel' in dnf_updates or 'kernel' in apt_updates)
+        msg: "yes, this hit"
+      when: (dnf_updates is defined or apt_updates is defined) and ('kernel' in dnf_updates.stdout or 'kernel' in apt_updates.stdout)
