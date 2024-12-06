@@ -32,13 +32,11 @@
       register: dnf_updates
       notify: Restart
       changed_when: true
-    - name: Resgister test string apt
-      ansible.builtin.command: echo kernel
-      register: apt_updates
-      notify: Restart
-      changed_when: true
+    - name: Display DNF
+      ansible.builtin.debug:
+        var: dnf_updates
   handlers:
     - name: Restart
       ansible.builtin.debug:
         msg: "yes, this hit"
-      when: (dnf_updates is defined or apt_updates is defined) and ('kernel' in dnf_updates.stdout or 'kernel' in apt_updates.stdout)
+      when: dnf_updates is defined and 'kernel' in dnf_updates

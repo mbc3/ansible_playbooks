@@ -43,7 +43,7 @@
     - name: Reboot AlmaLinux machine
       ansible.builtin.reboot:
         msg: "Rebooting system for kernel updates..."
-      when: dnf_updates is defined and 'kernel' in dnf_updates.stdout
+      when: dnf_updates is defined and 'kernel' in dnf_updates.results
       notify: Restart AlmaLinux containers
     - name: Reboot Debian machine
       ansible.builtin.reboot:
