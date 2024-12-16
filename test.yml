@@ -3,6 +3,9 @@
   hosts: localhost
   connection: local
   gather_facts: false
+  vars:
+
+
   tasks:
     # - name: Test URI
     #   ansible.builtin.uri:
@@ -39,4 +42,4 @@
     - name: Restart
       ansible.builtin.debug:
         msg: "yes, this hit"
-      when: dnf_updates is defined and 'kernel' in dnf_updates
+      when: dnf_updates.stdout.find('kernel') != -1
