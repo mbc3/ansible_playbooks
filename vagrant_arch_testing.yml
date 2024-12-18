@@ -1,0 +1,17 @@
+---
+- name: Provision Arch Testing box
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Update packages
+      community.general.pacman:
+        update_cache: true
+        upgrade: true
+      register: pacman_updates
+      notify: Pacman updates
+
+  handlers:
+    - name: Pacman updates
+      ansible.builtin.debug:
+        var: pacman_updates
