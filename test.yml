@@ -4,7 +4,9 @@
   connection: local
   gather_facts: false
   vars:
-
+    test_ip: "10.20.102.100"
+    ipmi_default_gateway: "0.1"
+    render_subnet: "102"
 
   tasks:
     # - name: Test URI
@@ -38,6 +40,25 @@
     - name: Display DNF
       ansible.builtin.debug:
         var: dnf_updates
+    - name: Display Thing
+      ansible.builtin.debug:
+        var: "{{ (test_ip | split('.')).1 }}"
+    - name: Configure IPMI IP Address
+      command: "/usr/bin/echo lan set 1 ipaddr 10.1{{ (test_ip | split('.')).1[0] }}0.{{ render_subnet }}.{{ (test_ip | split('.')).3 }}"
+      changed_when: false
+      register: la_ip
+    - name: Configure IPMI Default Gateway
+      command: "/usr/bin/echo lan set 1 defgw ipaddr 10.1{{ (test_ip | split('.')).1[0] }}0.{{ ipmi_default_gateway }}"
+      changed_when: false
+      register: la_gateway
+
+    - name: Display Variables
+      ansible.builtin.debug:
+        var: "{{ item }}"
+      loop:
+        - test_ip
+        - la_ip.stdout
+        - la_gateway.stdout
   handlers:
     - name: Restart
       ansible.builtin.debug:
