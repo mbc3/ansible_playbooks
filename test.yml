@@ -52,6 +52,11 @@
       changed_when: false
       register: la_gateway
 
+    - name: Check if a file exists
+      ansible.builtin.stat:
+        path: "/dev/null"
+      register: ipmi_device
+
     - name: Display Variables
       ansible.builtin.debug:
         var: "{{ item }}"
@@ -59,6 +64,7 @@
         - test_ip
         - la_ip.stdout
         - la_gateway.stdout
+      when: ipmi_device.stat.exists
   handlers:
     - name: Restart
       ansible.builtin.debug:

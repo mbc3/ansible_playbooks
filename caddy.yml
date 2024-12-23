@@ -1,0 +1,6 @@
+---
+- name: Install Caddy
+  hosts: homepi
+  become: true
+  roles:
+    - caddy

@@ -1,6 +1,4 @@
-books.localdomain {
-    reverse_proxy http://mediapi:5000/home
-}
-pdf.localdomain {
-    reverse_proxy http://mediapi:8080
+localhost {
+reverse_proxy localhost:8000
+encode zstd gzip
 }
