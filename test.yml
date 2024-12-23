@@ -7,6 +7,9 @@
     test_ip: "10.20.102.100"
     ipmi_default_gateway: "0.1"
     render_subnet: "102"
+    dnf_updates:
+      - results: "kernel test"
+      - stdout: "Installed: ok"
 
   tasks:
     # - name: Test URI
@@ -32,41 +35,46 @@
     # - name: Display Test File Output
     #   ansible.builtin.debug:
     #     var: test_output
-    - name: Resgister test string dnf
-      ansible.builtin.command: echo kernel
-      register: dnf_updates
-      notify: Restart
-      changed_when: true
+
+    # - name: Resgister test string dnf
+    #   ansible.builtin.command: echo kernel
+    #   register: dnf_updates
+    #   notify: Restart
+    #   changed_when: true
     - name: Display DNF
       ansible.builtin.debug:
         var: dnf_updates
-    - name: Display Thing
-      ansible.builtin.debug:
-        var: "{{ (test_ip | split('.')).1 }}"
-    - name: Configure IPMI IP Address
-      command: "/usr/bin/echo lan set 1 ipaddr 10.1{{ (test_ip | split('.')).1[0] }}0.{{ render_subnet }}.{{ (test_ip | split('.')).3 }}"
-      changed_when: false
-      register: la_ip
-    - name: Configure IPMI Default Gateway
-      command: "/usr/bin/echo lan set 1 defgw ipaddr 10.1{{ (test_ip | split('.')).1[0] }}0.{{ ipmi_default_gateway }}"
-      changed_when: false
-      register: la_gateway
+    - name: Test changed
+      ansible.builtin.command: echo "changed"
+      changed_when: true
+      notify: Restart
+    # - name: Display Thing
+    #   ansible.builtin.debug:
+    #     var: "{{ (test_ip | split('.')).1 }}"
+    # - name: Configure IPMI IP Address
+    #   command: "/usr/bin/echo lan set 1 ipaddr 10.1{{ (test_ip | split('.')).1[0] }}0.{{ render_subnet }}.{{ (test_ip | split('.')).3 }}"
+    #   changed_when: false
+    #   register: la_ip
+    # - name: Configure IPMI Default Gateway
+    #   command: "/usr/bin/echo lan set 1 defgw ipaddr 10.1{{ (test_ip | split('.')).1[0] }}0.{{ ipmi_default_gateway }}"
+    #   changed_when: false
+    #   register: la_gateway
 
-    - name: Check if a file exists
-      ansible.builtin.stat:
-        path: "/dev/null"
-      register: ipmi_device
+    # - name: Check if a file exists
+    #   ansible.builtin.stat:
+    #     path: "/dev/null"
+    #   register: ipmi_device
 
-    - name: Display Variables
-      ansible.builtin.debug:
-        var: "{{ item }}"
-      loop:
-        - test_ip
-        - la_ip.stdout
-        - la_gateway.stdout
-      when: ipmi_device.stat.exists
+    # - name: Display Variables
+    #   ansible.builtin.debug:
+    #     var: "{{ item }}"
+    #   loop:
+    #     - test_ip
+    #     - la_ip.stdout
+    #     - la_gateway.stdout
+    #   when: ipmi_device.stat.exists
   handlers:
     - name: Restart
       ansible.builtin.debug:
         msg: "yes, this hit"
-      when: dnf_updates.stdout.find('kernel') != -1
+      when: "'kernel' in dnf_updates"
