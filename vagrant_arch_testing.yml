@@ -3,7 +3,16 @@
   hosts: all
   become: true
 
-  tasks:
+  vars:
+    zfs_packages:
+      - base-devel
+      - git
+
+    zfs_keys:
+      - 4F3BA9AB6D1F8D683DC2DFB56AD860EED4598027
+      - C33DF142657ED1F7C328A2960AB9E991C6AF658B
+
+  pre_tasks:
     - name: Update packages
       community.general.pacman:
         update_cache: true
@@ -11,7 +20,46 @@
       register: pacman_updates
       notify: Pacman updates
 
+    - name: Import GPG key for ZFS DKMS
+      ansible.builtin.command: 'sudo -u vagrant gpg --receive-keys "{{ item }}"'
+      loop: "{{ zfs_keys }}"
+
+  tasks:
+    - name: Install ZFS DKMS requirements
+      community.general.pacman:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ zfs_packages }}"
+
+    - name: Clone ZFS Repo
+      ansible.builtin.git:
+        repo: https://aur.archlinux.org/zfs-dkms.git
+        dest: /opt/zfs
+
+    - name: Give vagrant user perms for ZFS repo dir
+      ansible.builtin.file:
+        path: /opt/zfs
+        owner: vagrant
+        group: vagrant
+        mode: '0770'
+
+    - name: Build ZFS DKMS
+      ansible.builtin.command: 
+        cmd: sudo -u vagrant makepkg -si
+        chdir: /opt/zfs
+        creates: *.zst # this will run if there's any zst file here
+      register: zfs_dkms
+
+    - name: Install ZFS DKMS
+      community.general.pacman:
+        name: '/opt/zfs/ "{{ zfs_dkms }}"' # iffy on this, probably have to do something to find .zst
+        state: present
+      notify: Reboot machine
+
   handlers:
     - name: Pacman updates
       ansible.builtin.debug:
         var: pacman_updates
+    - name: Reboot machine
+      ansible.builtin.reboot
+        msg: rebooting to use ZFS DKMS module
