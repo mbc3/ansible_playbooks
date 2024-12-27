@@ -7,9 +7,8 @@
     test_ip: "10.20.102.100"
     ipmi_default_gateway: "0.1"
     render_subnet: "102"
-    dnf_updates:
-      - results: "kernel test"
-      - stdout: "Installed: ok"
+    dnf_updates: { results: ["installed: kernel", "installed: something"], stdout: ["installed: kernel", "installed: something"]
+    }
 
   tasks:
     # - name: Test URI
@@ -43,7 +42,7 @@
     #   changed_when: true
     - name: Display DNF
       ansible.builtin.debug:
-        var: dnf_updates
+        var: dnf_updates.results
     - name: Test changed
       ansible.builtin.command: echo "changed"
       changed_when: true
@@ -77,4 +76,4 @@
     - name: Restart
       ansible.builtin.debug:
         msg: "yes, this hit"
-      when: "'kernel' in dnf_updates"
+      when: dnf_updates is defined and "'kernel' in dnf_updates.results | to_json"

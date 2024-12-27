@@ -34,18 +34,23 @@
       ansible.builtin.debug:
         var: dnf_updates
       when: dnf_updates is defined
+
     - name: Restart AlmaLinux containers
       containers.podman.podman_containers:
         containers:
           - name: url
+            image: docker.io/draganczukp/simply-shorten:latest
           - name: listmonk_db
+            image: docker.io/library/postgres:13
           - name: listmonk_app
+            image: docker.io/listmonk/listmonk:latest
+
     - name: Reboot AlmaLinux machine
       ansible.builtin.reboot:
         msg: "Rebooting system for kernel updates..."
-      when: dnf_updates is defined and "'kernel' in dnf_updates"
+      when: dnf_updates is defined and "'kernel' in dnf_updates.results | to_json"
       notify: Restart AlmaLinux containers
     - name: Reboot Debian machine
       ansible.builtin.reboot:
         msg: "Rebooting system for kernel updates..."
-      when: apt_updates is defined and "'kernel' in apt_updates"
+      when: apt_updates is defined and "'kernel' in apt_updates.stdout | to_json"
