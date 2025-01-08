@@ -32,10 +32,21 @@
           Server = https://archzfs.com/$repo/$arch
           Server = https://zxcvfdsa.com/archzfs/$repo/$arch
 
-
-    - name: Install ZFS
+    - name: Install LTS kernel
       community.general.pacman:
-        name: archzfs-linux
+        name: linux-lts
+        state: present
+
+    - name: Reconfigure GRUB
+      ansible.builtin.lineinfile:
+        path: /etc/default/grub
+        regexp: "^GRUB_DEFAULT="
+        line: GRUB_DEFAULT=saved
+      notify: Generate GRUB cfg
+
+    - name: Install ZFS LTS
+      community.general.pacman:
+        name: archzfs-linux-lts
         state: present
         update_cache: true
       notify: Reboot machine
@@ -44,6 +55,9 @@
     - name: Pacman updates
       ansible.builtin.debug:
         var: pacman_updates
+    - name: Generate GRUB cfg
+      ansible.builtin.command: grub-mkconfig -o /boot/grub/grub.cfg
+      changed_when: false
     - name: Reboot machine
       ansible.builtin.reboot:
         msg: rebooting to use ZFS
