@@ -12,7 +12,7 @@
       register: dnf_updates
       notify:
         - Display updated packages
-        - Reboot AlmaLinux machine
+        # - Reboot AlmaLinux machine
 
     - name: Run Gravity-sync to sync Pi-Holes
       ansible.builtin.command: /usr/local/bin/gravity-sync

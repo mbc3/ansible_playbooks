@@ -13,7 +13,7 @@
       register: apt_updates
       notify:
         - Display updated apt packages
-        - Reboot Debian machine
+        # - Reboot Debian machine
     - name: Update all packages (with dnf)
       ansible.builtin.dnf:
         name: "*"
@@ -22,7 +22,7 @@
       when: ansible_distribution == "AlmaLinux"
       register: dnf_updates
       notify:
-        # - Display updated dnf packages
+        - Display updated dnf packages
         # - Reboot AlmaLinux machine
 
   handlers:
