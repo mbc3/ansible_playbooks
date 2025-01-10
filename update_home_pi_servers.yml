@@ -12,7 +12,7 @@
       register: dnf_updates
       notify:
         - Display updated packages
-        # - Reboot AlmaLinux machine
+        - Reboot AlmaLinux machine
 
     - name: Run Gravity-sync to sync Pi-Holes
       ansible.builtin.command: /usr/local/bin/gravity-sync
@@ -44,4 +44,6 @@
     - name: Reboot AlmaLinux machine
       ansible.builtin.reboot:
         msg: "Rebooting system for kernel updates..."
-      when: dnf_updates is defined and "'kernel' in dnf_updates.results | to_json"
+      when:
+        - dnf_updates is defined
+        - (dnf_updates.results | regex_search('kernel-\d'))
