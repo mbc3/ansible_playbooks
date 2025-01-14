@@ -41,7 +41,6 @@
       when:
         - dnf_updates is defined
         - (dnf_updates.results | regex_search('kernel-\d'))
-      notify: Restart AlmaLinux containers
     - name: Reboot Debian machine
       ansible.builtin.reboot:
         msg: "Rebooting system for kernel updates..."
