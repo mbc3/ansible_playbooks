@@ -90,3 +90,4 @@
       when:
         - dnf_updates is defined
         - (dnf_updates.results | regex_search('kernel-\d'))
+        - ansible_distribution != "CentOS"
