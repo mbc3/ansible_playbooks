@@ -1,0 +1,7 @@
+---
+- name: Start Air Quality Systemd unit file
+  ansible.builtin.systemd_service:
+    name: air-quality
+    state: started
+    scope: user
+    daemon_reload: true

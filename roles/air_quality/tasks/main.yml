@@ -1,0 +1,29 @@
+---
+- name: Install podman
+  become: true
+  ansible.builtin.dnf:
+    name: podman
+    state: present
+- name: Create directory for volume mount
+  ansible.builtin.file:
+    path: "{{ air_quality_directory }}"
+    state: directory
+    mode: "0755"
+- name: Create Air Quality quadlet file
+  containers.podman.podman_container:
+    name: air_quality
+    image: localhost/air_quality
+    state: quadlet
+    quadlet_filename: air-quality
+    quadlet_dir: "{{ ansible_user_dir }}/.config/containers/systemd"
+    volumes: "{{ air_quality_directory }}:{{ air_quality_directory }}:z"
+    device: /dev/ttyUSB0:r
+    quadlet_options:
+      - "AutoUpdate=registry"
+      - "PodmanArgs=--group-add keep-groups"
+      - |
+        [Service]
+        Restart=always
+        [Install]
+        WantedBy=default.target
+  notify: Start Air Quality Systemd unit file
