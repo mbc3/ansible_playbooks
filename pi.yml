@@ -63,6 +63,12 @@
         - mediapi
         - container
 
+    - role: caddy
+      when: inventory_hostname == "homepi"
+      tags:
+        - homepi
+        - container
+
   handlers:
     - name: Display updated packages
       ansible.builtin.debug:
