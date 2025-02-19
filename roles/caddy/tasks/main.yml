@@ -1,4 +1,8 @@
 ---
+- name: Install NSS
+  ansible.builtin.dnf:
+    name: nss-tools
+    state: present
 - name: Install Caddy
   ansible.builtin.dnf:
     name: caddy

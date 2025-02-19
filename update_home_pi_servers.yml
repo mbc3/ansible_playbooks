@@ -14,17 +14,6 @@
         - Display updated packages
         - Reboot AlmaLinux machine
 
-    - name: Run Gravity-sync to sync Pi-Holes
-      ansible.builtin.command: /usr/local/bin/gravity-sync
-      when: inventory_hostname == "homepi"
-      changed_when: false
-      register: gravity_sync_output
-
-    - name: Display Gravity-sync results
-      ansible.builtin.debug:
-        var: gravity_sync_output
-      when: gravity_sync_output is defined
-
     - name: Update flatpaks
       ansible.builtin.command: /usr/bin/flatpak update --noninteractive
       register: flatpak_output
