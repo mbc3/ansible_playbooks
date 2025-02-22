@@ -1,16 +1,21 @@
 ---
 - name: Install NSS
+  become: true
   ansible.builtin.dnf:
     name: nss-tools
     state: present
 - name: Install Caddy
+  become: true
   ansible.builtin.dnf:
     name: caddy
     state: present
   notify: Enable Caddy
 - name: Copy Caddyfile
+  become: true
   ansible.builtin.template:
     src: Caddyfile.j2
     dest: /etc/caddy/Caddyfile
+    owner: root
+    group: root
     mode: "0644"
   notify: Restart Caddy

@@ -57,7 +57,7 @@
         - mediapi
         - container
 
-    - role: air-quality
+    - role: air_quality
       when: inventory_hostname == "mediapi"
       tags:
         - mediapi
@@ -73,4 +73,4 @@
     - name: Display updated packages
       ansible.builtin.debug:
         var: packages
-      when: pacakges is defined
+      when: packages is defined

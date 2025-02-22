@@ -1,8 +1,12 @@
 ---
-- ansible.builtin.include_tasks: setup.yml
-- ansible.builtin.include_tasks: pihole.yml
-- ansible.builtin.include_tasks: prometheus.yml
-- ansible.builtin.include_tasks: syncthing.yml
+- name: Initial setup
+  ansible.builtin.include_tasks: setup.yml
+- name: Initial PiHole install
+  ansible.builtin.include_tasks: pihole.yml
+- name: Install Prometheus
+  ansible.builtin.include_tasks: prometheus.yml
+- name: Install Syncthing
+  ansible.builtin.include_tasks: syncthing.yml
 
 - name: Enable linger (for podman containers)
   ansible.builtin.command: loginctl enable-linger

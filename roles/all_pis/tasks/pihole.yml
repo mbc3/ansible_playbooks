@@ -30,3 +30,9 @@
     permanent: true
     immediate: true
     state: enabled
+- name: Add Pihole OS Check Disabled environment variable
+  become: true
+  ansible.builtin.lineinfile:
+    path: /etc/environment
+    line: PIHOLE_SKIP_OS_CHECK=true
+    state: present
