@@ -1,1 +1,7 @@
- ansible_become_pass: "{{mediapi_password }}"
+ansible_become_pass: "{{ mediapi_password }}"
+caddy_services:
+# key is subdomain, ie pihole.mediapi.localdomain
+# value is port for reverse proxy, ie 8080
+    pihole: "8008"
+    books: "5000"
+    pdf: "8080"

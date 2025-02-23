@@ -64,9 +64,9 @@
         - container
 
     - role: caddy
-      when: inventory_hostname == "homepi"
       tags:
         - homepi
+        - mediapi
         - container
 
   handlers:

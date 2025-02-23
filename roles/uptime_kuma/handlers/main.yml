@@ -1,5 +1,6 @@
 ---
 - name: Start Uptime Kuma Systemd unit file
+  become: true
   ansible.builtin.systemd_service:
     name: uptime-kuma
     state: started

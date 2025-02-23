@@ -1,5 +1,5 @@
 {% for key, value in caddy_services.items() %}
-{{ key }}.homepi.localdomain {
+{{ key }}.{{ inventory_hostname }}.localdomain {
 reverse_proxy localhost:{{ value }}
 tls internal
 encode zstd gzip

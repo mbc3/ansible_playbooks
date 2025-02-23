@@ -1,12 +1,15 @@
 ---
 - name: Enable Nginx
+  become: true
   ansible.builtin.systemd_service:
     name: nginx
     enabled: true
 - name: Restart Nginx
+  become: true
   ansible.builtin.systemd_service:
     name: nginx
     state: restarted
 - name: Restorecon
+  become: true
   ansible.builtin.command: restorecon -v /var/www
   changed_when: false
