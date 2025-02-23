@@ -26,6 +26,7 @@
     owner: root
     group: root
     mode: "0644"
+    validate: nginx -t %s
   notify: Restart Nginx
 - name: Add Nginx performance tweaks
   ansible.builtin.copy:
@@ -56,4 +57,5 @@
     owner: root
     group: root
     mode: "0644"
+    validate: nginx -t %s
   notify: Restart Nginx
