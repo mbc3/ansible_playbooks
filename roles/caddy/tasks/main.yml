@@ -20,4 +20,5 @@
     owner: root
     group: root
     mode: "0644"
+    validate: caddy validate --config %s
   notify: Restart Caddy
