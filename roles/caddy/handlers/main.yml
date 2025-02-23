@@ -1,4 +1,8 @@
 ---
+- name: Run Caddy trust
+  become: true
+  ansible.builtin.command: caddy trust
+  changed_when: false
 - name: Enable Caddy
   become: true
   ansible.builtin.systemd_service:

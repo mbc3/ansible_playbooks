@@ -9,7 +9,9 @@
   ansible.builtin.dnf:
     name: caddy
     state: present
-  notify: Enable Caddy
+  notify:
+    - Enable Caddy
+    - Run Caddy trust
 - name: Copy Caddyfile
   become: true
   ansible.builtin.template:
