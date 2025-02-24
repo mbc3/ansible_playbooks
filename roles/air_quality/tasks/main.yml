@@ -16,7 +16,7 @@
     state: quadlet
     quadlet_filename: air-quality
     quadlet_dir: "{{ ansible_user_dir }}/.config/containers/systemd"
-    volumes: "{{ air_quality_directory }}:{{ air_quality_directory }}:z"
+    volumes: "{{ air_quality_directory }}:{{ air_quality_directory }}"
     device: /dev/ttyUSB0:r
     quadlet_options:
       - "AutoUpdate=registry"
