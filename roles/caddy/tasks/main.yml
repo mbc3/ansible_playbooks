@@ -4,6 +4,7 @@
   ansible.builtin.dnf:
     name: nss-tools
     state: present
+
 - name: Install Caddy
   become: true
   ansible.builtin.dnf:
@@ -12,6 +13,7 @@
   notify:
     - Enable Caddy
     - Run Caddy trust
+
 - name: Copy Caddyfile
   become: true
   ansible.builtin.template:
@@ -22,3 +24,20 @@
     mode: "0644"
     validate: caddy validate --config %s
   notify: Restart Caddy
+
+- name: Fetch Caddy certs
+  become: true
+  ansible.builtin.fetch:
+    src: /var/lib/caddy/.local/share/caddy/pki/authorities/local/root.crt
+    dest: /tmp/cert
+  register: cert_location
+
+- name: Display Cert info
+  ansible.builtin.debug:
+    var: cert_location.dest
+
+- name: Run trust command on localhost
+  become: true
+  ansible.builtin.command: trust anchor {{ cert_location.dest }}
+  changed_when: false
+  delegate_to: localhost
