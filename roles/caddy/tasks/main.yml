@@ -41,3 +41,9 @@
   ansible.builtin.command: trust anchor {{ cert_location.dest }}
   changed_when: false
   delegate_to: localhost
+
+- name: Remove Caddy certs
+  ansible.builtin.file:
+    path: "{{ cert_location.dest }}"
+    state: absent
+  delegate_to: localhost

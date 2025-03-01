@@ -3,6 +3,7 @@ all_pis_packages:
   - polkit
   - mosh
   - podman
+  - sysstat
 all_pis_pihole_ports:
   - dns
   - dhcp

@@ -11,6 +11,7 @@
         update_cache: true
       register: packages
       notify: Display updated packages
+
   roles:
     - role: all_pis
       tags: setup
