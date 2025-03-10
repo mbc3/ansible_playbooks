@@ -5,3 +5,4 @@ caddy_services:
     pihole: "8008"
     books: "5000"
     pdf: "8080"
+    syncthing: "8384"

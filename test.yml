@@ -51,9 +51,17 @@
     #   register: dnf_updates
     #   notify: Restart
     #   changed_when: true
+    - name: Check if file exists
+      ansible.builtin.stat:
+        path: /etc/fstabs
+      register: fstab
+    - name: Display Register
+      ansible.builtin.debug:
+        var: fstab
     - name: Display DNF
       ansible.builtin.debug:
         var: dnf_updates.results
+      when: not fstab.stat.exists
     - name: Test changed
       ansible.builtin.command: echo "changed"
       changed_when: true

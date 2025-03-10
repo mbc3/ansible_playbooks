@@ -5,3 +5,4 @@ caddy_services:
     pihole: "8080"
     uptime: "3001"
     dlna: "49494"
+    syncthing: "8384"
