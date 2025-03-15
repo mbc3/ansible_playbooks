@@ -1,0 +1,13 @@
+*.* action (
+type="omfwd"
+queue.filename="{{ inventory_hostname }}_logs"       # unique name prefix for spool files
+queue.maxDiskSpace="1g"         # 1gb space limit (use as much as possible)
+queue.saveOnShutdown="on"       # save messages to disk on shutdown
+queue.type="LinkedList"         # run asynchronously
+queue.checkpointInterval="100"  # write bookkeeping information every 100 records
+action.resumeRetryCount="-1"    # infinite retries if host is down
+target="{{ rsyslog_server }}"
+port="514"
+protocol="tcp"
+template="RSYSLOG_SyslogProtocol23Format"
+)
