@@ -1,0 +1,10 @@
+---
+- name: Update all hosts and nodes
+  become: true
+  hosts: proxmox_nodes,proxmox_all_lxc
+
+  tasks:
+    - name: Update all packages
+      ansible.builtin.package:
+        name: "*"
+        state: latest
