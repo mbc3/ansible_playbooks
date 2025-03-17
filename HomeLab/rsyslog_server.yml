@@ -1,0 +1,4 @@
+---
+- name: Setup Rsyslog server
+  become: true
+  hosts: all

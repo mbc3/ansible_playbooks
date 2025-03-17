@@ -1,0 +1,19 @@
+---
+- name: Update all hosts and nodes
+  become: true
+  hosts: proxmox_nodes
+
+  vars:
+    vm_ids:
+      - 101
+      - 102
+
+  pre_tasks:
+    - name: Update all packages
+      ansible.builtin.package:
+        name: "*"
+        state: latest
+  tasks:
+    - name: Install OpenSSH server on container
+      ansible.builtin.command: lxc-attach "{{ item }}" -- dnf install -y openssh-server
+      loop: "{{ vm_ids }}"
