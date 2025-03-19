@@ -8,6 +8,7 @@
     vm_ids:
       - 101
       - 102
+      - 103
 
   pre_tasks:
     - name: Update all packages
