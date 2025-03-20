@@ -3,6 +3,9 @@
   ansible.builtin.dnf:
     name: podman
     state: present
+- name: Enable linger (for podman containers)
+  ansible.builtin.command: loginctl enable-linger
+  changed_when: false
 - name: Create Prometheus data dir
   ansible.builtin.file:
     path: /opt/prometheus_data
@@ -28,5 +31,5 @@
     ports: "9090:9090"
     volume:
       - "/opt/prometheus.yml:/etc/prometheus/prometheus.yml"
-      #- "/opt/prometheus_data:/prometheus"
+    # - "/opt/prometheus_data:/prometheus"
     state: started
