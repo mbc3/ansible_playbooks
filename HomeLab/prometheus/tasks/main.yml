@@ -6,13 +6,6 @@
 - name: Enable linger (for podman containers)
   ansible.builtin.command: loginctl enable-linger
   changed_when: false
-- name: Create Prometheus data dir
-  ansible.builtin.file:
-    path: /opt/prometheus_data
-    state: directory
-    owner: root
-    group: root
-    mode: "0775"
 - name: Copy Prometheus config
   ansible.builtin.template:
     src: prometheus.yml.j2
@@ -20,6 +13,10 @@
     owner: root
     group: root
     mode: "0664"
+- name: Create Prometheus podman volume
+  containers.podman.podman_volume:
+    name: prometheus-data
+    state: present
 - name: Pull Prometheus image
   containers.podman.podman_image:
     name: docker.io/prom/prometheus
@@ -31,5 +28,5 @@
     ports: "9090:9090"
     volume:
       - "/opt/prometheus.yml:/etc/prometheus/prometheus.yml"
-    # - "/opt/prometheus_data:/prometheus"
+      - "prometheus-data:/prometheus"
     state: started
