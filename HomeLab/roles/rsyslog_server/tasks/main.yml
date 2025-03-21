@@ -1,0 +1,26 @@
+---
+- name: Install Rsyslog
+  ansible.builtin.dnf:
+    name: rsyslog
+    state: present
+- name: Enable TCP module
+  ansible.builtin.lineinfile:
+    path: /etc/rsyslog.conf
+    regex: '^\S?module(load="imtcp")'
+    line: 'module(load="imtcp")'
+- name: Enable UDP module
+  ansible.builtin.lineinfile:
+    path: /etc/rsyslog.conf
+    regex: '^\S?module(load="imudp")'
+    line: 'module(load="imudp")'
+- name: Enable TCP input
+  ansible.builtin.lineinfile:
+    path: /etc/rsyslog.conf
+    regex: 'input(type="imtcp" port="514")'
+    line: 'input(type="imtcp" port="514")'
+- name: Enable UDP input
+  ansible.builtin.lineinfile:
+    path: /etc/rsyslog.conf
+    regex: 'input(type="imudp" port="514")'
+    line: 'input(type="imudp" port="514")'
+  notify: Restart Rsyslog

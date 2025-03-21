@@ -8,7 +8,6 @@
       ansible.builtin.dnf:
         name: "*"
         state: latest
-  tasks:
     - name: Install SSHD
       ansible.builtin.dnf:
         name: openssh-server
@@ -18,6 +17,11 @@
         user: root
         state: present
         key: "{{ lookup('file', '/home/mbc/.ssh/id_ed25519.pub') }}"
+  roles:
+    - role: rsyslog
+      when: inventory_hostname == "logs"
+
+  tasks:
     - name: Set timezone to Los Angeles
       community.general.timezone:
         name: America/Los_Angeles
