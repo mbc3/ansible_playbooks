@@ -4,7 +4,8 @@ prometheus_systemd_port: "9558"
 prometheus_home_hosts:
   - homepi
   - mediapi
-  - 192.168.7.101
-  - 192.168.7.102
+  - logs
+  - loki
+  - graphs
 prometheus_mbc_hosts:
-  - 192.168.5.100
+  - arch

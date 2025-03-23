@@ -1,7 +1,0 @@
----
-- name: Setup Rsyslog server
-  become: true
-  hosts: logs
-
-  roles:
-    - role: rsyslog_server

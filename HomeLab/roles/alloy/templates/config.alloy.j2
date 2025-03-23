@@ -1,0 +1,21 @@
+logging {
+level = "info"
+format = "logfmt"
+}
+
+loki.source.syslog "local" {
+listener {
+address  = "0.0.0.0:{{ alloy_port }}"
+protocol = "{{ alloy_protocol }}"
+syslog_format = "rfc5424"
+use_rfc5424_message = true
+}
+
+forward_to = [loki.write.local.receiver]
+}
+
+loki.write "local" {
+endpoint {
+url = "http://127.0.0.1:{{ alloy_loki_port }}/loki/api/v1/push"
+}
+}

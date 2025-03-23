@@ -1,0 +1,21 @@
+---
+- name: Import GPG key
+  ansible.builtin.rpm_key:
+    state: present
+    key: https://{{ alloy_url }}/gpg.key
+- name: Create Grafana Alloy repo
+  ansible.builtin.template:
+    src: alloy.repo.j2
+    dest: /etc/yum.repos.d/grafana.repo
+    mode: "0644"
+- name: Install Grafana Alloy
+  ansible.builtin.dnf:
+    name: alloy
+    state: present
+  notify: Enable Alloy
+- name: Copy Alloy config
+  ansible.builtin.template:
+    src: config.alloy.j2
+    dest: /etc/alloy/config.alloy
+    mode: "0644"
+  notify: Restart Alloy

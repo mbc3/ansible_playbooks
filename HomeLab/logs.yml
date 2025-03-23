@@ -1,0 +1,8 @@
+---
+- name: Setup logs server
+  hosts: logs
+  become: true
+
+  roles:
+    - role: loki
+    - role: alloy

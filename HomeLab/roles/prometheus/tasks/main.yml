@@ -13,6 +13,7 @@
     owner: root
     group: root
     mode: "0664"
+  notify: Restart Prometheus
 - name: Create Prometheus podman volume
   containers.podman.podman_volume:
     name: prometheus-data

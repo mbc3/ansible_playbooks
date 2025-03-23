@@ -1,0 +1,6 @@
+---
+- name: Restart Prometheus
+  containers.podman.podman_container:
+    name: prometheus
+    state: started
+    force_restart: true

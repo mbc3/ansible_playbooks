@@ -1,0 +1,23 @@
+---
+- name: Import GPG key
+  ansible.builtin.rpm_key:
+    state: present
+    key: https://{{ loki_url }}/gpg.key
+- name: Create Grafana Loki repo
+  ansible.builtin.template:
+    src: loki.repo.j2
+    dest: /etc/yum.repos.d/grafana.repo
+    mode: "0644"
+- name: Install Grafana Loki
+  ansible.builtin.dnf:
+    name: loki
+    state: present
+  notify: Enable Loki
+- name: Copy Loki config
+  ansible.builtin.template:
+    src: config.yml.j2
+    dest: /etc/loki/config.yml
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart Loki

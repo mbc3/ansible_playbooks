@@ -17,9 +17,9 @@
         user: root
         state: present
         key: "{{ lookup('file', '/home/mbc/.ssh/id_ed25519.pub') }}"
+
   roles:
     - role: rsyslog
-      when: inventory_hostname == "logs"
 
   tasks:
     - name: Set timezone to Los Angeles

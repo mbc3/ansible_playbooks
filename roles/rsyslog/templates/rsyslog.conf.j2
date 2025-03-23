@@ -8,7 +8,7 @@ queue.type="LinkedList"         # run asynchronously
 queue.checkpointInterval="100"  # write bookkeeping information every 100 records
 action.resumeRetryCount="-1"    # infinite retries if host is down
 target="{{ rsyslog_server }}"
-port="514"
-protocol="tcp"
+port="{{ rsyslog_port }}"
+protocol="{{ rsyslog_protocol }}"
 template="RSYSLOG_SyslogProtocol23Format"
 )

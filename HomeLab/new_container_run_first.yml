@@ -1,13 +1,12 @@
 ---
 - name: Initial provisioning for new containers
   become: true
-  hosts: proxmox_nodes
+  hosts: 192.168.7.20
 
   # This isn't a great solution, but if I add container ids here manually, this should work
   # Weirdly RHEL based/Arch containers don't have ssh enabled by default, but Debian does
   vars:
     vm_ids:
-      - 101
       - 102
       - 103
 

@@ -1,2 +1,4 @@
 ---
-rsyslog_server: "192.168.7.101"
+rsyslog_server: "192.168.7.102"
+rsyslog_port: "1514"
+rsyslog_protocol: "udp"
