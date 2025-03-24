@@ -1,12 +1,13 @@
 ---
 - name: Initial provisioning for new containers
   become: true
-  hosts: 192.168.7.20
+  hosts: services
 
   # This isn't a great solution, but if I add container ids here manually, this should work
   # Weirdly RHEL based/Arch containers don't have ssh enabled by default, but Debian does
   vars:
     vm_ids:
+      - 100
       - 102
       - 103
 

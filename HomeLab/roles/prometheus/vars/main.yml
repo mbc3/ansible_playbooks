@@ -5,7 +5,7 @@ prometheus_home_hosts:
   - homepi
   - mediapi
   - logs
-  - loki
   - graphs
+  - test
 prometheus_mbc_hosts:
   - arch
