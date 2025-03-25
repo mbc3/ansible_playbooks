@@ -8,3 +8,10 @@
       ansible.builtin.package:
         name: "*"
         state: latest
+      register: updates
+      notify: Display updated packages
+  handlers:
+    - name: Display updated packages
+      ansible.builtin.debug:
+        var: updates
+      when: updates is defined
