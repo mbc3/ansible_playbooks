@@ -7,5 +7,6 @@ prometheus_home_hosts:
   - logs
   - graphs
   - test
+  - dns
 prometheus_mbc_hosts:
   - arch

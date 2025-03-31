@@ -8,10 +8,17 @@
       ansible.builtin.dnf:
         name: "*"
         state: latest
+      when: ansible_distribution != "Debian"
+    - name: Update all packages (for Debian containers)
+      ansible.builtin.apt:
+        update-cache: true
+        upgrade: true
+      when: ansible_distribution == "Debian"
     - name: Install SSHD
       ansible.builtin.dnf:
         name: openssh-server
         state: present
+      when: ansible_distribution != "Debian"
     - name: Copy MBC SSH key
       ansible.posix.authorized_key:
         user: root
@@ -33,15 +40,24 @@
       ansible.builtin.dnf:
         name: epel-release
         state: present
+      when: ansible_distribution != "Debian"
     - name: Enable EPEL CRB
       ansible.builtin.command: dnf config-manager --set-enabled crb
       register: crb_output
       changed_when: crb_output.rc != 0
-      when: not epel.stat.exists
+      when:
+        - not epel.stat.exists
+        - ansible_distribution != "Debian"
     - name: Install Prometheus Node Exporter
       ansible.builtin.dnf:
         name: golang-github-prometheus-node-exporter
         state: present
+      when: ansible_distribution != "Debian"
+    - name: Install Prometheus Node Exporter (Debian)
+      ansible.builtin.apt:
+        name: prometheus-node-exporter
+        state: present
+      when: ansible_distribution == "Debian"
     - name: Enable Prometheus node exporter service
       ansible.builtin.systemd_service:
         name: prometheus-node-exporter

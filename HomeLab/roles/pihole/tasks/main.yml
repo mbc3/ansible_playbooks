@@ -1,0 +1,6 @@
+---
+- name: Checkout pihole repo
+  ansible.builtin.git:
+    repo: https://github.com/pi-hole/pi-hole.git
+    dest: /opt/pihole
+  changed_when: false
