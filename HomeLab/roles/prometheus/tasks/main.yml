@@ -22,7 +22,7 @@
   containers.podman.podman_image:
     name: docker.io/prom/prometheus
     tag: latest
-- name: Run Prometheus container
+- name: Create Prometheus quadlet file
   containers.podman.podman_container:
     name: prometheus
     image: docker.io/prom/prometheus
@@ -30,4 +30,15 @@
     volume:
       - "/opt/prometheus.yml:/etc/prometheus/prometheus.yml"
       - "prometheus-data:/prometheus"
-    state: started
+    state: quadlet
+    quadlet_filename: prometheus
+    quadlet_dir: "/etc/containers/systemd/"
+    quadlet_options:
+      - "AutoUpdate=registry"
+      - |
+        [Service]
+        Restart=always
+        [Unit]
+        After=network-online.target
+        [Install]
+        WantedBy=default.target
