@@ -1,4 +1,8 @@
 ---
+- name: Install Git
+  ansible.builtin.apt:
+    name: git
+    state: present
 - name: Checkout pihole repo
   ansible.builtin.git:
     repo: https://github.com/pi-hole/pi-hole.git
