@@ -1,6 +1,6 @@
 ---
 - name: Setup dns server
-  hosts: dns
+  hosts: dns01,dns02
   become: true
 
   roles:

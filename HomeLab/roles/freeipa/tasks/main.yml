@@ -1,0 +1,5 @@
+---
+- name: Install FreeIPA Server
+  ansible.builtin.dnf:
+    name: ipa-server
+    state: present
