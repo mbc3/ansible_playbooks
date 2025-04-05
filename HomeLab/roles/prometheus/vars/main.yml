@@ -10,5 +10,6 @@ prometheus_home_hosts:
   - dns01
   - dns02
   - freeipa
+  - files
 prometheus_mbc_hosts:
   - arch

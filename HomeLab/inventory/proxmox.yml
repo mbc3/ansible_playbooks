@@ -19,5 +19,5 @@ want_facts: true
 want_proxmox_nodes_ansible_host: true
 compose:
   # this sets the ansible_host to the container's public IP -- otherwise it would use the hostname to connect
-  ansible_host: proxmox_lxc_interfaces.1.inet.split('/').0
-  ansible_user: "'root'"
+  # I don't need this if I've set up DNS
+  # ansible_host: proxmox_lxc_interfaces.1.inet.split('/').0

@@ -1,7 +1,7 @@
 ---
-- name: Container Provisioning
+- name: Provisioning HomeLab Container/VMs
   become: true
-  hosts: proxmox_all_lxc
+  hosts: proxmox_all_lxc, proxmox_all_qemu
 
   pre_tasks:
     - name: Update all packages
@@ -19,11 +19,20 @@
         name: openssh-server
         state: present
       when: ansible_distribution != "Debian"
+    - name: Make sure ansible user exists
+      ansible.builtin.user:
+        name: ansible
+        comment: Ansible Service Account
     - name: Copy MBC SSH key
       ansible.posix.authorized_key:
-        user: root
+        user: ansible
         state: present
         key: "{{ lookup('file', '/home/mbc/.ssh/id_ed25519.pub') }}"
+    - name: Copy Proxmox SSH key
+      ansible.posix.authorized_key:
+        user: ansible
+        state: present
+        key: "{{ lookup('file', '/home/mbc/.ssh/proxmox.pub') }}"
 
   roles:
     - role: rsyslog
