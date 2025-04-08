@@ -1,0 +1,37 @@
+---
+- name: Get service facts
+  ansible.builtin.service_facts:
+- name: Install NFS
+  ansible.builtin.dnf:
+    name: nfs-utils
+    state: present
+  notify: Enable NFS
+- name: Open necessary ports for firewalld
+  ansible.posix.firewalld:
+    service: "{{ item }}"
+    permanent: true
+    immediate: true
+    state: enabled
+  loop: "{{ nfs_firewall_ports }}"
+  when: ansible_facts.services['firewalld'] is defined
+- name: Make NFS share directory
+  ansible.builtin.file:
+    path: "{{ nfs_directory }}"
+    state: directory
+    mode: "0777"
+    owner: root
+    group: root
+- name: Mount NFS directory
+  ansible.posix.mount:
+    path: "{{ nfs_directory }}"
+    src: UUID=c5bf6d8f-ceb6-4b87-8c61-056c848c2045
+    fstype: ext4
+    state: mounted
+- name: Edit /etc/exports to enable share
+  ansible.builtin.template:
+    src: templates/exports.j2
+    dest: /etc/exports
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart NFS

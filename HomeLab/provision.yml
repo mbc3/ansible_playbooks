@@ -3,17 +3,22 @@
   become: true
   hosts: proxmox_all_lxc, proxmox_all_qemu
 
+  vars:
+    nfs_mountpoint: "/mnt/share"
+
   pre_tasks:
     - name: Update all packages
       ansible.builtin.dnf:
         name: "*"
         state: latest
       when: ansible_distribution != "Debian"
+      notify: Restart machine
     - name: Update all packages (for Debian containers)
       ansible.builtin.apt:
         update-cache: true
         upgrade: true
       when: ansible_distribution == "Debian"
+      notify: Restart machine
     - name: Install SSHD
       ansible.builtin.dnf:
         name: openssh-server
@@ -72,3 +77,17 @@
         name: prometheus-node-exporter
         enabled: true
         state: started
+    - name: Mount NFS share
+      ansible.posix.mount:
+        src: files:/opt/share
+        path: "{{ nfs_mountpoint }}"
+        opts: rw,sync,hard
+        boot: false
+        state: mounted
+        fstype: nfs
+      when: inventory_hostname == "freeipa"
+
+  handlers:
+    - name: Restart machine
+      ansible.builtin.reboot:
+        msg: "Rebooting system after initial package upgrade..."

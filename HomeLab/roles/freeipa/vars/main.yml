@@ -1,0 +1,8 @@
+freeipa_domain: "localdomain"
+freeipa_host: "freeipa"
+freeipa_fqdn: "freeipa.localdomain"
+freeipa_auth_domain: "auth.localdomain"
+freeipa_admin: "admin"
+freeipa_username: "mbc"
+freeipa_admin_password: "{{ vault_freeipa_admin_password }}"
+freeipa_user_password: "{{ vault_freeipa_user_password }}"

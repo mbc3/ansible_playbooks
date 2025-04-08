@@ -1,0 +1,10 @@
+---
+nfs_firewall_ports:
+  - nfs
+  - nfs3
+  - mountd
+  - rpc-bind
+nfs_directory: "/opt/share"
+nfs_ip_range: "192.168.0.0/16"
+nfs_user: "share"
+nfs_group: "share"

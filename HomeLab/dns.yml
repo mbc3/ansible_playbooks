@@ -1,5 +1,5 @@
 ---
-- name: Setup dns server
+- name: Set up DNS servers
   hosts: dns01,dns02
   become: true
 

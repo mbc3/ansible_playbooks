@@ -3,3 +3,25 @@
   ansible.builtin.dnf:
     name: ipa-server
     state: present
+- name: Set FQDN hostname
+  ansible.builtin.hostname:
+    name: "{{ inventory_hostname }}.{{ freeipa_domain }}"
+    use: systemd
+- name: Set default login shell to bash
+  community.general.ipa_config:
+    ipadefaultloginshell: /usr/bin/bash
+    ipa_host: freeipa.localdomain
+    ipa_user: "{{ freeipa_admin }}"
+    ipa_pass: "{{ vault_freeipa_admin_password }}"
+- name: Create mbc user
+  community.general.ipa_user:
+    name: "{{ freeipa_username }}"
+    state: present
+    givenname: Matt
+    loginshell: /usr/bin/bash
+    sn: Cohen
+    password: "{{ freeipa_user_password }}"
+    update_password: on_create
+    ipa_host: "{{ freeipa_fqdn }}"
+    ipa_user: "{{ freeipa_admin }}"
+    ipa_pass: "{{ vault_freeipa_admin_password }}"

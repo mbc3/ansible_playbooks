@@ -1,0 +1,7 @@
+---
+- name: Set up Files server
+  hosts: files
+  become: true
+
+  roles:
+    - role: nfs

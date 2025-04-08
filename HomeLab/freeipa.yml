@@ -1,0 +1,7 @@
+---
+- name: Set up FreeIPA
+  hosts: freeipa
+  become: true
+
+  roles:
+    - role: freeipa

@@ -1,5 +1,5 @@
 ---
-- name: Setup logs server
+- name: Set up logs server
   hosts: logs
   become: true
 
