@@ -1,0 +1,9 @@
+---
+- name: Install FreeIPA client
+  ansible.builtin.dnf:
+    name: freeipa-client
+    state: present
+- name: Set hostname to be FQDN
+  ansible.builtin.hostname:
+    name: "{{ inventory_hostname }}.{{ freeipa_client_domain }}"
+    use: systemd

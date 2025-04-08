@@ -3,9 +3,6 @@
   become: true
   hosts: proxmox_all_lxc, proxmox_all_qemu
 
-  vars:
-    nfs_mountpoint: "/mnt/share"
-
   pre_tasks:
     - name: Update all packages
       ansible.builtin.dnf:
@@ -41,6 +38,10 @@
 
   roles:
     - role: rsyslog
+    - role: freeipa_client
+      when: inventory_hostname == "files"
+    - role: nfs_client
+      when: inventory_hostname == "freeipa"
 
   tasks:
     - name: Set timezone to Los Angeles
@@ -77,15 +78,6 @@
         name: prometheus-node-exporter
         enabled: true
         state: started
-    - name: Mount NFS share
-      ansible.posix.mount:
-        src: files:/opt/share
-        path: "{{ nfs_mountpoint }}"
-        opts: rw,sync,hard
-        boot: false
-        state: mounted
-        fstype: nfs
-      when: inventory_hostname == "freeipa"
 
   handlers:
     - name: Restart machine

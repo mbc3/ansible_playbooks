@@ -24,7 +24,7 @@
 - name: Mount NFS directory
   ansible.posix.mount:
     path: "{{ nfs_directory }}"
-    src: UUID=c5bf6d8f-ceb6-4b87-8c61-056c848c2045
+    src: UUID=c5bf6d8f-ceb6-4b87-8c61-056c848c2045 # TO DO: get this UUID from ansible facts
     fstype: ext4
     state: mounted
 - name: Edit /etc/exports to enable share
