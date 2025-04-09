@@ -21,11 +21,15 @@
     mode: "0777"
     owner: root
     group: root
+- name: Create xfs filesystem on /dev/sdb
+  community.general.filesystem:
+    fstype: xfs
+    dev: /dev/sdb
 - name: Mount NFS directory
   ansible.posix.mount:
     path: "{{ nfs_directory }}"
-    src: UUID=c5bf6d8f-ceb6-4b87-8c61-056c848c2045 # TO DO: get this UUID from ansible facts
-    fstype: ext4
+    src: UUID=73175723-104a-4ac1-b503-17d3b8930f59 # TO DO: get this UUID from ansible facts
+    fstype: xfs
     state: mounted
 - name: Edit /etc/exports to enable share
   ansible.builtin.template:

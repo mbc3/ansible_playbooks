@@ -1,0 +1,16 @@
+---
+- name: Add DNS
+  community.general.nmcli:
+    conn_name: System eth0
+    type: ethernet
+    dns4:
+      - "{{ dns_client_ipv4_server_1 }}"
+      - "{{ dns_client_ipv4_server_2 }}"
+    dns4_search:
+      - "{{ dns_client_search }}"
+    dns6:
+      - "{{ dns_client_ipv6_server_1 }}"
+      - "{{ dns_client_ipv6_server_2 }}"
+    dns6_search:
+      - "{{ dns_client_search }}"
+    state: present

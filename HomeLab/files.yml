@@ -5,3 +5,4 @@
 
   roles:
     - role: nfs
+    - role: freeipa_client

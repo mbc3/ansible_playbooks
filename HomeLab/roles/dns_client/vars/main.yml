@@ -1,0 +1,6 @@
+---
+dns_client_ipv4_server_1: "192.168.7.101"
+dns_client_ipv4_server_2: "192.168.7.106"
+dns_client_ipv6_server_1: "2600:6c50:73f:8273:be24:11ff:fe70:1b8c"
+dns_client_ipv6_server_2: "2600:6c50:73f:8273:be24:11ff:fe5d:82a1"
+dns_client_search: "localdomain"

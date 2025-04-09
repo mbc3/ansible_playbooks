@@ -12,4 +12,6 @@
   ansible.builtin.dnf:
     name: grafana
     state: present
-  notify: Enable Grafana
+  notify:
+    - Enable Grafana
+    - Restart Grafana

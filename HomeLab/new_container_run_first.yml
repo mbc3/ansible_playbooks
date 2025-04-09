@@ -9,10 +9,8 @@
   vars:
     vm_ids:
       - 100
-      - 101
       - 102
       - 103
-      - 106
 
   pre_tasks:
     # - name: Display vmid # Still testing this out
@@ -28,7 +26,6 @@
       ansible.builtin.command: lxc-attach "{{ item }}" -- dnf install -y openssh-server
       loop: "{{ vm_ids }}"
       notify: Restart SSHD
-      when: ansible_distribution != "Debian"
 
   handlers:
     - name: Restart SSHD
