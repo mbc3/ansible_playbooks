@@ -5,7 +5,11 @@
   ansible.builtin.dnf:
     name: nfs-utils
     state: present
-  notify: Enable NFS
+- name: Enable NFS
+  ansible.builtin.systemd_service:
+    name: nfs-server
+    enabled: true
+    state: started
 - name: Open necessary ports for firewalld
   ansible.posix.firewalld:
     service: "{{ item }}"

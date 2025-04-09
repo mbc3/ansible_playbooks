@@ -1,7 +1,13 @@
-freeipa_domain: "localdomain"
+---
+freeipa_services:
+  - freeipa-4
+  - freeipa-ldap
+  - freeipa-ldaps
+  - freeipa-replication
+  - freeipa-trust
+freeipa_domain: "auth.localdomain"
 freeipa_host: "freeipa"
-freeipa_fqdn: "freeipa.localdomain"
-freeipa_auth_domain: "auth.localdomain"
+freeipa_fqdn: "freeipa.auth.localdomain"
 freeipa_admin: "admin"
 freeipa_username: "mbc"
 freeipa_admin_password: "{{ vault_freeipa_admin_password }}"

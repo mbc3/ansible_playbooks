@@ -1,0 +1,6 @@
+## This file is maintained by ansible ##
+{{ ansible_default_ipv4.address }} {{ freeipa_fqdn }}
+{{ ansible_default_ipv6.address }} {{ freeipa_fqdn }}
+# localhost resolution is commented out for FreeIPA to work
+# 127.0.0.1   localhost localhost.localdomain localhost4 localhost4.localdomain4
+# ::1         localhost localhost.localdomain localhost6 localhost6.localdomain6
