@@ -32,8 +32,8 @@
     name: "{{ freeipa_username }}"
     state: present
     givenname: Matt
-    loginshell: /usr/bin/bash
     sn: Cohen
+    loginshell: /usr/bin/bash
     password: "{{ freeipa_user_password }}"
     update_password: on_create
     ipa_host: "{{ freeipa_fqdn }}"

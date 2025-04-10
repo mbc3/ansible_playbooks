@@ -5,16 +5,9 @@
 
   pre_tasks:
     - name: Update all packages
-      ansible.builtin.dnf:
+      ansible.builtin.package:
         name: "*"
         state: latest
-      when: ansible_distribution != "Debian"
-    - name: Update all packages (for Debian containers)
-      ansible.builtin.apt:
-        update-cache: true
-        upgrade: true
-      when: ansible_distribution == "Debian"
-      notify: Restart machine
     - name: Install SSHD
       ansible.builtin.dnf:
         name: openssh-server
@@ -81,3 +74,8 @@
         name: prometheus-node-exporter
         enabled: true
         state: started
+    - name: Install QEMU guest agent
+      ansible.builtin.package:
+        name: qemu-guest-agent
+        state: present
+      when: "'proxmox_all_qemu' in group_names"
