@@ -1,6 +1,7 @@
 .vault
 group_vars/home/.vault
 group_vars/personal/.vault
+HomeLab/group_vars/all/.vault
 .vscode
 .pytest_cache
 TEST

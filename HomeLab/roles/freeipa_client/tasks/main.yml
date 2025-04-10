@@ -3,7 +3,21 @@
   ansible.builtin.dnf:
     name: freeipa-client
     state: present
-# - name: Set hostname to be FQDN
-#   ansible.builtin.hostname:
-#     name: "{{ inventory_hostname }}.{{ freeipa_client_domain }}"
-#     use: systemd
+- name: Set hostname to be FQDN
+  ansible.builtin.hostname:
+    name: "{{ inventory_hostname }}.{{ domain }}"
+    use: systemd
+  when: inventory_hostname != "freeipa"
+- name: Copy MBC SSH key
+  ansible.posix.authorized_key:
+    state: present
+    user: "{{ freeipa_username }}"
+    key: "{{ lookup('file', '/home/mbc/.ssh/id_ed25519.pub') }}"
+- name: Allow FreeIPA user in sudoers
+  community.general.sudoers:
+    name: "{{ freeipa_username }}"
+    state: present
+    user: "{{ freeipa_username }}"
+    commands: ALL
+    host: ALL
+    nopassword: false

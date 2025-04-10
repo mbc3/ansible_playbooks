@@ -6,3 +6,4 @@
   roles:
     - role: freeipa
     - role: nfs_client
+    - role: freeipa_client

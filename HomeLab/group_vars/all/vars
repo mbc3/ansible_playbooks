@@ -1,1 +1,3 @@
-
+---
+freeipa_username: "mbc"
+domain: "localdomain"
