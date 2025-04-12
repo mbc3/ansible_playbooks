@@ -1,0 +1,57 @@
+---
+- name: Create Smallstep repo
+  ansible.builtin.template:
+    src: smallstep.repo.j2
+    dest: /etc/yum.repos.d/smallstep.repo
+    mode: "0644"
+- name: Install Smallstep CA
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ ca_smallstep_packages }}"
+- name: Create service user
+  ansible.builtin.user:
+    name: small
+    shell: /usr/bin/false
+    comment: Smallstep Service Account
+- name: Create Smallstep global config directory
+  ansible.builtin.file:
+    state: directory
+    path: "{{ ca_smallstep_global_directory }}"
+    owner: small
+    group: small
+    mode: '0750'
+- name: Create password file
+  ansible.builtin.template:
+    src: password.txt.j2
+    dest: "{{ ca_smallstep_password_file }}"
+    owner: small
+    group: small
+    mode: '0640'
+- name: Move Smallstep config to global directory
+  ansible.builtin.copy:
+    src: '{{ ca_smallstep_initial_directory }}/' # need the trailing slash to copy contents of directory
+    dest: "{{ ca_smallstep_global_directory }}"
+    owner: small
+    group: small
+    mode: '0640'
+    remote_src: true
+    force: false # won't copy if destination already exists
+# - name: Edit config
+#   ansible.builtin.lineinfile:
+#     path: '{{ ca_smallstep_global_directory }}/config/ca.json'
+#     regexp: .dataSource.:.*
+#     line: "\t\t\"dataSource\": \"{{ ca_smallstep_global_directory }}/db\","
+- name: Edit config file
+  ansible.builtin.replace:
+    path: '{{ ca_smallstep_global_directory }}/config/ca.json'
+    regexp: \/root\/\.step
+    replace: "{{ ca_smallstep_global_directory }}"
+- name: Create systemd unit file
+  ansible.builtin.template:
+    src: step-ca.service.j2
+    dest: /etc/systemd/system/step-ca.service
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Enable Step-CA service

@@ -10,8 +10,16 @@ protocol = "{{ alloy_protocol }}"
 syslog_format = "rfc5424"
 use_rfc5424_message = true
 }
+    forward_to = [loki.relabel.add_static_label.receiver]
+}
 
-forward_to = [loki.write.local.receiver]
+loki.relabel "add_static_label" {
+    forward_to = [loki.write.local.receiver]
+
+    rule {
+        target_label = "job"
+        replacement  = "home"
+    }
 }
 
 loki.write "local" {

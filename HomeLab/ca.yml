@@ -1,0 +1,7 @@
+---
+- name: Set up CA server
+  hosts: ca
+  become: true
+
+  roles:
+    - role: ca

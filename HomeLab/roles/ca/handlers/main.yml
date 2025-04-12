@@ -1,0 +1,11 @@
+---
+- name: Enable Step-CA service
+  ansible.builtin.systemd_service:
+    daemon-reload: true
+    name: step-ca
+    enabled: true
+    state: started
+- name: Restart Step-CA service
+  ansible.builtin.systemd_service:
+    name: step-ca
+    state: restarted
