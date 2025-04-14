@@ -55,3 +55,24 @@
     group: root
     mode: '0644'
   notify: Enable Step-CA service
+- name: Create systemd rewnewal unit file
+  ansible.builtin.copy:
+    src: cert-renewer@.service
+    dest: /etc/systemd/system
+    owner: root
+    group: root
+    mode: '0644'
+- name: Create systemd renewal timer
+  ansible.builtin.copy:
+    src: cert-renewer@.timer
+    dest: /etc/systemd/system
+    owner: root
+    group: root
+    mode: '0644'
+- name: Create /etc/step/certs directory to store certs
+  ansible.builtin.file:
+    name: /etc/step/certs
+    state: directory
+    owner: root
+    group: root
+    mode: '0644'
