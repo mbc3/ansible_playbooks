@@ -1,0 +1,48 @@
+---
+- name: Install Smallstep CLI
+  when: ansible_distribution != "Debian"
+  block:
+    - name: Create Smallstep repo
+      ansible.builtin.template:
+        src: smallstep.repo.j2
+        dest: /etc/yum.repos.d/smallstep.repo
+        mode: "0644"
+    - name: Install Smallstep
+      ansible.builtin.dnf:
+        name: step-cli
+        state: present
+- name: Install Smallstep CLI (Debian)
+  when: ansible_distribution == "Debian"
+  block:
+    - name: Add Smallstep key (Debian)
+      ansible.builtin.get_url:
+        url: "{{ ca_smallstep_deb_gpg }}"
+        dest: /etc/apt/trusted.gpg.d/smallstep.asc
+        mode: "0644"
+    - name: Add Smallstep repo (Debian)
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/etc/apt/trusted.gpg.d/smallstep.asc] https://packages.smallstep.com/stable/debian debs main"
+        state: present
+    - name: Install Smallstep
+      ansible.builtin.apt:
+        name: step-cli
+        state: present
+    - name: Tell User to trust Root CA /
+      ansible.builtin.debug:
+        msg: "Make sure you run 'step ca bootstrap --ca CA_URL --fingerprint CA_FINGERPRINT' and then 'step ceritficate install ROOT_CRT' !"
+    - name: Install certbot
+      ansible.builtin.apt:
+        name: certbot
+        state: present
+    - name: set REQUEST_CA_BUNDLE env variable to step path
+      ansible.builtin.lineinfile:
+        path: /etc/environment
+        line: REQUESTS_CA_BUNDLE=/root/.step/certs/root_ca.crt
+        state: present
+    - name: Copy post hook .pem
+      ansible.builtin.copy:
+        src: pihole-pem.sh
+        dest: /etc/letsencrypt/renewal-hooks/post
+        owner: root
+        group: root
+        mode: "0755"

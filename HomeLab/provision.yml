@@ -26,6 +26,17 @@
         user: ansible
         state: present
         key: "{{ lookup('file', '/home/mbc/.ssh/proxmox.pub') }}"
+    - name: Check for existence of CA SSH key
+      local_action:
+        module: ansible.builtin.stat
+        path: /tmp/ca-cert.pub
+      register: ca_cert
+    - name: Copy CA SSH key
+      ansible.posix.authorized_key:
+        user: ansible
+        state: present
+        key: "{{ lookup('file', '/tmp/ca-cert.pub') }}"
+      when: ca_cert.stat.exists
     - name: Remove MBC SSH key from Ansible service account
       ansible.posix.authorized_key:
         user: ansible
@@ -42,39 +53,44 @@
 
   roles:
     - role: rsyslog
+    - role: ca_client
 
   tasks:
     - name: Set timezone to Los Angeles
       community.general.timezone:
         name: America/Los_Angeles
-    - name: Check if EPEL is installed
-      ansible.builtin.stat:
-        path: /etc/yum.repos.d/epel.repo
-      register: epel
-    - name: Install EPEL repo
-      ansible.builtin.dnf:
-        name: epel-release
-        state: present
+
+    - name: Alma/RHEL specific tasks
       when: ansible_distribution != "Debian"
-    - name: Enable EPEL CRB
-      ansible.builtin.command: dnf config-manager --set-enabled crb
-      register: crb_output
-      changed_when: crb_output.rc != 0
-      when:
-        - not epel.stat.exists
-        - ansible_distribution != "Debian"
-    - name: Install necessary packages
-      ansible.builtin.dnf:
-        name: "{{ item }}"
-        state: present
-      loop: "{{ rhel_package_list }}"
-      when: ansible_distribution != "Debian"
-    - name: Install necessary packages
-      ansible.builtin.apt:
-        name: "{{ item }}"
-        state: present
-      loop: "{{ debian_package_list }}"
+      block:
+        - name: Check if EPEL is installed
+          ansible.builtin.stat:
+            path: /etc/yum.repos.d/epel.repo
+          register: epel
+        - name: Install EPEL repo
+          ansible.builtin.dnf:
+            name: epel-release
+            state: present
+        - name: Enable EPEL CRB
+          ansible.builtin.command: dnf config-manager --set-enabled crb
+          register: crb_output
+          changed_when: crb_output.rc != 0
+          when: not epel.stat.exists
+        - name: Install necessary packages
+          ansible.builtin.dnf:
+            name: "{{ item }}"
+            state: present
+          loop: "{{ rhel_package_list }}"
+
+    - name: Debian specific tasks
       when: ansible_distribution == "Debian"
+      block:
+        - name: Install necessary packages
+          ansible.builtin.apt:
+            name: "{{ item }}"
+            state: present
+          loop: "{{ debian_package_list }}"
+
     - name: Enable Prometheus node exporter service
       ansible.builtin.systemd_service:
         name: prometheus-node-exporter

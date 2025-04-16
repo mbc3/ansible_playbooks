@@ -1,4 +1,5 @@
 ---
+### This role doesn't init the ca or install the acme provisioner
 - name: Create Smallstep repo
   ansible.builtin.template:
     src: smallstep.repo.j2
@@ -62,6 +63,11 @@
     owner: root
     group: root
     mode: '0644'
+- name: Change STEPPATH environment variable
+  ansible.builtin.lineinfile:
+    path: /etc/environment
+    line: 'export STEPPATH=/etc/step-ca'
+    state: present
 - name: Create systemd renewal timer
   ansible.builtin.copy:
     src: cert-renewer@.timer
@@ -76,3 +82,13 @@
     owner: root
     group: root
     mode: '0644'
+- name: Generate SSH key for copying new certs
+  community.crypto.openssh_keypair:
+    path: "{{ ca_cert_ssh_key_location }}"
+    state: present
+    type: ed25519
+- name: Copy pub key locally
+  ansible.builtin.fetch:
+    src: "{{ ca_cert_ssh_key_location }}.pub"
+    dest: /tmp/ca-cert.pub
+    flat: true

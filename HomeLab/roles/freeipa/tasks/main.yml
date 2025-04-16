@@ -1,4 +1,5 @@
 ---
+## This role doesn't configure the initial freeipa setup
 - name: Install FreeIPA Server
   ansible.builtin.dnf:
     name: ipa-server
