@@ -14,6 +14,8 @@
   ansible.builtin.user:
     name: small
     shell: /usr/bin/false
+    system: true
+    home: /etc/step-ca
     comment: Smallstep Service Account
 - name: Create Smallstep global config directory
   ansible.builtin.file:
@@ -66,7 +68,7 @@
 - name: Change STEPPATH environment variable
   ansible.builtin.lineinfile:
     path: /etc/environment
-    line: 'export STEPPATH=/etc/step-ca'
+    line: 'STEPPATH=/etc/step-ca'
     state: present
 - name: Create systemd renewal timer
   ansible.builtin.copy:
