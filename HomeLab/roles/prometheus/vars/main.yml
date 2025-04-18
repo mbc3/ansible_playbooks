@@ -6,7 +6,6 @@ prometheus_home_hosts:
   - mediapi
   - logs
   - graphs
-  - test
   - dns01
   - dns02
   - freeipa

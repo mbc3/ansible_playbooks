@@ -15,8 +15,10 @@
       - 3001:3001
     volumes:
       - "uptime-kuma:/app/data:z"
+      - "/opt/certs:/opt/certs:z" # needed so uptime-kuma can trust my root-ca - this dir has a hardlink to my root cert
     quadlet_options:
       - "AutoUpdate=registry"
+      - "Environment=NODE_EXTRA_CA_CERTS=/opt/certs/root_ca.crt" # need to pass this variable so uptime kuma uses root ca
       - |
         [Service]
         Restart=always
