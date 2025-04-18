@@ -1,0 +1,3 @@
+---
+ca_smallstep_url: "https://packages.smallstep.com/stable/fedora/"
+ca_smallstep_gpg: "https://packages.smallstep.com/keys/smallstep-0x889B19391F774443.gpg"

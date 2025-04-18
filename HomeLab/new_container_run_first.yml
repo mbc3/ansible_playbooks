@@ -17,9 +17,13 @@
     #   ansible.builtin.debug:
     #     var: graphs.proxmox_hostname.graphs.proxmox_vmid
     - name: Update all packages
-      ansible.builtin.package:
+      ansible.builtin.apt:
         name: "*"
         state: latest
+    - name: Install unattended-upgrades
+      ansible.builtin.apt:
+        name: unattended-upgrades
+        state: present
 
   tasks:
     - name: Copy Proxmox SSH key

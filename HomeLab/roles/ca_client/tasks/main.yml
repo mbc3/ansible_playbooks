@@ -11,6 +11,11 @@
       ansible.builtin.dnf:
         name: step-cli
         state: present
+    - name: Install Certbot
+      ansible.builtin.dnf:
+        name: certbot
+        state: present
+
 - name: Install Smallstep CLI (Debian)
   when: ansible_distribution == "Debian"
   block:
@@ -27,22 +32,23 @@
       ansible.builtin.apt:
         name: step-cli
         state: present
-    - name: Tell User to trust Root CA /
-      ansible.builtin.debug:
-        msg: "Make sure you run 'step ca bootstrap --ca CA_URL --fingerprint CA_FINGERPRINT' and then 'step ceritficate install ROOT_CRT' !"
     - name: Install certbot
       ansible.builtin.apt:
         name: certbot
         state: present
-    - name: set REQUEST_CA_BUNDLE env variable to step path
-      ansible.builtin.lineinfile:
-        path: /etc/environment
-        line: REQUESTS_CA_BUNDLE=/root/.step/certs/root_ca.crt
-        state: present
-    - name: Copy post hook .pem
+    - name: Copy post hook for pihole
       ansible.builtin.copy:
         src: pihole-pem.sh
         dest: /etc/letsencrypt/renewal-hooks/post
         owner: root
         group: root
         mode: "0755"
+
+- name: Tell user to trust Root CA
+  ansible.builtin.debug:
+    msg: "Make sure you run 'step ca bootstrap --ca CA_URL --fingerprint CA_FINGERPRINT' and then 'step ceritficate install ROOT_CRT' !"
+- name: set REQUEST_CA_BUNDLE env variable to step path
+  ansible.builtin.lineinfile:
+    path: /etc/environment
+    line: REQUESTS_CA_BUNDLE=/root/.step/certs/root_ca.crt
+    state: present
