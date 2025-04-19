@@ -18,6 +18,11 @@
     state: enabled
   loop: "{{ nfs_firewall_ports }}"
   when: ansible_facts.services['firewalld'] is defined
+- name: Put Virtiofs mount in /etc/fstab
+  ansible.builtin.lineinfile:
+    line: "files   /srv/files      virtiofs        rw,relatime     0 0"
+    path: /etc/fstab
+    state: present
 - name: Make NFS share directory
   ansible.builtin.file:
     path: "{{ nfs_directory }}"
@@ -25,16 +30,6 @@
     mode: "0777"
     owner: root
     group: root
-- name: Create xfs filesystem on /dev/sdb
-  community.general.filesystem:
-    fstype: xfs
-    dev: /dev/sdb
-- name: Mount NFS directory
-  ansible.posix.mount:
-    path: "{{ nfs_directory }}"
-    src: UUID=73175723-104a-4ac1-b503-17d3b8930f59 # TO DO: get this UUID from ansible facts
-    fstype: xfs
-    state: mounted
 - name: Edit /etc/exports to enable share
   ansible.builtin.template:
     src: templates/exports.j2
@@ -42,4 +37,6 @@
     owner: root
     group: root
     mode: "0644"
-  notify: Restart NFS
+  notify:
+    - Restart NFS
+    - Exportfs

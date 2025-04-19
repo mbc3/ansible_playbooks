@@ -4,3 +4,7 @@
   ansible.builtin.systemd_service:
     name: nfs-server
     state: restarted
+- name: Exportfs
+  become: true
+  ansible.builtin.command: exportfs -av
+  changed_when: false
