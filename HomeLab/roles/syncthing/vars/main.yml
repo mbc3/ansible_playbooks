@@ -1,0 +1,5 @@
+---
+syncthing_ports:
+  - syncthing
+  - syncthing-gui
+  - syncthing-relay

@@ -16,7 +16,7 @@
   ansible.builtin.replace:
     path: "{{ ansible_user_dir }}/.local/state/syncthing/config.xml"
     regexp: 127\.0\.0\.1:8384
-    replace: 0\.0\.0\.0:8384
+    replace: 0.0.0.0:8384
     backup: true
 - name: Enable Syncthing service
   ansible.builtin.systemd_service:

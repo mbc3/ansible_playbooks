@@ -1,0 +1,32 @@
+---
+- name: Install Syncthing
+  become: true
+  ansible.builtin.dnf:
+    name: syncthing
+    state: present
+- name: Open Syncthing firewall ports
+  become: true
+  ansible.posix.firewalld:
+    service: "{{ item }}"
+    permanent: true
+    immediate: true
+    state: enabled
+  loop: "{{ syncthing_ports }}"
+- name: Create syncthing service account
+  ansible.builtin.user:
+    name: syncthing
+    comment: Syncthing Service Account
+    shell: /sbin/nologin
+    state: present
+- name: Enable Syncthing service
+  ansible.builtin.systemd_service:
+    name: syncthing@syncthing
+    enabled: true
+    state: started
+- name: Set Syncthing to listen on all interfaces
+  ansible.builtin.replace:
+    path: "/home/syncthing/.local/state/syncthing/config.xml"
+    regexp: 127\.0\.0\.1:8384
+    replace: 0.0.0.0:8384
+    backup: true
+  notify: Restart Syncthing
