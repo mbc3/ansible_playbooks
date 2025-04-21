@@ -1,0 +1,53 @@
+---
+- name: Set up Resilio Sync
+  block:
+    - name: Set up Resilio repo
+      ansible.builtin.template:
+        src: resilio-sync.repo.j2
+        dest: /etc/yum.repos.d/resilio-sync.repo
+        mode: "0644"
+        owner: root
+        group: root
+    - name: Import GPG key
+      ansible.builtin.rpm_key:
+        state: present
+        key: "{{ resilio_sync_key }}"
+    - name: Add rslsync custom firewalld service
+      ansible.builtin.copy:
+        src: rslsync.xml
+        dest: /etc/firewalld/services/rslsync.xml
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Add rslsync firewalld service
+    - name: Install Resilio Sync
+      ansible.builtin.dnf:
+        name: resilio-sync
+        state: present
+    - name: Enable Resilio Sync
+      ansible.builtin.systemd_service:
+        name: resilio-sync
+        state: started
+        enabled: true
+    - name: Create directory
+      ansible.builtin.file:
+        state: directory
+        path: "{{ resilio_sync_settings }}"
+        owner: rslsync
+        group: rslsync
+        mode: "0775"
+    - name: Update config file
+      ansible.builtin.template:
+        src: config.json.j2
+        dest: /etc/resilio-sync/config.json
+        mode: "0644"
+        owner: root
+        group: root
+      notify: Restart Sync
+    - name: Add license file to server
+      ansible.builtin.copy:
+        src: rslsync_license.btskey
+        dest: /home/rslsync
+        mode: "0775"
+        owner: rslsync
+        group: rslsync

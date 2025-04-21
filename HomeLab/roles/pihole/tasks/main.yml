@@ -8,3 +8,31 @@
     repo: https://github.com/pi-hole/pi-hole.git
     dest: /opt/pihole
   changed_when: false
+- name: Tell User to install pihole
+  ansible.builtin.debug:
+    msg: "Make sure you install pihole with `/opt/pihole/automated install/basic-install.sh` !"
+# - name : Get cert
+#   ansible.builtin.command: certbot certonly -n -d dns02.localdomain --server https://ca.localdomain:8443/acme/acme/directory --agree-tos --email cohen@matthewbriancohen.com --webroot --webroot-path /var/www/html
+#   changed_when: false
+- name: Get letsencrypt info
+  ansible.builtin.stat:
+    path: /etc/lets/encrypt/renewel-hooks/post
+  register: letsencryptrh
+- name: Copy post hook for pihole
+  ansible.builtin.copy:
+    src: pihole-pem.sh
+    dest: /etc/letsencrypt/renewal-hooks/post
+    owner: root
+    group: root
+    mode: "0755"
+  when: letsencryptrh.stat.exists
+- name: Get more letsencrypt info
+  ansible.builtin.stat:
+    path: /etc/letsencrypt/renewal/{{ inventory_name }}/{{ domain }}.conf
+  register: letsencryptrenewal
+- name: Edit renewal to happen at 14 day mark
+  ansible.builtin.lineinfile:
+    path: /etc/letsencrypt/renewal/{{ inventory_name }}/{{ domain }}.conf
+    regexp: .*renew_before_expiry.*
+    line: renew_before_expiry = 14 days
+  when: letsencryptrenewal.stats.exists

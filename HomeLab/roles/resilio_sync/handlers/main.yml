@@ -1,0 +1,11 @@
+---
+- name: Restart Sync
+  ansible.builtin.systemd_service:
+    name: resilio-sync
+    state: restarted
+- name: Add rslsync firewalld service
+  ansible.posix.firewalld:
+    service: rslsync
+    permanent: true
+    immediate: true
+    state: enabled

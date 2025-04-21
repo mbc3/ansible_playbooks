@@ -6,3 +6,4 @@
   roles:
     - role: nfs
     - role: freeipa_client
+    - role: resilio_sync

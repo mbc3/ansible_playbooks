@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+<short>Resilio Sync</short>
+<description>Resilio Sync</description>
+<port port="8888" protocol="tcp"/>
+<port port="57125" protocol="tcp"/>
+<port port="3838" protocol="udp"/>
+
+</service>

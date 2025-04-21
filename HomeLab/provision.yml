@@ -7,8 +7,10 @@
     rhel_package_list:
       - openssh-server
       - golang-github-prometheus-node-exporter
+      - vim
     debian_package_list:
       - prometheus-node-exporter
+      - vim
 
   pre_tasks:
     - name: Update all packages
@@ -17,6 +19,11 @@
         state: latest
       register: package_updates
       notify: Display updated packages
+    - name: Set hostname to be FQDN
+      ansible.builtin.hostname:
+        name: "{{ inventory_hostname }}.{{ domain }}"
+        use: systemd
+      when: inventory_hostname != "freeipa"
     - name: Make sure ansible service account user exists
       ansible.builtin.user:
         name: ansible
@@ -42,27 +49,17 @@
         user: ansible
         state: absent
         key: "{{ lookup('file', '/home/mbc/.ssh/id_ed25519.pub') }}"
-    - name: Set Ansible user to NOPASSWD in sudoers
-      community.general.sudoers:
-        name: 99-ansible
-        state: present
-        user: ansible
-        commands: ALL
-        host: ALL
-        nopassword: true
-
-  roles:
-    - role: rsyslog
-    - role: ca_client
-
-  tasks:
-    - name: Set timezone to Los Angeles
-      community.general.timezone:
-        name: America/Los_Angeles
-
     - name: Alma/RHEL specific tasks
       when: ansible_distribution != "Debian"
       block:
+        - name: Set Ansible user to NOPASSWD in sudoers
+          community.general.sudoers:
+            name: 99-ansible
+            state: present
+            user: ansible
+            commands: ALL
+            host: ALL
+            nopassword: true
         - name: Check if EPEL is installed
           ansible.builtin.stat:
             path: /etc/yum.repos.d/epel.repo
@@ -81,6 +78,15 @@
             name: "{{ item }}"
             state: present
           loop: "{{ rhel_package_list }}"
+
+  roles:
+    - role: rsyslog
+    - role: ca_client
+
+  tasks:
+    - name: Set timezone to Los Angeles
+      community.general.timezone:
+        name: America/Los_Angeles
 
     - name: Debian specific tasks
       when: ansible_distribution == "Debian"

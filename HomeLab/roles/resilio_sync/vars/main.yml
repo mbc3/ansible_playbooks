@@ -1,0 +1,4 @@
+---
+resilio_sync_repo: "https://linux-packages.resilio.com/resilio-sync/rpm/$basearch"
+resilio_sync_key: "https://linux-packages.resilio.com/resilio-sync/key.asc"
+resilio_sync_settings: "/home/rslsync/settings"

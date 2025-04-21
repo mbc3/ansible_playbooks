@@ -1,23 +1,19 @@
 ---
 - name: Install Smallstep CLI
-  when: ansible_distribution != "Debian"
+  when:
+    - ansible_distribution != "Debian"
+    - inventory_hostname != "ca"
   block:
     - name: Create Smallstep repo
       ansible.builtin.template:
         src: smallstep.repo.j2
         dest: /etc/yum.repos.d/smallstep.repo
         mode: "0644"
-    - name: Install Smallstep
-      ansible.builtin.dnf:
-        name: step-cli
-        state: present
-    - name: Install Certbot
-      ansible.builtin.dnf:
-        name: certbot
-        state: present
 
 - name: Install Smallstep CLI (Debian)
-  when: ansible_distribution == "Debian"
+  when:
+    - ansible_distribution == "Debian"
+    - inventory_hostname != "ca"
   block:
     - name: Add Smallstep key (Debian)
       ansible.builtin.get_url:
@@ -28,27 +24,28 @@
       ansible.builtin.apt_repository:
         repo: "deb [signed-by=/etc/apt/trusted.gpg.d/smallstep.asc] https://packages.smallstep.com/stable/debian debs main"
         state: present
-    - name: Install Smallstep
-      ansible.builtin.apt:
-        name: step-cli
-        state: present
-    - name: Install certbot
-      ansible.builtin.apt:
-        name: certbot
-        state: present
-    - name: Copy post hook for pihole
-      ansible.builtin.copy:
-        src: pihole-pem.sh
-        dest: /etc/letsencrypt/renewal-hooks/post
-        owner: root
-        group: root
-        mode: "0755"
 
-- name: Tell user to trust Root CA
-  ansible.builtin.debug:
-    msg: "Make sure you run 'step ca bootstrap --ca CA_URL --fingerprint CA_FINGERPRINT' and then 'step ceritficate install ROOT_CRT' !"
-- name: set REQUEST_CA_BUNDLE env variable to step path
-  ansible.builtin.lineinfile:
-    path: /etc/environment
-    line: REQUESTS_CA_BUNDLE=/root/.step/certs/root_ca.crt
+- name: Install Smallstep
+  ansible.builtin.package:
+    name: step-cli
     state: present
+- name: Install Certbot
+  ansible.builtin.package:
+    name: certbot
+    state: present
+
+- name: Additional config
+  when: inventory_hostname != "ca"
+  block:
+    - name: Tell user to trust Root CA
+      ansible.builtin.debug:
+        msg: "Make sure you run 'step ca bootstrap --ca CA_URL --fingerprint CA_FINGERPRINT'!"
+    - name: Trust Root CA
+      become: true
+      ansible.builtin.command: step certificate install {{ ca_root_ca }}
+    - name: set REQUESTS_CA_BUNDLE env variable to step path
+      become: true
+      ansible.builtin.lineinfile:
+        path: /etc/environment
+        line: REQUESTS_CA_BUNDLE=/root/.step/certs/root_ca.crt
+        state: present

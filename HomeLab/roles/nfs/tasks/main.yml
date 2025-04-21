@@ -1,6 +1,4 @@
 ---
-- name: Get service facts
-  ansible.builtin.service_facts:
 - name: Install NFS
   ansible.builtin.dnf:
     name: nfs-utils
@@ -17,12 +15,6 @@
     immediate: true
     state: enabled
   loop: "{{ nfs_firewall_ports }}"
-  when: ansible_facts.services['firewalld'] is defined
-- name: Put Virtiofs mount in /etc/fstab
-  ansible.builtin.lineinfile:
-    line: "files   /srv/files      virtiofs        rw,relatime     0 0"
-    path: /etc/fstab
-    state: present
 - name: Make NFS share directory
   ansible.builtin.file:
     path: "{{ nfs_directory }}"
