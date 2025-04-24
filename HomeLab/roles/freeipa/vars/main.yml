@@ -5,7 +5,6 @@ freeipa_services:
   - freeipa-ldaps
   - freeipa-replication
   - freeipa-trust
-  - prometheus-node-exporter
 freeipa_domain: "auth.localdomain"
 freeipa_host: "freeipa"
 freeipa_fqdn: "freeipa.auth.localdomain"

@@ -11,6 +11,15 @@
     name: "{{ inventory_hostname }}.{{ domain }}"
     use: systemd
   when: inventory_hostname != "freeipa"
+# TO DO: get this working!
+# - name: Bind to FreeIPA domain
+#   become: true
+#   ansible.builtin.expect:
+#     command: ipa-client-install --mkhomedir
+#     responses:
+#       - auth.localdomain
+#       - {{ freeipa_admin_account }}
+#       - {{ freeipa_admin_password }}
 - name: Copy MBC SSH key
   ansible.posix.authorized_key:
     state: present

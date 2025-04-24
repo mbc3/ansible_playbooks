@@ -1,0 +1,8 @@
+---
+- name: Add Prometheus Node Exporter service to firewalld
+  ansible.posix.firewalld:
+    service: "{{ item }}"
+    state: enabled
+    immediate: true
+    permanent: true
+  loop: "{{ prometheus_client_ports }}"

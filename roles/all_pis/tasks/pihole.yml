@@ -3,9 +3,9 @@
   become: true
   ansible.posix.firewalld:
     service: "{{ item }}"
+    state: enabled
     permanent: true
     immediate: true
-    state: enabled
   loop: "{{ all_pis_pihole_ports }}"
 - name: Check if ftl firewalld zone exists
   ansible.builtin.command: firewall-cmd --get-zones

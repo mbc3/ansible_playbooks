@@ -34,12 +34,17 @@
     name: certbot
     state: present
 
-- name: Additional config
+- name: Trust Root CA
   when: inventory_hostname != "ca"
   block:
     - name: Tell user to trust Root CA
       ansible.builtin.debug:
         msg: "Make sure you run 'step ca bootstrap --ca CA_URL --fingerprint CA_FINGERPRINT'!"
+    - name: Bootstrap Smallstep with Root CA
+      ansible.builtin.expect:
+        command: step ca bootstrap --ca {{ ca_url }} --fingerprint {{ ca_fingerprint }}
+        responses:
+          - (?i)password: {{ ca_smallstep_password }}
     - name: Trust Root CA
       become: true
       ansible.builtin.command: step certificate install {{ ca_root_ca }}

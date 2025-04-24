@@ -5,6 +5,7 @@
 
   roles:
     - role: nfs
-    - role: freeipa_client
     - role: resilio_sync
     - role: syncthing
+    - role: prometheus_client
+    - role: freeipa_client

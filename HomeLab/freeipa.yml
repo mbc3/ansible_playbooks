@@ -5,5 +5,6 @@
 
   roles:
     - role: freeipa
+    - role: prometheus_client
     - role: nfs_client
     - role: freeipa_client
