@@ -4,6 +4,21 @@
   ansible.builtin.dnf:
     name: podman
     state: present
+- name: Create certs directory
+  ansible.builtin.file:
+    name: /opt/certs
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0755"
+- name: Create hardlink to root cert
+  ansible.builtin.file:
+    src: /home/almalinux/.step/certs/root_ca.crt
+    dest: /opt/certs/root_ca.crt
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0600"
+    state: hard
 - name: Create Uptime Kuma quadlet file
   containers.podman.podman_container:
     name: uptime-kuma
