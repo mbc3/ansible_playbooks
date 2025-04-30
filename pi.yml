@@ -13,15 +13,12 @@
       notify: Display updated packages
 
   roles:
-    # There's no rhyme or reason why some things are in all pis -- I should break these out to separate roles'
+    # There's no rhyme or reason why some things are in all pis -- I should break these out to separate roles
     - role: all_pis
       tags: setup
 
     - role: rsyslog
       tags: setup
-
-    - role: ca_client
-      tags: cert
 
     - role: homepi
       when: inventory_hostname == "homepi"
@@ -71,11 +68,11 @@
         - mediapi
         - container
 
-    - role: caddy
-      tags:
-        - homepi
-        - mediapi
-        - container
+    # - role: caddy
+    #   tags:
+    #     - homepi
+    #     - mediapi
+    #     - container
 
   handlers:
     - name: Display updated packages

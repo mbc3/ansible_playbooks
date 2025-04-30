@@ -13,7 +13,7 @@
 - name: Open Prometheus port on firewall
   become: true
   ansible.posix.firewalld:
-    port: 9100/tcp
+    service: prometheus-node-exporter
     permanent: true
     immediate: true
     state: enabled

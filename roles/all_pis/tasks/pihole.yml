@@ -15,7 +15,7 @@
   become: true
   ansible.builtin.command: firewall-cmd --permanent --new-zone ftl
   register: ftl_zone_output
-  when: '"ftl" in ftl_output'
+  when: '"ftl" not in ftl_output.stdout'
   changed_when: ftl_zone_output.rc == 0
 - name: Reload firewalld to use ftl zone
   become: true

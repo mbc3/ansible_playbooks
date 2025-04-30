@@ -9,3 +9,5 @@
     - role: syncthing
     - role: prometheus_client
     - role: freeipa_client
+    - role: ca_client
+    - role: opnsense_backups

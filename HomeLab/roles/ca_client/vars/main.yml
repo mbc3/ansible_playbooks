@@ -5,3 +5,6 @@ ca_smallstep_deb_gpg: "https://packages.smallstep.com/keys/apt/repo-signing-key.
 ca_url: "https://ca.localdomain:8443"
 ca_fingerprint: "{{ vault_ca_fingerprint }}"
 ca_root_ca: "/root/.step/certs/root_ca.crt"
+ca_client_ports:
+  - http
+  - https

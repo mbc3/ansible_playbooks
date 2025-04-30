@@ -1,0 +1,20 @@
+---
+- name: Add OPnSense service account user
+  ansible.builtin.user:
+    name: opnsense
+    state: present
+    create_home: true
+    comment: "OPNSense Backups Service Account"
+    system: true
+- name: Add Opnsense Backups SSH key
+  ansible.posix.authorized_key:
+    user: opnsense
+    state: present
+    key: "{{ lookup('file', '/home/mbc/.ssh/opnsense_backups.pub') }}"
+- name: Add symlink to files mount
+  ansible.builtin.file:
+    src: /srv/files/opnsense_backups
+    dest: /home/opnsense/opnsense_backups
+    owner: opnsense
+    group: opnsense
+    state: link
