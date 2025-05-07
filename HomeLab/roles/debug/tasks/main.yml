@@ -1,0 +1,11 @@
+---
+- name: Install iperf
+  ansible.builtin.dnf:
+    name: iperf3
+    state: present
+- name: Open up test port
+  ansible.posix.firewalld:
+    port: 9999/tcp
+    state: enabled
+    permanent: true
+    immediate: true

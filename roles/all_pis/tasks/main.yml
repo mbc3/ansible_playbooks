@@ -1,8 +1,8 @@
 ---
 - name: Initial setup
   ansible.builtin.include_tasks: setup.yml
-- name: Initial PiHole install
-  ansible.builtin.include_tasks: pihole.yml
+# - name: Initial PiHole install
+#   ansible.builtin.include_tasks: pihole.yml
 - name: Install Prometheus
   ansible.builtin.include_tasks: prometheus.yml
 - name: Install Syncthing

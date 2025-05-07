@@ -8,3 +8,4 @@
     - role: prometheus_client
     - role: nfs_client
     - role: freeipa_client
+    - role: debug

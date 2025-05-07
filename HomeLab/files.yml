@@ -11,3 +11,4 @@
     - role: freeipa_client
     - role: ca_client
     - role: opnsense_backups
+    - role: debug
