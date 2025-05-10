@@ -20,6 +20,11 @@
     - role: rsyslog
       tags: setup
 
+    - role: ca_client
+      tags:
+        - setup
+        - certs
+
     - role: homepi
       when: inventory_hostname == "homepi"
       tags:
