@@ -1,0 +1,3 @@
+---
+caddy_ca_directory: "https://ca.localdomain:8443/acme/acme/directory"
+caddy_email: "cohen@matthewbriancohen.com"

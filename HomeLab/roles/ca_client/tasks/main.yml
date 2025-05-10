@@ -57,7 +57,7 @@
       become: true
       ansible.builtin.command: step certificate install {{ ca_root_ca }}
       changed_when: false
-    - name: set REQUESTS_CA_BUNDLE env variable to step path
+    - name: Set REQUESTS_CA_BUNDLE env variable to step path
       become: true
       ansible.builtin.lineinfile:
         path: /etc/environment

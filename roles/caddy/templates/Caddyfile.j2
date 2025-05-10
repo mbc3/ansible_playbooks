@@ -1,7 +1,10 @@
+{
+    acme_ca {{ caddy_ca_directory }}
+    email {{ caddy_email }}
+}
 {% for key, value in caddy_services.items() %}
 {{ key }}.{{ inventory_hostname }}.localdomain {
 reverse_proxy localhost:{{ value }}
-tls internal
 encode zstd gzip
 }
 {% endfor %}

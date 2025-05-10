@@ -4,6 +4,7 @@ all_pis_packages:
   - mosh
   - podman
   - sysstat
+  - tmux
 all_pis_pihole_ports:
   - dns
   - dhcp

@@ -24,25 +24,26 @@
     mode: "0644"
   notify: Restart Caddy
 
-- name: Fetch Caddy certs
-  become: true
-  ansible.builtin.fetch:
-    src: /var/lib/caddy/.local/share/caddy/pki/authorities/local/root.crt
-    dest: /tmp/cert
-  register: cert_location
+# No longer applies -- using my own CA
+# - name: Fetch Caddy certs
+#   become: true
+#   ansible.builtin.fetch:
+#     src: /var/lib/caddy/.local/share/caddy/pki/authorities/local/root.crt
+#     dest: /tmp/cert
+#   register: cert_location
 
-- name: Display Cert info
-  ansible.builtin.debug:
-    var: cert_location.dest
+# - name: Display Cert info
+#   ansible.builtin.debug:
+#     var: cert_location.dest
 
-- name: Run trust command on localhost
-  become: true
-  ansible.builtin.command: trust anchor {{ cert_location.dest }}
-  changed_when: false
-  delegate_to: localhost
+# - name: Run trust command on localhost
+#   become: true
+#   ansible.builtin.command: trust anchor {{ cert_location.dest }}
+#   changed_when: false
+#   delegate_to: localhost
 
-- name: Remove Caddy certs
-  ansible.builtin.file:
-    path: "{{ cert_location.dest }}"
-    state: absent
-  delegate_to: localhost
+# - name: Remove Caddy certs
+#   ansible.builtin.file:
+#     path: "{{ cert_location.dest }}"
+#     state: absent
+#   delegate_to: localhost
