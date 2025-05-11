@@ -32,33 +32,30 @@
         repo: "deb [signed-by=/etc/apt/trusted.gpg.d/smallstep.asc] https://packages.smallstep.com/stable/debian debs main"
         state: present
 
-- name: Install Smallstep
-  ansible.builtin.package:
-    name: step-cli
-    state: present
-- name: Install Certbot
-  ansible.builtin.package:
-    name: certbot
-    state: present
+- name: Install necessary packages
+  block:
+    - name: Install all packages
+      ansible.builtin.package:
+        name: "{{ item }}"
+        state: present
+        loop: "{{ ca_packages }}"
 
 - name: Trust Root CA
   when: inventory_hostname != "ca"
+  become: true
   block:
+    - name: Check if Root CA exists
+      ansible.builtin.stat:
+        path: "{{ ca_root_ca }}"
+      register: root_ca
     - name: Tell user to trust Root CA
       ansible.builtin.debug:
         msg: "Make sure you run 'step ca bootstrap --ca-url CA_URL --fingerprint CA_FINGERPRINT'!"
-    # TO DO: Get this working!
-    # - name: Bootstrap Smallstep with Root CA
-    #   ansible.builtin.expect:
-    #     command: step ca bootstrap --ca-url {{ ca_url }} --fingerprint {{ ca_fingerprint }}
-    #     responses:
-    #       - (?i)password: "{{ ca_smallstep_password }}"
-    - name: Trust Root CA
-      become: true
-      ansible.builtin.command: step certificate install {{ ca_root_ca }}
+    - name: Bootstrap Smallstep with Root CA and trust it
+      ansible.builtin.command: step ca bootstrap --ca-url {{ ca_url }} --fingerprint {{ ca_fingerprint }} --install
+      when: not root_ca.stat.exists
       changed_when: false
     - name: Set REQUESTS_CA_BUNDLE env variable to step path
-      become: true
       ansible.builtin.lineinfile:
         path: /etc/environment
         line: REQUESTS_CA_BUNDLE={{ ca_root_ca }}

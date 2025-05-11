@@ -15,4 +15,4 @@
 
 - name: Tell user to trust Root CA
   ansible.builtin.debug:
-    msg: "Make sure you run 'step ca bootstrap --ca-url CA_URL --fingerprint CA_FINGERPRINT' and then 'step ceritficate install ROOT_CRT' !"
+    msg: "Make sure you run 'step ca bootstrap --ca-url CA_URL --fingerprint CA_FINGERPRINT' and then 'step certificate install ROOT_CRT' !"

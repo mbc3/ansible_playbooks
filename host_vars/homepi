@@ -1,7 +1,6 @@
 ansible_become_pass: "{{ homepi_password }}"
 caddy_services:
-# key is subdomain, ie pihole.homepi.localdomain
+# key is subdomain, ie pihole.mediapi.localdomain
 # value is port for reverse proxy, ie 8080
-    uptime: "3001"
-    dlna: "49494"
     syncthing: "8384"
+    uptime: "3001"

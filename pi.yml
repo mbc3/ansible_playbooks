@@ -74,9 +74,8 @@
         - container
 
     - role: caddy
-      when: inventory_hostname == "mediapi"
       tags:
-        # - homepi
+        - homepi
         - mediapi
         - reverse_proxy
 

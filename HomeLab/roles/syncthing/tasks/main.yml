@@ -30,4 +30,4 @@
     replace: 0.0.0.0:8384
     backup: true
   notify: Restart Syncthing
-  # lets encrypt, change owner/group to syncthing, copy script to renewal
+  # TO DO set up lets encrypt, change owner/group to syncthing, copy script to renewal
