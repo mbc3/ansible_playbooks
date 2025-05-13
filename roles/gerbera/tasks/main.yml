@@ -12,6 +12,14 @@
     permanent: true
     immediate: true
   loop: "{{ gerbera_port }}"
+- name: Create gerbera config directory
+  become: true
+  ansible.builtin.file:
+    name: /opt/gerbera
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: "0755"
 - name: Create Gerbera quadlet file
   containers.podman.podman_container:
     name: gerbera
@@ -22,8 +30,8 @@
     network:
       - host
     volumes:
-      - "gerbera-config:/var/run/gerbera"
-      - "{{ ansible_user_dir }}/external/dlna:/mnt/content:ro"
+      - "/opt/gerbera:/var/run/gerbera"
+      - "/media/external/dlna:/mnt/content:ro"
     quadlet_options:
       - "AutoUpdate=registry"
       - |

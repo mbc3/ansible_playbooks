@@ -5,3 +5,4 @@ caddy_services:
     books: "5000"
     pdf: "8080"
     syncthing: "8384"
+    search: "8081"

@@ -1,0 +1,23 @@
+---
+- name: Install podman
+  become: true
+  ansible.builtin.dnf:
+    name: podman
+    state: present
+- name: Create SearXNG quadlet file
+  containers.podman.podman_container:
+    name: searxng
+    image: docker.io/searxng/searxng:latest
+    state: quadlet
+    quadlet_filename: searxng
+    quadlet_dir: "{{ ansible_user_dir }}/.config/containers/systemd"
+    ports:
+      - 8081:8080
+    quadlet_options:
+      - "AutoUpdate=registry"
+      - |
+        [Service]
+        Restart=always
+        [Install]
+        WantedBy=default.target
+  notify: Start SearXNG Systemd unit file

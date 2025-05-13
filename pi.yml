@@ -73,6 +73,12 @@
         - mediapi
         - container
 
+    - role: searxng
+      when: inventory_hostname == "mediapi"
+      tags:
+        - mediapi
+        - container
+
     - role: caddy
       tags:
         - homepi
