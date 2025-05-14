@@ -4,13 +4,6 @@
   ansible.builtin.dnf:
     name: podman
     state: present
-- name: Enable Flyimg port on firewall
-  become: true
-  ansible.posix.firewalld:
-    port: "{{ item }}"
-    state: enabled
-    permanent: true
-    immediate: true
   loop: "{{ flyimg_port }}"
 - name: Create Flyimg quadlet file
   containers.podman.podman_container:

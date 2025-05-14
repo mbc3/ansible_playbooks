@@ -1,6 +1,5 @@
 ---
 - name: Start Flyimg Systemd unit file
-  become: true
   ansible.builtin.systemd_service:
     name: flyimg
     state: started

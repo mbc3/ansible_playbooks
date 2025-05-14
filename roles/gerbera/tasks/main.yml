@@ -4,14 +4,6 @@
   ansible.builtin.dnf:
     name: podman
     state: present
-- name: Enable Gerbera port on firewall
-  become: true
-  ansible.posix.firewalld:
-    port: "{{ item }}"
-    state: enabled
-    permanent: true
-    immediate: true
-  loop: "{{ gerbera_port }}"
 - name: Create gerbera config directory
   become: true
   ansible.builtin.file:
