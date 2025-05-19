@@ -1,1 +1,12 @@
 ---
+- name: Add qbittorrent firewalld service
+  ansible.posix.firewalld:
+    service: qbittorrent
+    permanent: true
+    immediate: true
+    state: enabled
+  notify: Restart Firewalld
+- name: Restart Firewalld
+  ansible.builtin.systemd_service:
+    name: firewalld
+    state: restarted

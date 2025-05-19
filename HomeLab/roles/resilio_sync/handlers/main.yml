@@ -3,9 +3,14 @@
   ansible.builtin.systemd_service:
     name: resilio-sync
     state: restarted
+- name: Restart Firewalld
+  ansible.builtin.systemd_service:
+    name: firewalld
+    state: restarted
 - name: Add rslsync firewalld service
   ansible.posix.firewalld:
     service: rslsync
     permanent: true
     immediate: true
     state: enabled
+  notify: Restart Firewalld

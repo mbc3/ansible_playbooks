@@ -5,6 +5,15 @@
     name: nss-tools
     state: present
 
+- name: Open HTTP/HTTPS Firewalld services
+  become: true
+  ansible.posix.firewalld:
+    service: "{{ item }}"
+    permanent: true
+    immediate: true
+    state: enabled
+  loop: "{{ caddy_ports }}"
+
 - name: Install Caddy
   become: true
   ansible.builtin.dnf:
