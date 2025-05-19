@@ -8,6 +8,8 @@
       - openssh-server
       - golang-github-prometheus-node-exporter
       - vim
+      - lsof
+      - iperf3
     debian_package_list:
       - prometheus-node-exporter
       - vim
