@@ -8,6 +8,6 @@ ca_root_ca: "/root/.step/certs/root_ca.crt"
 ca_client_ports:
   - http
   - https
-ca_packages:
+ca_client_packages:
   - step-cli
   - certbot

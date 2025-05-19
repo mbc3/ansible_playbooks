@@ -4,11 +4,13 @@
   become: true
 
   roles:
-    - role: nfs
-    - role: resilio_sync
-    - role: syncthing
     - role: prometheus_client
     - role: freeipa_client
     - role: ca_client
     - role: opnsense_backups
+    - role: nfs
+    - role: resilio_sync
+    - role: syncthing
+    - role: torrent
+    - role: caddy
     - role: debug

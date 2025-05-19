@@ -38,7 +38,7 @@
       ansible.builtin.package:
         name: "{{ item }}"
         state: present
-        loop: "{{ ca_packages }}"
+      loop: "{{ ca_client_packages }}"
 
 - name: Trust Root CA
   when: inventory_hostname != "ca"

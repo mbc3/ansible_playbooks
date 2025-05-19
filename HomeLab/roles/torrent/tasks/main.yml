@@ -1,0 +1,16 @@
+---
+- name: Create torrent service account
+  ansible.builtin.user:
+    name: torrent
+    comment: Qbittorrent Service Account
+    shell: /sbin/nologin
+    state: present
+- name: Install qbittorent-nox
+  ansible.builtin.dnf:
+    name: qbittorrent-nox
+    state: present
+- name: Enable Qbittorent-nox service
+  ansible.builtin.systemd_service:
+    name: qbittorrent-nox@torrent
+    enabled: true
+    state: started
