@@ -14,10 +14,10 @@
 # - name : Get cert
 #   ansible.builtin.command: certbot certonly -n -d dns02.localdomain --server https://ca.localdomain:8443/acme/acme/directory --agree-tos --email cohen@matthewbriancohen.com --webroot --webroot-path /var/www/html
 #   changed_when: false
-- name: Get letsencrypt info
+- name: Check if lets encrypt renewal hooks exists
   ansible.builtin.stat:
-    path: /etc/lets/encrypt/renewel-hooks/post
-  register: letsencryptrh
+    path: /etc/letsencrypt/renewal-hooks/post
+  register: le_path
 - name: Copy post hook for pihole
   ansible.builtin.copy:
     src: pihole-pem.sh
@@ -25,14 +25,14 @@
     owner: root
     group: root
     mode: "0755"
-  when: letsencryptrh.stat.exists
-- name: Get more letsencrypt info
+  when: le_path.stat.exists
+- name: Check if lets encrypt renewal conf exists
   ansible.builtin.stat:
-    path: /etc/letsencrypt/renewal/{{ inventory_name }}/{{ domain }}.conf
-  register: letsencryptrenewal
+    path: /etc/letsencrypt/renewal/{{ inventory_hostname }}/{{ domain }}.conf
+  register: le_renewal
 - name: Edit renewal to happen at 14 day mark
   ansible.builtin.lineinfile:
-    path: /etc/letsencrypt/renewal/{{ inventory_name }}/{{ domain }}.conf
+    path: /etc/letsencrypt/renewal/{{ inventory_hostname }}/{{ domain }}.conf
     regexp: .*renew_before_expiry.*
     line: renew_before_expiry = 14 days
-  when: letsencryptrenewal.stats.exists
+  when: le_renewal.stat.exists
