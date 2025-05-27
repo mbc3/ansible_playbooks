@@ -4,6 +4,13 @@
   ansible.builtin.dnf:
     name: podman
     state: present
+- name: Open UPNP port on firewall
+  become: true
+  ansible.posix.firewalld:
+    service: upnp-client
+    permanent: true
+    immediate: true
+    state: enabled
 - name: Create gerbera config directory
   become: true
   ansible.builtin.file:

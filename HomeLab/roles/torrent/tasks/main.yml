@@ -5,6 +5,13 @@
     comment: Qbittorrent Service Account
     shell: /sbin/nologin
     state: present
+- name: Create torrent directory
+  ansible.builtin.file:
+    name: /srv/files/torrents
+    state: directory
+    owner: torrent
+    group: torrent
+    mode: "0777"
 - name: Add qbittorrent custom firewalld service
   ansible.builtin.copy:
     src: qbittorrent.xml
