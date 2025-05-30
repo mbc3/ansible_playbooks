@@ -11,6 +11,11 @@
     name: "{{ inventory_hostname }}.{{ domain }}"
     use: systemd
   when: inventory_hostname != "freeipa"
+- name: Check if FreeIPA user exists
+  ansible.builtin.user:
+    name: mbc
+  check_mode: true
+  register: user_check
 - name: Bind to FreeIPA domain
   become: true
   ansible.builtin.expect:
@@ -31,6 +36,7 @@
       "Password for admin@AUTH.LOCALDOMAIN":
         - " {{ freeipa_admin_password }}"
   no_log: true
+  when: '"present" not in user_check.state'
 - name: Copy MBC SSH key
   ansible.posix.authorized_key:
     state: present

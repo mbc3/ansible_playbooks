@@ -1,0 +1,5 @@
+---
+semaphore_mysql_db_user: "semaphore"
+semaphore_mysql_db_password: "{{ vault_semaphore_db_password }}"
+semaphore_admin_password: "{{ vault_semaphore_admin_password }}"
+semaphore_admin_email: "cohen@matthewbriancohen.com"

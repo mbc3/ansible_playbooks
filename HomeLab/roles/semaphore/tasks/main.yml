@@ -1,0 +1,92 @@
+---
+- name: Create semaphore user
+  ansible.builtin.user:
+    name: semaphore
+    comment: Semaphore Service Account
+    shell: /usr/bin/bash
+    password: "{{ vault_semaphore_ansible_password }}"
+- name: Install podman
+  ansible.builtin.dnf:
+    name: podman
+    state: present
+- name: Create Semaphore mysql quadlet file
+  become: true
+  become_user: semaphore
+  containers.podman.podman_container:
+    name: semaphore-mysql
+    hostname: mysql
+    image: docker.io/library/mysql:8.0
+    volume:
+      - "semaphore-mysql:/var/lib/mysql"
+    publish: 3306:3306
+    env:
+      MYSQL_RANDOM_ROOT_PASSWORD: "yes"
+      MYSQL_DATABASE: "semaphore"
+      MYSQL_USER: "{{ semaphore_mysql_db_user }}"
+      MYSQL_PASSWORD: "{{ semaphore_mysql_db_password }}"
+    state: quadlet
+    quadlet_filename: semaphore-mysql
+    quadlet_dir: "/home/semaphore/.config/containers/systemd/"
+    quadlet_options:
+      - "AutoUpdate=registry"
+      - |
+        [Service]
+        Restart=always
+        [Unit]
+        After=network-online.target
+        [Install]
+        WantedBy=default.target
+  notify: Restart Semaphore
+- name: Create Semaphore quadlet file
+  become: true
+  become_user: semaphore
+  containers.podman.podman_container:
+    name: semaphore
+    image: docker.io/semaphoreui/semaphore:latest
+    publish: 3000:3000
+    env:
+      SEMAPHORE_DB_USER: "{{ semaphore_mysql_db_user }}"
+      SEMAPHORE_DB_PASS: "{{ semaphore_mysql_db_password }}"
+      SEMAPHORE_DB_HOST: "mysql"
+      SEMAPHORE_DB_PORT: "3306"
+      SEMAPHORE_DB_DIALECT: "mysql"
+      SEMAPHORE_DB: "semaphore"
+      SEMAPHORE_PLAYBOOK_PATH: "/tmp/semaphore/"
+      SEMAPHORE_ADMIN_PASSWORD: "{{ semaphore_admin_password }}"
+      SEMAPHORE_ADMIN_NAME: admin
+      SEMAPHORE_ADMIN_EMAIL: "{{ semaphore_admin_email }}"
+      SEMAPHORE_ADMIN: admin
+      SEMAPHORE_ACCESS_KEY_ENCRYPTION: yTAT7nm1p+MozxEtliYZKkt32XzBcAAdaSd/UxTgoUk= # head -c32 /dev/urandom | base64
+      SEMAPHORE_LDAP_ACTIVATED: "no"
+    state: quadlet
+    quadlet_filename: semaphore
+    quadlet_dir: "/home/semaphore/.config/containers/systemd/"
+    quadlet_options:
+      - "AutoUpdate=registry"
+      - |
+        [Service]
+        Restart=always
+        [Unit]
+        Requires=semaphore-mysql.service
+        After=semaphore-mysql.service
+        [Install]
+        WantedBy=default.target
+  notify: Restart Semaphore
+- name: Start Semaphore mysql container
+  become: true
+  become_user: semaphore
+  ansible.builtin.systemd_service:
+    name: semaphore-mysql
+    scope: user
+    state: started
+    enabled: true
+    daemon_reload: true
+- name: Start Semaphore container
+  become: true
+  become_user: semaphore
+  ansible.builtin.systemd_service:
+    name: semaphore
+    scope: user
+    state: started
+    enabled: true
+    daemon_reload: true
