@@ -1,0 +1,3 @@
+---
+freeipa_client_domain: "auth.localdomain"
+freeipa_client_fqdn: "freeipa.auth.localdomain"

@@ -1,0 +1,8 @@
+---
+- name: Set up Semaphore server
+  hosts: semaphore
+  become: true
+
+  roles:
+    - role: freeipa_client
+    - role: ca_client

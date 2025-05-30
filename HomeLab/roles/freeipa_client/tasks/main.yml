@@ -11,15 +11,26 @@
     name: "{{ inventory_hostname }}.{{ domain }}"
     use: systemd
   when: inventory_hostname != "freeipa"
-# TO DO: get this working!
-# - name: Bind to FreeIPA domain
-#   become: true
-#   ansible.builtin.expect:
-#     command: ipa-client-install --mkhomedir
-#     responses:
-#       - auth.localdomain
-#       - {{ freeipa_admin_account }}
-#       - {{ freeipa_admin_password }}
+- name: Bind to FreeIPA domain
+  become: true
+  ansible.builtin.expect:
+    command: ipa-client-install --mkhomedir
+    responses:
+      "Provide the domain name of your IPA server (ex: example.com)":
+        - "{{ freeipa_client_domain }}"
+      "Provide your IPA server name (ex: ipa.example.com)":
+        - "{{ freeipa_client_fqdn }}"
+      "Proceed with fixed values and no DNS discovery? [no]":
+        - "yes" # this is to disable dns auto discovery
+      "Do you want to configure chrony with NTP server or pool address? [no]":
+        - "no" # this is for chrony
+      "Continue to configure the system with these values? [no]":
+        - "yes" # confirms config
+      "User authorized to enroll computers":
+        - "{{ freeipa_admin_account }}"
+      "Password for admin@AUTH.LOCALDOMAIN":
+        - " {{ freeipa_admin_password }}"
+  no_log: true
 - name: Copy MBC SSH key
   ansible.posix.authorized_key:
     state: present

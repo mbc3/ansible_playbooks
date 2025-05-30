@@ -1,4 +1,7 @@
 ---
+- name: Populate service facts
+  ansible.builtin.service_facts:
+
 - name: Install Smallstep CLI
   when:
     - ansible_distribution != "Debian"
@@ -16,6 +19,7 @@
         permanent: true
         immediate: true
       loop: "{{ ca_client_ports }}"
+      when: ansible_facts.services['firewalld.service'].status is defined
 
 - name: Install Smallstep CLI (Debian)
   when:
