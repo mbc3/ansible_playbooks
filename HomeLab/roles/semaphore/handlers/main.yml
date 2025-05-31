@@ -3,5 +3,5 @@
   become: true
   become_user: semaphore
   ansible.builtin.systemd_service:
-    name: semaphore
+    name: semaphore-app
     state: restarted

@@ -14,14 +14,34 @@
     state: enabled
   loop: "{{ caddy_ports }}"
 
+- name: Check for Caddy Copr reo
+  ansible.builtin.stat:
+    path: /etc/yum.repos.d/_copr:copr.fedorainfracloud.org:group_caddy:caddy.repo
+  register: caddy_copr
+
+- name: Install Caddy Copr repo for RHEL10
+  become: true
+  ansible.builtin.expect:
+    command: dnf copr enable @caddy/caddy
+    responses:
+      "enable": "y"
+  when:
+    - hostvars[inventory_hostname].ansible_distribution_major_version == "10" # only needed for RHEL10, as they took out caddy from EPEL
+    - not caddy_copr.stat.exists
+
 - name: Install Caddy
   become: true
   ansible.builtin.dnf:
     name: caddy
     state: present
-  notify:
-    - Enable Caddy
-    - Run Caddy trust
+  notify: Run Caddy trust
+
+- name: Start and enable Caddy
+  become: true
+  ansible.builtin.systemd_service:
+    name: caddy
+    state: started
+    enabled: true
 
 - name: Copy Caddyfile
   become: true
