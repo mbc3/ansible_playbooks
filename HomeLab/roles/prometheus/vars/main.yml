@@ -11,4 +11,4 @@ prometheus_home_hosts:
   - freeipa
   - files
 prometheus_mbc_hosts:
-  - arch
+  - arch.mbc

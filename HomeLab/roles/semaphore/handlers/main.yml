@@ -1,7 +1,15 @@
 ---
+- name: Restart Semaphore DB
+  become: true
+  become_user: semaphore
+  ansible.builtin.systemd_service:
+    name: semaphore-mysql
+    state: restarted
+    scope: user
 - name: Restart Semaphore
   become: true
   become_user: semaphore
   ansible.builtin.systemd_service:
     name: semaphore-app
     state: restarted
+    scope: user

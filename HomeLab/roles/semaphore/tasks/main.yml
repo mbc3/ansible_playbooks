@@ -1,22 +1,50 @@
 ---
+- name: Install necessary packages
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ semaphore_packages }}"
 - name: Create semaphore user
   ansible.builtin.user:
     name: semaphore
     comment: Semaphore Service Account
     shell: /usr/bin/bash
     password: "{{ vault_semaphore_semaphore_password | password_hash('sha512', 'Dash0fSA1t') }}"
-- name: Install podman
-  ansible.builtin.dnf:
-    name: podman
+- name: Make SSH directory
+  become: true
+  become_user: semaphore
+  ansible.builtin.file:
+    path: ~/.ssh
+    state: directory
+    mode: "0700"
+- name: Generate Github SSH key
+  become: true
+  become_user: semaphore
+  community.crypto.openssh_keypair:
+    path: ~/.ssh/github
+    owner: semaphore
+    group: semaphore
+    comment: "MBC Github"
+    type: "ed25519"
+- name: Set ssh config to use ipv4 to get around github's missing ipv6 support
+  become: true
+  become_user: semaphore
+  community.general.ssh_config:
+    user: semaphore
+    host: "github.com"
+    identity_file: "/home/semaphore/.ssh/github"
     state: present
+    other_options:
+      addressfamily: "inet"
+
 - name: Create Semaphore podman network
   become: true
   become_user: semaphore
   containers.podman.podman_network:
     name: semaphore
-    internal: true
     subnet: 192.168.10.0/24
     gateway: 192.168.10.1
+    ipv6: false
     state: quadlet
     quadlet_filename: semaphore
     quadlet_dir: "/home/semaphore/.config/containers/systemd/"
@@ -24,7 +52,10 @@
       - |
         [Install]
         WantedBy=default.target
-  notify: Restart Semaphore
+  notify:
+    - Restart Semaphore DB
+    - Restart Semaphore
+
 - name: Create Semaphore mysql quadlet file
   become: true
   become_user: semaphore
@@ -54,7 +85,10 @@
         Before=semaphore-app.service
         [Install]
         WantedBy=default.target
-  notify: Restart Semaphore
+  notify:
+    - Restart Semaphore DB
+    - Restart Semaphore
+
 - name: Create Semaphore quadlet file
   become: true
   become_user: semaphore
@@ -63,6 +97,9 @@
     image: docker.io/semaphoreui/semaphore:latest
     publish: 3000:3000
     network: semaphore
+    dns_search:
+      - dns.podman # need this to talk to mysql container
+      - localdomain # need this to talk to other vms / lxc containers
     env:
       SEMAPHORE_DB_USER: "{{ semaphore_mysql_db_user }}"
       SEMAPHORE_DB_PASS: "{{ semaphore_mysql_db_password }}"
@@ -89,4 +126,6 @@
         After=semaphore.network
         [Install]
         WantedBy=default.target
-  notify: Restart Semaphore
+  notify:
+    - Restart Semaphore DB
+    - Restart Semaphore
