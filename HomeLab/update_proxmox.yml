@@ -1,7 +1,7 @@
 ---
-- name: Update all hosts and nodes
+- name: Update all proxmox hosts
   become: true
-  hosts: proxmox_nodes,proxmox_all_lxc,proxmox_all_qemu
+  hosts: proxmox_nodes
 
   tasks:
     - name: Update all packages
