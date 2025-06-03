@@ -1,9 +1,11 @@
 ---
 - name: Install Git
+  become: true
   ansible.builtin.apt:
     name: git
     state: present
 - name: Checkout pihole repo
+  become: true
   ansible.builtin.git:
     repo: https://github.com/pi-hole/pi-hole.git
     dest: /opt/pihole
@@ -19,6 +21,7 @@
     path: /etc/letsencrypt/renewal-hooks/post
   register: le_path
 - name: Copy post hook for pihole
+  become: true
   ansible.builtin.copy:
     src: pihole-pem.sh
     dest: /etc/letsencrypt/renewal-hooks/post
@@ -31,6 +34,7 @@
     path: /etc/letsencrypt/renewal/{{ inventory_hostname }}/{{ domain }}.conf
   register: le_renewal
 - name: Edit renewal to happen at 14 day mark
+  become: true
   ansible.builtin.lineinfile:
     path: /etc/letsencrypt/renewal/{{ inventory_hostname }}/{{ domain }}.conf
     regexp: .*renew_before_expiry.*

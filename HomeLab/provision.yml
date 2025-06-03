@@ -36,6 +36,14 @@
         user: ansible
         state: present
         key: "{{ lookup('file', '/home/mbc/.ssh/proxmox.pub') }}"
+    - name: Set Ansible user to NOPASSWD in sudoers
+      community.general.sudoers:
+        name: 99-ansible
+        state: present
+        user: ansible
+        commands: ALL
+        host: ALL
+        nopassword: true
     - name: Check for existence of CA SSH key
       local_action:
         module: ansible.builtin.stat
@@ -55,14 +63,6 @@
     - name: Alma/RHEL specific tasks
       when: ansible_distribution != "Debian"
       block:
-        - name: Set Ansible user to NOPASSWD in sudoers
-          community.general.sudoers:
-            name: 99-ansible
-            state: present
-            user: ansible
-            commands: ALL
-            host: ALL
-            nopassword: true
         - name: Check if EPEL is installed
           ansible.builtin.stat:
             path: /etc/yum.repos.d/epel.repo
