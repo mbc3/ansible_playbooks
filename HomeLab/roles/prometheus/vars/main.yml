@@ -11,5 +11,6 @@ prometheus_home_hosts:
   - freeipa
   - files
   - semaphore
+  - uptime
 prometheus_mbc_hosts:
   - arch.mbc

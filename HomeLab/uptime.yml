@@ -1,0 +1,8 @@
+---
+- name: Set up Uptime server
+  hosts: uptime
+  become: true
+
+  roles:
+    - role: uptime_kuma
+    - role: caddy

@@ -1,4 +1,7 @@
 ---
+- name: Populate service facts
+  ansible.builtin.service_facts:
+
 - name: Install NSS
   become: true
   ansible.builtin.dnf:
@@ -13,6 +16,7 @@
     immediate: true
     state: enabled
   loop: "{{ caddy_ports }}"
+  when: ansible_facts.services['firewalld.service'].status is defined
 
 - name: Check for Caddy Copr reo
   ansible.builtin.stat:

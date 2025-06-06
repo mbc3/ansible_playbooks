@@ -11,6 +11,7 @@
       - 102
       - 103
       - 107
+      - 109
 
   pre_tasks:
     # - name: Display vmid # Still testing this out
@@ -46,6 +47,9 @@
       ansible.builtin.command: lxc-attach "{{ item }}" -- dnf install -y openssh-server
       loop: "{{ vm_ids }}"
       notify: Restart SSHD
+    - name: Create Ansible user on container
+      ansible.builtin.command: lxc-attach "{{ item }}" -- useradd ansible -G wheel
+      loop: "{{ vm_ids }}"
 
   handlers:
     - name: Restart SSHD
