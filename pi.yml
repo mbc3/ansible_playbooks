@@ -31,18 +31,6 @@
         - homepi
         - container
 
-    - role: uptime_kuma
-      when: inventory_hostname == "homepi"
-      tags:
-        - homepi
-        - container
-
-    - role: gerbera
-      when: inventory_hostname == "homepi"
-      tags:
-        - homepi
-        - container
-
     - role: mediapi
       when: inventory_hostname == "mediapi"
       tags:

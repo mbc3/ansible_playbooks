@@ -1,0 +1,6 @@
+---
+- name: Restart Uptime Kuma
+  containers.podman.podman_container:
+    name: uptime-kuma
+    state: started
+    force_restart: true
