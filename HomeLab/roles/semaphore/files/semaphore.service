@@ -1,0 +1,22 @@
+[Unit]
+Description=Semaphore Ansible
+Documentation=https://github.com/semaphoreui/semaphore
+Wants=network-online.target
+After=network-online.target
+Requires=mariadb.service
+
+[Service]
+Type=simple
+ExecReload=/bin/kill -HUP $MAINPID
+ExecStart=/usr/bin/semaphore server --config=/home/semaphore/config.json
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=semaphore
+# to auto-upgrade ansible collections and roles at service startup
+ExecStartPre=/bin/bash -c 'ansible-galaxy collection install --upgrade -r /home/semaphore/requirements.yml'
+ExecStartPre=/bin/bash -c 'ansible-galaxy role install --force -r /home/semaphore/requirements.yml'
+Restart=always
+RestartSec=10s
+
+[Install]
+WantedBy=multi-user.target

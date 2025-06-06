@@ -3,7 +3,16 @@ semaphore_mysql_db_user: "semaphore"
 semaphore_mysql_db_password: "{{ vault_semaphore_db_password }}"
 semaphore_admin_password: "{{ vault_semaphore_admin_password }}"
 semaphore_admin_email: "cohen@matthewbriancohen.com"
+semaphore_version: "2.14.12"
+semaphore_package_location: "/home/ansible/semaphore_{{ semaphore_version }}.rpm"
 semaphore_packages:
   - git
   - podman
+  - ansible-core
+  - ansible-collection-community-general
   - python3-paramiko
+  - mariadb-server
+  - python3-PyMySQL
+semaphore_cloud_servers:
+  charon: "173.230.144.162"
+  sleepycow: "45.79.90.174"
