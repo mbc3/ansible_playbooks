@@ -6,6 +6,7 @@
   # This isn't a great solution, but if I add container ids here manually, this should work
   # Weirdly RHEL based/Arch containers don't have ssh enabled by default, but Debian does
   # TO DO: loop over each container in inventory, get proxmox_hostname["ansible_inventory"].proxmox_vmid
+  # SETUP: After it runs, ssh as root, then make the ansible user with useradd ansible -G wheel -p PASSWORD, then put the ansible users in the sudoers file with no password.
   vars:
     vm_ids:
       - 102
@@ -47,9 +48,6 @@
       ansible.builtin.command: lxc-attach "{{ item }}" -- dnf install -y openssh-server
       loop: "{{ vm_ids }}"
       notify: Restart SSHD
-    - name: Create Ansible user on container
-      ansible.builtin.command: lxc-attach "{{ item }}" -- useradd ansible -G wheel
-      loop: "{{ vm_ids }}"
 
   handlers:
     - name: Restart SSHD
