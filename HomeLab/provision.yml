@@ -82,6 +82,7 @@
             state: present
           loop: "{{ rhel_package_list }}"
           ignore_errors: true
+          notify: Enable Prometheus node exporter service
 
   roles:
     - role: rsyslog
