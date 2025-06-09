@@ -7,7 +7,7 @@
     state: present
 - name: Create torrent directory
   ansible.builtin.file:
-    name: /srv/files/torrents
+    name: /srv/proto/torrents
     state: directory
     owner: torrent
     group: torrent

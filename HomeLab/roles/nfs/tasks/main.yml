@@ -1,4 +1,38 @@
 ---
+# - name: Create a new primary partition for proto external disk
+#   community.general.parted:
+#     device: /dev/sdc
+#     number: 1
+#     state: present
+#     part_end: "100%"
+# - name: Create xfs filesystem on proto
+#   community.general.filesystem:
+#     dev: /dev/sdc1
+#     fstype: xfs
+- name: Ensure mountpoints exist
+  ansible.builtin.file:
+    name: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0777"
+  loop:
+    - "{{ nfs_directory }}"
+    - "{{ nfs_directory_other }}"
+# - name: Mount external file partion - files
+#   ansible.posix.mount:
+#     src: 'UUID="{{ ansible_facts.devices.sdb.links.uuids }}"'
+#     path: "{{ nfs_directory }}"
+#     boot: true
+#     state: mounted
+#     fstype: xfs
+# - name: Mount external file partion - proto
+#   ansible.posix.mount:
+#     src: 'UUID="{{ ansible_facts.devices.sdc.links.uuids }}"'
+#     path: "{{ nfs_directory_other }}"
+#     boot: true
+#     state: mounted
+#     fstype: xfs
 - name: Install NFS
   ansible.builtin.dnf:
     name: nfs-utils

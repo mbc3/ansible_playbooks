@@ -5,6 +5,7 @@ nfs_firewall_ports:
   - mountd
   - rpc-bind
 nfs_directory: "/srv/files"
+nfs_directory_other: "/srv/proto"
 nfs_ip_range: "192.168.0.0/16"
 nfs_user: "share"
 nfs_group: "share"

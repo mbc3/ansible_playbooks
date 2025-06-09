@@ -1,11 +1,9 @@
 ---
 - name: Test
-  hosts: semaphore
+  hosts: files
   vars:
     version: "2.14.12"
   tasks:
-    - name: Download Semaphore package
-      ansible.builtin.get_url:
-        url: "https://github.com/semaphoreui/semaphore/releases/download/v{{ version }}/semaphore_{{ version }}_linux_amd64.rpm"
-        dest: "/home/ansible/semaphore_{{ version }}.rpm"
-        mode: "0770"
+    - name: Display disk info
+      ansible.builtin.debug:
+        var: ansible_facts.devices.sdb.links.uuids
