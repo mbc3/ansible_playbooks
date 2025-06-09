@@ -1,4 +1,5 @@
 ---
+# TO DO: Improve partitioning / filesystem creation
 # - name: Create a new primary partition for proto external disk
 #   community.general.parted:
 #     device: /dev/sdc
@@ -19,6 +20,7 @@
   loop:
     - "{{ nfs_directory }}"
     - "{{ nfs_directory_other }}"
+# TO DO: Improve the mounting here
 # - name: Mount external file partion - files
 #   ansible.posix.mount:
 #     src: 'UUID="{{ ansible_facts.devices.sdb.links.uuids }}"'
