@@ -9,17 +9,48 @@ address  = "0.0.0.0:{{ alloy_port }}"
 protocol = "{{ alloy_protocol }}"
 syslog_format = "rfc5424"
 use_rfc5424_message = true
+label_structured_data = true
+labels = {
+      component = "loki.source.syslog",
+      protocol = "{{ alloy_protocol }}",
+      }
 }
-    forward_to = [loki.relabel.add_static_label.receiver]
+     relabel_rules = loki.relabel.syslog.rules
+     forward_to = [loki.write.local.receiver]
 }
 
-loki.relabel "add_static_label" {
-    forward_to = [loki.write.local.receiver]
+loki.relabel "syslog" {
+  forward_to = []
 
-    rule {
-        target_label = "job"
-        replacement  = "home"
-    }
+  rule {
+    source_labels = ["__syslog_message_hostname"]
+    target_label  = "hostname"
+  }
+
+  rule {
+    source_labels = ["__syslog_message_severity"]
+    target_label  = "level"
+  }
+
+  rule {
+    source_labels = ["__syslog_message_app_name"]
+    target_label  = "syslog_app"
+  }
+
+  rule {
+    source_labels = ["__syslog_message_facility"]
+    target_label  = "facility"
+  }
+
+  rule {
+    source_labels = ["__syslog_message_proc_id"]
+    target_label  = "proc_id"
+  }
+
+  rule {
+    source_labels = ["__syslog_message_msg_id"]
+    target_label  = "msg_id"
+  }
 }
 
 loki.write "local" {
