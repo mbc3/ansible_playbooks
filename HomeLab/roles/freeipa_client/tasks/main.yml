@@ -20,6 +20,7 @@
   become: true
   ansible.builtin.expect:
     command: ipa-client-install --mkhomedir
+    timeout: 480
     responses:
       "Provide the domain name of your IPA server":
         - "{{ freeipa_client_domain }}"
@@ -32,16 +33,11 @@
       "Continue to configure the system with these values":
         - "yes" # confirms config
       "User authorized to enroll computers":
-        - "{{ freeipa_admin_account }}"
-      "Password for admin":
-        - " {{ freeipa_admin_password }}"
+        - "{{ freeipa_client_admin_account }}"
+      "Password for":
+        - " {{ freeipa_client_admin_password }}"
   no_log: true
-  when: '"present" not in user_check.state'
-- name: Copy MBC SSH key
-  ansible.posix.authorized_key:
-    state: present
-    user: "{{ freeipa_username }}"
-    key: "{{ lookup('file', '/home/mbc/.ssh/id_ed25519.pub') }}"
+  when: user_check.state is not defined
 - name: Allow FreeIPA user in sudoers
   community.general.sudoers:
     name: "{{ freeipa_username }}"
@@ -50,3 +46,8 @@
     commands: ALL
     host: ALL
     nopassword: false
+- name: Copy MBC SSH key
+  ansible.posix.authorized_key:
+    state: present
+    user: "{{ freeipa_username }}"
+    key: "{{ lookup('file', '/home/mbc/.ssh/id_ed25519.pub') }}"

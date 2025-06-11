@@ -12,5 +12,6 @@ prometheus_home_hosts:
   - semaphore
   - uptime
   - repos
+  - wazuh
 prometheus_mbc_hosts:
   - arch.mbc

@@ -1,0 +1,10 @@
+---
+- name: Set up Wazuh server
+  hosts: wazuh
+  become: true
+
+  roles:
+    - role: prometheus_client
+    - role: freeipa_client
+    - role: ca_client
+    - role: debug

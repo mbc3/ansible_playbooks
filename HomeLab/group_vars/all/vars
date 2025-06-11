@@ -1,7 +1,5 @@
 ---
 freeipa_username: "mbc"
-freeipa_admin_account: "admin"
-freeipa_admin_password: "{{ vault_freeipa_admin_password }}"
 domain: "localdomain"
 ca_url: "https://ca.localdomain:8443"
 ca_fingerprint: "{{ vault_ca_fingerprint }}"
