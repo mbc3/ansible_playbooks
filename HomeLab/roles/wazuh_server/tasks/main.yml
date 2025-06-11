@@ -1,0 +1,20 @@
+---
+- name: Add wazuh custom firewalld service
+  ansible.builtin.copy:
+    src: wazuh.xml
+    dest: /etc/firewalld/services/wazuh.xml
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart firewalld
+- name: Add wazuh firewalld service
+  ansible.posix.firewalld:
+    service: wazuh
+    permanent: true
+    immediate: true
+    state: enabled
+- name: Change wazuh agent port to 2514 # the default 1514 I use for rsyslog
+  ansible.builtin.lineinfile:
+    path: /var/ossec/etc/ossec.conf
+    regexp: '<port>\d514<\/port>'
+    line: <port>2514</port>

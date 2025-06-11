@@ -7,4 +7,5 @@
     - role: prometheus_client
     - role: freeipa_client
     - role: ca_client
+    - role: wazuh_server
     - role: debug

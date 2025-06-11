@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+<short>Wazuh</short>
+<description>Wazuh</description>
+<port port="9200" protocol="tcp"/>
+<port port="55000" protocol="tcp"/>
+<port port="2514" protocol="tcp"/>
+<port port="1515" protocol="tcp"/>
+<port port="1516" protocol="tcp"/>
+</service>

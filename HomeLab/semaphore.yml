@@ -10,3 +10,5 @@
     - role: prometheus_client
     - role: semaphore
     - role: caddy
+    - role: wazuh_agent
+    - role: debug

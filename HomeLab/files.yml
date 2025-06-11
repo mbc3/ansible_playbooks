@@ -13,4 +13,5 @@
     - role: syncthing
     - role: torrent
     - role: caddy
+    - role: wazuh_agent
     - role: debug

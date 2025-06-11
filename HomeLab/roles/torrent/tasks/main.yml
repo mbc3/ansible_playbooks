@@ -19,7 +19,12 @@
     owner: root
     group: root
     mode: "0644"
-  notify: Add qbittorrent firewalld service
+- name: Add qbittorrent firewalld service
+  ansible.posix.firewalld:
+    service: qbittorrent
+    permanent: true
+    immediate: true
+    state: enabled
 - name: Install qbittorent-nox
   ansible.builtin.dnf:
     name: qbittorrent-nox

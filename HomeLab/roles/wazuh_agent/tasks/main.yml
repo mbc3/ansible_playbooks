@@ -1,0 +1,32 @@
+---
+- name: Import Wazuh GPG key
+  ansible.builtin.rpm_key:
+    state: present
+    key: "{{ wazuh_agent_gpg_key }}"
+- name: Add Wazuh repo
+  ansible.builtin.yum_repository:
+    name: wazuh
+    description: Wazuh Agent
+    baseurl: "{{ wazuh_agent_repo_url }}"
+    gpgkey: "{{ wazuh_agent_gpg_key }}"
+    gpgcheck: true
+- name: Install Wazuh
+  ansible.builtin.dnf:
+    name: wazuh-agent
+    state: present
+- name: Change wazuh agent port to 2514 # the default 1514 I use for rsyslog
+  ansible.builtin.lineinfile:
+    path: /var/ossec/etc/ossec.conf
+    regexp: '<port>\d514<\/port>'
+    line: <port>2514</port>
+  notify: Restart wazuh-agent
+- name: Set Wazuh manager IP
+  ansible.builtin.lineinfile:
+    path: /var/ossec/etc/ossec.conf
+    regexp: '<\/address>'
+    line: "<address>{{ wazuh_agent_manager_ip }}</address>"
+  notify: Restart wazuh-agent
+- name: Enable Wazuh agent systemd service
+  ansible.builtin.systemd_service:
+    name: wazuh-agent
+    enabled: true
