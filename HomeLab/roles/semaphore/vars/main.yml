@@ -13,6 +13,7 @@ semaphore_packages:
   - python3-paramiko
   - mariadb-server
   - python3-PyMySQL
+  - tofu
 semaphore_cloud_servers:
   charon: "173.230.144.162"
   sleepycow: "45.79.90.174"

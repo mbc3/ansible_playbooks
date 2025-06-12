@@ -24,7 +24,7 @@
       when: updates is defined
     - name: Run AIDE update
       ansible.builtin.command: /usr/sbin/aide --update
-      when: aide.exists
+      when: aide.stat.exists
     - name: Use new AIDE DB
       ansible.builtin.copy:
         remote_src: true

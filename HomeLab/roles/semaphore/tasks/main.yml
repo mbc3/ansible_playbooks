@@ -1,4 +1,9 @@
 ---
+- name: Copy OpenTofu repo
+  ansible.builtin.copy:
+    src: opentofu.repo
+    dest: /etc/yum.repos.d/opentofu.repo
+    mode: "0644"
 - name: Install necessary packages
   ansible.builtin.dnf:
     name: "{{ item }}"

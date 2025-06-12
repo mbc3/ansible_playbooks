@@ -1,9 +1,13 @@
 ---
 - name: Test
-  hosts: files
+  hosts: logs
   vars:
     version: "2.14.12"
   tasks:
-    - name: Display disk info
+    - name: Check if AIDE exists
+      ansible.builtin.stat:
+        path: /sr/sbin/aide
+      register: aide
+    - name: Debug
       ansible.builtin.debug:
-        var: ansible_facts.devices.sdb.links.uuids
+        var: aide
