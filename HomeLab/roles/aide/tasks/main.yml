@@ -1,0 +1,14 @@
+---
+- name: Install AIDE
+  ansible.builtin.dnf:
+    name: aide
+    state: present
+  notify:
+    - Initialize AIDE
+    - Use new AIDE DB
+- name: Create AIDE cronjob
+  ansible.builtin.cron:
+    name: "run aide check"
+    minute: "05"
+    hour: "2"
+    job: "/usr/sbin/aide --check"

@@ -6,6 +6,7 @@
   roles:
     - role: freeipa_client
     - role: ca_client
+    # - role: aide # aide is broken on rhel10
     - role: prometheus.prometheus.node_exporter # installs prometheus on rhel10, install with ansible-galaxy collection install prometheus.prometheus
     - role: prometheus_client
     - role: semaphore

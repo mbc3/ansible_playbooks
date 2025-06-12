@@ -7,6 +7,7 @@
     - role: prometheus_client
     - role: freeipa_client
     - role: ca_client
+    - role: aide
     - role: opnsense_backups
     - role: nfs
     - role: resilio_sync

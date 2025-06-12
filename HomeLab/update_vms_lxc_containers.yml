@@ -4,14 +4,30 @@
   hosts: proxmox_all_lxc,proxmox_all_qemu
 
   tasks:
+    - name: Check if AIDE exists
+      ansible.builtin.stat:
+        path: /sr/sbin/aide
+      register: aide
     - name: Update all packages
       ansible.builtin.package:
         name: "*"
         state: latest
       register: updates
-      notify: Display updated packages
+      notify:
+        - Display updated packages
+        - Run AIDE update
+        - Use new AIDE DB
   handlers:
     - name: Display updated packages
       ansible.builtin.debug:
         var: updates
       when: updates is defined
+    - name: Run AIDE update
+      ansible.builtin.command: /usr/sbin/aide --update
+      when: aide.exists
+    - name: Use new AIDE DB
+      ansible.builtin.copy:
+        remote_src: true
+        src: /var/lib/aide/aide.db.new.gz
+        dest: /var/lib/aide/aide.db.gz
+        mode: preserve
