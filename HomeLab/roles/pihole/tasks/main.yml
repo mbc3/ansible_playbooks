@@ -9,6 +9,8 @@
   ansible.builtin.git:
     repo: https://github.com/pi-hole/pi-hole.git
     dest: /opt/pihole
+    force: true
+  ignore_errors: true
   changed_when: false
 - name: Tell User to install pihole
   ansible.builtin.debug:
