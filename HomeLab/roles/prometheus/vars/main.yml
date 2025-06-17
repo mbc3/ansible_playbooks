@@ -14,4 +14,4 @@ prometheus_home_hosts:
   - repos
   - wazuh
 prometheus_mbc_hosts:
-  - arch.mbc
+  - arch.internal
