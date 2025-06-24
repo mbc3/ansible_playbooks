@@ -12,12 +12,36 @@
   ansible.builtin.dnf:
     name: grafana
     state: present
-- name: Enable Grafana
+  notify: Enable Grafana
+- name: Copy Grafana config
+  ansible.builtin.copy:
+    src: grafana.ini
+    dest: /etc/grafana/grafana.ini
+    user: root
+    group: grafana
+    mode: "0640"
+  notify: Restart Grafana
+- name: Warn about requesting cert
+  ansible.builtin.debug:
+    msg: "Make sure you request a https certificate: certbot certonly -n -d graphs.localdomain --server https://ca.localdomain:8443/acme/acme/directory --agree-tos --email cohen@matthewbriancohen.com --standalone"
+- name: Enable certbot timer
   ansible.builtin.systemd_service:
-    name: grafana-server
+    name: certbot-renew.timer
     enabled: true
-    state: started
-- name: Restart Grafana
-  ansible.builtin.systemd_service:
-    name: grafana-server
-    state: restarted
+- name: Create symlinks to crt and key files in grafana directory
+  ansible.builtin.file:
+    state: link
+    src: "/etc/letsencrypt/live/graphs.localdomain/{{ item.key }}"
+    dest: "/etc/grafana/{{ item.value }}"
+    owner: root
+    group: grafana
+    mode: "0440"
+  loop: "{{ grafana_certs | dict2items }}"
+- name: Change group to grafana on everything in letsencrypt directory
+  become: true
+  ansible.builtin.command: chgrp -R grafana /etc/letsencrypt/*
+  changed_when: false
+- name: Change permissions on everything in letsencrypt directory
+  become: true
+  ansible.builtin.command: chmod -R g+rx /etc/letsencrypt/*
+  changed_when: false

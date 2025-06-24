@@ -1,2 +1,3 @@
 ---
 grafana_url: "rpm.grafana.com"
+grafana_certs: { "fullchain.pem": "grafana.crt", "privkey.pem", "grafana.key" }

@@ -13,6 +13,7 @@
     name: alloy
     state: present
   notify: Enable Alloy
+# TO DO: disable reporting
 - name: Copy Alloy config
   ansible.builtin.template:
     src: config.alloy.j2
