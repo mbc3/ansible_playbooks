@@ -31,7 +31,7 @@
       ansible.builtin.command: /usr/sbin/aide --update
       when: aide.stat.exists
       register: aide_update
-      failed_when: aide_update.rc != 0 or aide_update.rc != 1 or aide_update.rc != 2 or aide_update.rc != 4 # these return codes are when something changes
+      failed_when: aide_update.rc > 7 # see https://linux.die.net/man/1/aide for how aide generates return codes
 
     - name: Use new AIDE DB
       ansible.builtin.copy:
