@@ -2,9 +2,12 @@
 - name: Restart NFS
   become: true
   ansible.builtin.systemd_service:
-    name: nfs-server
+    name: "{{ item }}"
     state: restarted
+  loop:
+    - nfs-server
+    - rpcbind
 - name: Exportfs
   become: true
-  ansible.builtin.command: exportfs -av
+  ansible.builtin.command: exportfs -rav
   changed_when: false

@@ -58,6 +58,11 @@
     mode: "0777"
     owner: root
     group: root
+- name: Add domain name to /etc/idmapd.conf
+  ansible.builtin.lineinfile:
+    path: /etc/idmapd.conf
+    regexp: "Domain ="
+    line: "Domain = {{ domain }}"
 - name: Edit /etc/exports to enable share
   ansible.builtin.template:
     src: templates/exports.j2

@@ -1,11 +1,19 @@
 ---
-- name: Install podman
-  ansible.builtin.dnf:
-    name: podman
-    state: present
-- name: Enable linger (for podman containers)
-  ansible.builtin.command: loginctl enable-linger
-  changed_when: false
+- name: Install Podman
+  block:
+    - name: Install Podman
+      ansible.builtin.dnf:
+        name: podman
+        state: present
+    - name: Enable linger (for podman containers)
+      ansible.builtin.command: loginctl enable-linger
+      changed_when: false
+    - name: Enable podman auto-update service
+      ansible.builtin.systemd_service:
+        name: podman-auto-update.timer
+        enabled: true
+        state: started
+
 - name: Copy Prometheus config
   ansible.builtin.template:
     src: prometheus.yml.j2

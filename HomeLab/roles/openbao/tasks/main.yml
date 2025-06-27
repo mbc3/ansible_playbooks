@@ -2,10 +2,13 @@
 - name: Install Podman
   block:
     - name: Install Podman
+      become: true
       ansible.builtin.dnf:
         name: podman
         state: present
     - name: Enable linger (for podman containers)
+      become: true
+      become_user: "{{ service_user }}"
       ansible.builtin.command: loginctl enable-linger
       changed_when: false
     - name: Enable podman auto-update service
@@ -14,25 +17,18 @@
         enabled: true
         state: started
 
-- name: Create Uptime Kuma podman volume
-  containers.podman.podman_volume:
-    name: uptime-kuma
-    state: present
-- name: Pull Uptime Kuma image
-  containers.podman.podman_image:
-    name: docker.io/louislam/uptime-kuma
-    tag: 1
-- name: Create Uptime Kuma quadlet file
+- name: Install OpenBao
+  become: true
+  become_user: semaphore
   containers.podman.podman_container:
-    name: uptime-kuma
-    image: docker.io/louislam/uptime-kuma
+    name: openbao
+    hostname: openbao
+    image: docker.io/openbao/openbao-ubi
+    publish:
+      - 8200:8200
     state: quadlet
-    quadlet_filename: uptime-kuma
-    quadlet_dir: "/etc/containers/systemd/"
-    ports:
-      - 3001:3001
-    volumes:
-      - "uptime-kuma:/app/data"
+    quadlet_filename: openbao
+    quadlet_dir: "/home/semaphore/.config/containers/systemd/"
     quadlet_options:
       - "AutoUpdate=registry"
       - |
@@ -40,4 +36,13 @@
         Restart=always
         [Install]
         WantedBy=default.target
-  notify: Restart Uptime Kuma
+  notify: Restart openbao
+
+- name: Enable and start openbao service
+  become: true
+  become_user: "{{ service_user }}"
+  ansible.builtin.systemd_service:
+    name: openbao
+    state: started
+    enabled: true
+    scope: user
