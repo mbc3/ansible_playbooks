@@ -8,11 +8,15 @@
     src: grafana.repo.j2
     dest: /etc/yum.repos.d/grafana.repo
     mode: "0644"
-- name: Install Grafana
+- name: Install Grafana and plugins
   ansible.builtin.dnf:
-    name: grafana
+    name: "{{ item }}"
     state: present
+  loop: "{{ grafana_packages }}"
   notify: Enable Grafana
+- name: Install performance co pilot plugin
+  ansible.builtin.command: grafana-cli plugins install performancecopilot-pcp-app
+  changed_when: false
 - name: Copy Grafana config
   ansible.builtin.copy:
     src: grafana.ini
@@ -37,11 +41,10 @@
     group: grafana
     mode: "0440"
   loop: "{{ grafana_certs | dict2items }}"
-- name: Change group to grafana on everything in letsencrypt directory
-  become: true
-  ansible.builtin.command: chgrp -R grafana /etc/letsencrypt/*
-  changed_when: false
-- name: Change permissions on everything in letsencrypt directory
-  become: true
-  ansible.builtin.command: chmod -R g+rx /etc/letsencrypt/*
-  changed_when: false
+- name: Give grafana group ownership and read/execute permissions on /etc/letsencrypt
+  ansible.builtin.file:
+    path: /etc/letsencrypt
+    owner: root
+    group: grafana
+    mode: g+rx
+    recurse: true
