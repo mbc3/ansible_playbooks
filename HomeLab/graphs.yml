@@ -4,5 +4,6 @@
   become: true
 
   roles:
+    - role: prometheus_client
     - role: prometheus
     - role: grafana

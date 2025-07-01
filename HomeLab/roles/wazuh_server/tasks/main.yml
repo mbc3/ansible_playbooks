@@ -41,9 +41,9 @@
       src: "{{ wazuh_server_tls_directory_src }}/{{ item }}"
       dest: "{{ wazuh_server_tls_directory_dest }}/{{ item }}"
       owner: wazuh-dashboard
-      group: wazuh_dashboard
+      group: wazuh-dashboard
       mode: "0440"
-    loop: "{{ wazh_server_tls_certs }}"
+    loop: "{{ wazuh_server_tls_certs }}"
   - name: Modify Lets Encrypt conf to set renewal at 14 days
     ansible.builtin.lineinfile:
       path: /etc/letsencrypt/renewal/wazuh.localdomain.conf
