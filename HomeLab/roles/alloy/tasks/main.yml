@@ -13,7 +13,12 @@
     name: alloy
     state: present
   notify: Enable Alloy
-# TO DO: disable reporting
+- name: Disable reporting
+  ansible.builtin.lineinfile:
+    path: "/etc/sysconfig/alloy"
+    regexp: "^CUSTOM_ARGS="
+    line: 'CUSTOM_ARGS="--disable-reporting=true"'
+  notify: Restart Alloy
 - name: Copy Alloy config
   ansible.builtin.template:
     src: config.alloy.j2
