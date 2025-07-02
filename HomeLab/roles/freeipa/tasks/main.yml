@@ -40,3 +40,16 @@
     ipa_host: "{{ freeipa_fqdn }}"
     ipa_user: "{{ freeipa_admin }}"
     ipa_pass: "{{ vault_freeipa_admin_password }}"
+- name: Modify the global password policy
+  community.general.ipa_pwpolicy:
+    maxpwdlife: '9999'
+    minpwdlife: '1'
+    historylength: '2'
+    minclasses: '1'
+    minlength: '8'
+    maxfailcount: '6'
+    failinterval: '120'
+    lockouttime: '120'
+    ipa_host: "{{ freeipa_fqdn }}"
+    ipa_user: "{{ freeipa_admin }}"
+    ipa_pass: "{{ vault_freeipa_admin_password }}"
