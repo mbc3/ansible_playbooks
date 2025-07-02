@@ -6,16 +6,26 @@
       ansible.builtin.dnf:
         name: podman
         state: present
-    - name: Enable linger (for podman containers)
-      become: true
-      become_user: "{{ service_user }}"
-      ansible.builtin.command: loginctl enable-linger
-      changed_when: false
     - name: Enable podman auto-update service
       ansible.builtin.systemd_service:
         name: podman-auto-update.timer
         enabled: true
         state: started
+
+- name: Make OpenBao directory
+  ansible.builtin.file:
+    path: /opt/openbao/config
+    state: directory
+    owner: semaphore
+    group: semaphore
+    mode: "0775"
+
+# - name: Open up OpenBao port (temp for testing, before caddy)
+#   ansible.posix.firewalld:
+#     port: 8200/tcp
+#     state: enabled
+#     permanent: true
+#     immediate: true
 
 - name: Install OpenBao
   become: true
@@ -24,6 +34,8 @@
     name: openbao
     hostname: openbao
     image: docker.io/openbao/openbao-ubi
+    volumes:
+      - /opt/openbao/config:/openbao/config:z
     publish:
       - 8200:8200
     state: quadlet
@@ -46,3 +58,4 @@
     state: started
     enabled: true
     scope: user
+    daemon_reload: true

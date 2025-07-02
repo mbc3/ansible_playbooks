@@ -5,9 +5,6 @@
       ansible.builtin.dnf:
         name: podman
         state: present
-    - name: Enable linger (for podman containers)
-      ansible.builtin.command: loginctl enable-linger
-      changed_when: false
     - name: Enable podman auto-update service
       ansible.builtin.systemd_service:
         name: podman-auto-update.timer

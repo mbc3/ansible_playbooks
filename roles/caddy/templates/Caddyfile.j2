@@ -3,8 +3,8 @@
     email {{ caddy_email }}
 }
 {% for key, value in caddy_services.items() %}
-{{ key }}.{{ inventory_hostname }}.localdomain {
-reverse_proxy localhost:{{ value }}
-encode zstd gzip
+{{ key }}.{{ inventory_hostname }}.localdomain  {
+    reverse_proxy localhost:{{ value }}
+    encode zstd gzip
 }
 {% endfor %}
