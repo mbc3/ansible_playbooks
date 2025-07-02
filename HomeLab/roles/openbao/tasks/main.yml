@@ -20,12 +20,13 @@
     group: semaphore
     mode: "0775"
 
-# - name: Open up OpenBao port (temp for testing, before caddy)
-#   ansible.posix.firewalld:
-#     port: 8200/tcp
-#     state: enabled
-#     permanent: true
-#     immediate: true
+- name: Copy OpenBao config
+  ansible.builtin.copy:
+    src: bao.hcl
+    dest: /opt/openbao/config/bao.hcl
+    owner: semaphore
+    group: semaphore
+    mode: "0664"
 
 - name: Install OpenBao
   become: true
@@ -34,6 +35,8 @@
     name: openbao
     hostname: openbao
     image: docker.io/openbao/openbao-ubi
+    network:
+      - host
     volumes:
       - /opt/openbao/config:/openbao/config:z
     publish:
