@@ -3,20 +3,24 @@
   ansible.builtin.rpm_key:
     state: present
     key: https://{{ grafana_url }}/gpg.key
+
 - name: Create Grafana repo
   ansible.builtin.template:
     src: grafana.repo.j2
     dest: /etc/yum.repos.d/grafana.repo
     mode: "0644"
+
 - name: Install Grafana and plugins
   ansible.builtin.dnf:
     name: "{{ item }}"
     state: present
   loop: "{{ grafana_packages }}"
+
   notify: Enable Grafana
 - name: Install performance co pilot plugin
   ansible.builtin.command: grafana-cli plugins install performancecopilot-pcp-app
   changed_when: false
+
 - name: Copy Grafana config
   ansible.builtin.copy:
     src: grafana.ini
@@ -24,6 +28,7 @@
     user: root
     group: grafana
     mode: "0640"
+
   notify: Restart Grafana
 - name: Warn about requesting cert
   ansible.builtin.debug:
@@ -32,6 +37,7 @@
   ansible.builtin.systemd_service:
     name: certbot-renew.timer
     enabled: true
+
 - name: Create symlinks to crt and key files in grafana directory
   ansible.builtin.file:
     state: link
@@ -41,7 +47,8 @@
     group: grafana
     mode: "0440"
   loop: "{{ grafana_certs | dict2items }}"
-- name: Give grafana group ownership and read/execute permissions on /etc/letsencrypt
+
+- name: Give Grafana group ownership and read/execute permissions on /etc/letsencrypt
   ansible.builtin.file:
     path: /etc/letsencrypt
     owner: root

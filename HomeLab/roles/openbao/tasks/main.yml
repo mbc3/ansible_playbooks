@@ -1,64 +1,42 @@
 ---
-- name: Install Podman
-  block:
-    - name: Install Podman
-      become: true
-      ansible.builtin.dnf:
-        name: podman
-        state: present
-    - name: Enable podman auto-update service
-      ansible.builtin.systemd_service:
-        name: podman-auto-update.timer
-        enabled: true
-        state: started
-
-- name: Make OpenBao directory
+- name: Make OpenBao data directory
   ansible.builtin.file:
-    path: /opt/openbao/config
+    path: "{{ openbao_data_dir }}"
     state: directory
-    owner: semaphore
-    group: semaphore
+    owner: openbao
+    group: openbao
     mode: "0775"
 
-- name: Copy OpenBao config
-  ansible.builtin.copy:
-    src: bao.hcl
-    dest: /opt/openbao/config/bao.hcl
-    owner: semaphore
-    group: semaphore
-    mode: "0664"
+- name: Download OpenBao package
+  ansible.builtin.get_url:
+    url: "https://github.com/openbao/openbao/releases/download/v{{ openbao_version }}/bao_{{ openbao_version }}_linux_amd64.rpm"
+    dest: "{{ openbao_pkg_path }}"
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Import OpenBao GPG key
+  ansible.builtin.rpm_key:
+    state: present
+    key: "{{ openbao_gpg_key }}"
 
 - name: Install OpenBao
-  become: true
-  become_user: semaphore
-  containers.podman.podman_container:
-    name: openbao
-    hostname: openbao
-    image: docker.io/openbao/openbao-ubi
-    network:
-      - host
-    volumes:
-      - /opt/openbao/config:/openbao/config:z
-    publish:
-      - 8200:8200
-    state: quadlet
-    quadlet_filename: openbao
-    quadlet_dir: "/home/semaphore/.config/containers/systemd/"
-    quadlet_options:
-      - "AutoUpdate=registry"
-      - |
-        [Service]
-        Restart=always
-        [Install]
-        WantedBy=default.target
-  notify: Restart openbao
+  ansible.builtin.dnf:
+    name: "{{ openbao_pkg_path }}"
+    state: present
 
-- name: Enable and start openbao service
+- name: Copy OpenBao config
+  ansible.builtin.template:
+    src: openbao.hcl.j2
+    dest: /etc/openbao/openbao.hcl
+    owner: root
+    group: root
+    mode: "0664"
+
+- name: Enable and start OpenBao service
   become: true
-  become_user: "{{ service_user }}"
   ansible.builtin.systemd_service:
     name: openbao
     state: started
     enabled: true
-    scope: user
     daemon_reload: true

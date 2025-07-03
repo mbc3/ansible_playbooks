@@ -4,11 +4,11 @@
   become: true
 
   roles:
+    - role: rsyslog
     - role: freeipa_client
     - role: ca_client
     - role: prometheus.prometheus.node_exporter # installs prometheus on rhel10, install with ansible-galaxy collection install prometheus.prometheus
     - role: semaphore
-    - role: openbao
     - role: caddy
     - role: wazuh_agent
     - role: debug

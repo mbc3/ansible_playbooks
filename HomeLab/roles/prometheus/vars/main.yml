@@ -11,7 +11,7 @@ prometheus_home_hosts:
   - files
   - semaphore
   - uptime
-  - repos
+  - openbao
   - wazuh
 prometheus_mbc_hosts:
   - arch.internal

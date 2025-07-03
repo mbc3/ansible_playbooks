@@ -4,5 +4,7 @@
   become: true
 
   roles:
+    - role: rsyslog
     - role: prometheus_client
+    - role: ca_client
     - role: pihole

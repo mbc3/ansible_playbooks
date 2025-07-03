@@ -83,10 +83,6 @@
           loop: "{{ rhel_package_list }}"
           ignore_errors: true
 
-  roles:
-    - role: rsyslog
-    - role: ca_client
-
   tasks:
     - name: Set timezone to Los Angeles
       community.general.timezone:

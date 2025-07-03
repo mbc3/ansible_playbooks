@@ -1,6 +1,4 @@
-ansible_become_password: "{{ vault_semaphore_ansible_password }}"
-service_user: "semaphore"
 caddy_services:
 # key is subdomain, ie pihole.mediapi.localdomain
 # value is port for reverse proxy, ie 8080
-    run: "3000"
+    bao: "8200"

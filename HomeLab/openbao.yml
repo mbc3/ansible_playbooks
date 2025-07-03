@@ -1,10 +1,11 @@
 ---
-- name: Set up Uptime server
-  hosts: uptime
+- name: Set up openbao server
+  hosts: openbao
   become: true
 
   roles:
+    - role: rsyslog
     - role: prometheus_client
     - role: ca_client
-    - role: uptime_kuma
+    - role: openbao
     - role: caddy

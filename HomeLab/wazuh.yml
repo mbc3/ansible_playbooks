@@ -4,6 +4,7 @@
   become: true
 
   roles:
+    - role: rsyslog
     - role: prometheus_client
     - role: freeipa_client
     - role: ca_client
