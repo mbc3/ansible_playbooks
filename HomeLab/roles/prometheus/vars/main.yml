@@ -13,5 +13,6 @@ prometheus_home_hosts:
   - uptime
   - openbao
   - wazuh
+  - test
 prometheus_mbc_hosts:
   - arch.internal

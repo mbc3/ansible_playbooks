@@ -46,6 +46,10 @@
     commands: ALL
     host: ALL
     nopassword: false
+- name: Switch user to create home dir
+  become: true
+  ansible.builtin.command: su {{ freeipa_username }}
+  changed_when: false
 - name: Copy MBC SSH key
   ansible.posix.authorized_key:
     state: present
