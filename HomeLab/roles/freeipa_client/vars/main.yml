@@ -2,5 +2,3 @@
 freeipa_client_domain: "auth.localdomain"
 freeipa_client_fqdn: "freeipa.auth.localdomain"
 freeipa_client_admin_account: "admin"
-freeipa_client_admin_password: "{{ vault_freeipa_admin_password }}"
-freeipa_client_user_password: "{{ vault_freeipa_user_password }}"

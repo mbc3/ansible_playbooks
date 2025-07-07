@@ -1,4 +1,6 @@
 ---
+- name: Populate service facts
+  ansible.builtin.service_facts:
 - name: Install iperf
   ansible.builtin.dnf:
     name: iperf3
@@ -9,3 +11,4 @@
     state: enabled
     permanent: true
     immediate: true
+  when: ansible_facts.services['firewalld.service'].status is defined

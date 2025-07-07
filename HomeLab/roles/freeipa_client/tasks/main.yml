@@ -20,7 +20,7 @@
   become: true
   ansible.builtin.expect:
     command: ipa-client-install --mkhomedir
-    timeout: 480
+    timeout: 600
     responses:
       "Provide the domain name of your IPA server":
         - "{{ freeipa_client_domain }}"
@@ -35,8 +35,8 @@
       "User authorized to enroll computers":
         - "{{ freeipa_client_admin_account }}"
       "Password for":
-        - " {{ freeipa_client_admin_password }}"
-  no_log: true
+        - "{{ vault_freeipa_admin_password }}"
+  no_log: false
   when: user_check.state is not defined
 - name: Allow FreeIPA user in sudoers
   community.general.sudoers:

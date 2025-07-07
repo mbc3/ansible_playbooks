@@ -1,13 +1,10 @@
 ---
-- name: Test
-  hosts: logs
-  vars:
-    version: "2.14.12"
-  tasks:
-    - name: Check if AIDE exists
-      ansible.builtin.stat:
-        path: /sr/sbin/aide
-      register: aide
-    - name: Debug
-      ansible.builtin.debug:
-        var: aide
+- name: Set up Uptime server
+  hosts: test
+  become: true
+
+  roles:
+    - role: debug
+    - role: prometheus.prometheus.node_exporter # installs prometheus on rhel10, install with ansible-galaxy collection install prometheus.prometheus
+    - role: freeipa_client
+    - role: wazuh_agent
