@@ -6,7 +6,6 @@
   # This isn't a great solution, but if I add container ids here manually, this should work
   # Weirdly RHEL based/Arch containers don't have ssh enabled by default, but Debian does
   # TO DO: loop over each container in inventory, get proxmox_hostname["ansible_inventory"].proxmox_vmid
-  # SETUP: After it runs, ssh as root, then make the ansible user with useradd ansible -G wheel -p PASSWORD, then ssh-copy-id the ssh key, then put the ansible users in the sudoers file with no password.
   vars:
     vm_ids:
       - 102
@@ -34,21 +33,19 @@
         user: root
         state: present
         key: "{{ lookup('file', '/home/mbc/.ssh/proxmox.pub') }}"
-    - name: Check for existence of CA SSH key
-      local_action:
-        module: ansible.builtin.stat
-        path: /tmp/ca-cert.pub
-      register: ca_cert
-    - name: Copy CA SSH key
-      ansible.posix.authorized_key:
-        user: root
-        state: present
-        key: "{{ lookup('file', '/tmp/ca-cert.pub') }}"
-      when: ca_cert.stat.exists
-    - name: Install OpenSSH server on container
-      ansible.builtin.command: lxc-attach "{{ item }}" -- dnf install -y openssh-server
-      loop: "{{ vm_ids }}"
-      notify: Restart SSHD
+
+    - name: Container Provision
+      block:
+        - name: Install OpenSSH server on container
+          ansible.builtin.command: lxc-attach "{{ item }}" -- dnf install -y openssh-server
+          loop: "{{ vm_ids }}"
+          notify: Restart SSHD
+
+        - name: Create ansible service account on container (RHEL)
+          ansible.builtin.command: lxc-attach "{{ item }}" -- useradd -m -G wheel -p "{{ vault_container_password }} ansible"
+          loop: "{{ vm_ids }}"
+
+        # Curl the proxmox public key from github, put it in authorized_keys for ansible user
 
   handlers:
     - name: Restart SSHD

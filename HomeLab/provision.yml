@@ -44,17 +44,6 @@
         commands: ALL
         host: ALL
         nopassword: true
-    - name: Check for existence of CA SSH key
-      local_action:
-        module: ansible.builtin.stat
-        path: /tmp/ca-cert.pub
-      register: ca_cert
-    - name: Copy CA SSH key
-      ansible.posix.authorized_key:
-        user: ansible
-        state: present
-        key: "{{ lookup('file', '/tmp/ca-cert.pub') }}"
-      when: ca_cert.stat.exists
     - name: Remove MBC SSH key from Ansible service account
       ansible.posix.authorized_key:
         user: ansible
