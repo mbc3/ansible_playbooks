@@ -1,0 +1,15 @@
+---
+- name: Add Puppet repo
+  ansible.builtin.yum_repository:
+    name: puppet8
+    description: puppet8
+    baseurl: "{{ foreman_puppet_repo }}"
+    gpgkey: "{{ foreman_puppet_gpg_key }}"
+    gpgcheck: true
+- name: Add Foreman repo
+  ansible.builtin.yum_repository:
+    name: foreman
+    description: foreman
+    baseurl: "{{ foreman_foreman_repo }}"
+    gpgkey: "{{ foreman_foreman_gpg_key }}"
+    gpgcheck: true
