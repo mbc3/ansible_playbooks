@@ -1,5 +1,5 @@
 # This is set with Ansible in the prometheus role
-# my global config -- all defaults
+# global config
 global:
   scrape_interval: 1m
   evaluation_interval: 1m
@@ -17,19 +17,12 @@ rule_files:
   # - "first_rules.yml"
   # - "second_rules.yml"
 
-# A scrape configuration containing exactly one endpoint to scrape:
-# Here it's Prometheus itself.
 scrape_configs:
-  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
-  - job_name: "prometheus"
 
-    # metrics_path defaults to '/metrics'
-    # scheme defaults to 'http'.
-
+  - job_name: "firewall"
     static_configs:
-      - targets: ["localhost:9090"]
-
-  - job_name: "home"
+      - targets: [{% for item in prometheus_fw_hosts %}"{{ item }}:{{ prometheus_port }}"{%if item != prometheus_fw_hosts[-1]%},{% endif %}{% endfor %}]
+  - job_name: "homelab"
     static_configs:
       - targets: [{% for item in prometheus_home_hosts %}"{{ item }}:{{ prometheus_port }}"{%if item != prometheus_home_hosts[-1]%},{% endif %}{% endfor %}]
   - job_name: "mbc"

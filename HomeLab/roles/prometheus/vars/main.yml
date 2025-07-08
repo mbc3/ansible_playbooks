@@ -16,3 +16,5 @@ prometheus_home_hosts:
   - test
 prometheus_mbc_hosts:
   - arch.internal
+prometheus_fw_hosts:
+  - opnsense
