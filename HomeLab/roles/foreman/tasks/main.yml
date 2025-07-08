@@ -1,15 +1,39 @@
 ---
-- name: Add Puppet repo
-  ansible.builtin.yum_repository:
-    name: puppet8
-    description: puppet8
-    baseurl: "{{ foreman_puppet_repo }}"
-    gpgkey: "{{ foreman_puppet_gpg_key }}"
-    gpgcheck: true
-- name: Add Foreman repo
-  ansible.builtin.yum_repository:
-    name: foreman
-    description: foreman
-    baseurl: "{{ foreman_foreman_repo }}"
-    gpgkey: "{{ foreman_foreman_gpg_key }}"
-    gpgcheck: true
+- name: Add Firewall rules
+  ansible.posix.firewalld:
+    service: "{{ item }}"
+    permanent: true
+    immediate: true
+    state: enabled
+  loop: "{{ foreman_ports }}"
+
+- name: Import GPG keys
+  ansible.builtin.rpm_key:
+    state: present
+    key: "{{ item }}"
+  loop: "{{ foreman_gpg_keys }}"
+
+- name: Install puppet8
+  ansible.builtin.dnf:
+    name: "{{ foreman_puppet_rpm }}"
+    state: present
+
+- name: Install foreman
+  ansible.builtin.dnf:
+    name: "{{ foreman_foreman_rpm }}"
+    state: present
+
+- name: Install katello
+  ansible.builtin.dnf:
+    name: "{{ foreman_katello_rpm }}"
+    state: present
+
+- name: Install Foreman w/ katello
+  ansible.builtin.dnf:
+    name: foreman-installer-katello
+    state: present
+
+# to install with just foreman:
+# sudo foreman-installer --scenario=foreman --foreman-initial-organization=HomeLab --foreman-initial-location="LA" --foreman-initial-admin-username="admin" --foreman-initial-admin-password="PASSWORD" --foreman-proxy-templates=true
+# to install with katello (needs 20GB of RAM)
+# sudo foreman-installer --scenario=katello --foreman-initial-organization=HomeLab --foreman-initial-location="LA" --foreman-initial-admin-username="admin" --foreman-initial-admin-password="PASSWORD" --foreman-proxy-templates=true

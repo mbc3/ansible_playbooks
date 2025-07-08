@@ -9,3 +9,4 @@
     - role: freeipa_client
     - role: aide
     - role: wazuh_agent
+    - role: foreman

@@ -1,3 +1,9 @@
-foreman_puppet_repo: "https://yum.puppet.com/puppet8-release-el-9.noarch.rpm"
-foreman_foreman_repo: "https://yum.theforeman.org/releases/3.15/el9/x86_64/foreman-release.rpm"
-foreman_foreman_gpg_key: "https://theforeman.org/static/keys/E8C5B839A994276DB61B0228EF5D6BD3A8356411.pub" # https://theforeman.org/security.html#GPGkeys
+foreman_puppet_rpm: "https://yum.puppet.com/puppet8-release-el-9.noarch.rpm"
+foreman_katello_rpm: "https://yum.theforeman.org/katello/4.17/katello/el9/x86_64/katello-repos-latest.rpm"
+foreman_foreman_rpm: "https://yum.theforeman.org/releases/3.15/el9/x86_64/foreman-release.rpm"
+foreman_ports:
+  - RH-Satellite-6
+  - RH-Satellite-6-capsule
+foreman_gpg_keys:
+  - https://yum.puppet.com/RPM-GPG-KEY-puppet
+  - https://theforeman.org/static/keys/E8C5B839A994276DB61B0228EF5D6BD3A8356411.pub
