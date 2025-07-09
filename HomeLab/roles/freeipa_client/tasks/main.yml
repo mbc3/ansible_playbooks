@@ -3,14 +3,17 @@
   ansible.builtin.dnf:
     name: freeipa-client
     state: present
+
 - name: Remind user to run freeipa command
   ansible.builtin.debug:
     msg: "Please run `sudo ipa-client-install --mkhomedir`!"
+
 - name: Set hostname to be FQDN
   ansible.builtin.hostname:
     name: "{{ inventory_hostname }}.{{ domain }}"
     use: systemd
   when: inventory_hostname != "freeipa"
+
 - name: Check if FreeIPA user exists
   ansible.builtin.user:
     name: mbc
@@ -38,6 +41,7 @@
         - "{{ vault_freeipa_admin_password }}"
   no_log: false
   when: user_check.state is not defined
+
 - name: Allow FreeIPA user in sudoers
   community.general.sudoers:
     name: "{{ freeipa_username }}"
@@ -46,10 +50,12 @@
     commands: ALL
     host: ALL
     nopassword: false
+
 - name: Switch user to create home dir
   become: true
   ansible.builtin.command: su {{ freeipa_username }}
   changed_when: false
+
 - name: Copy MBC SSH key
   ansible.posix.authorized_key:
     state: present

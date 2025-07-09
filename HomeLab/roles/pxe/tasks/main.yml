@@ -1,0 +1,93 @@
+---
+- name: Install PXE server packages
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ pxe_packages }}"
+
+- name: Enable tftp/http server
+  ansible.builtin.systemd_service:
+    name: "{{ item }}"
+    enabled: true
+    state: started
+  loop:
+    - nginx
+    - tftp
+
+- name: Create http directory
+  ansible.builtin.file:
+    state: directory
+    path: /var/www
+    owner: root
+    group: root
+    mode: "0775"
+
+- name: Copy Nginx conf
+  ansible.builtin.copy:
+    src: pxe.conf
+    dest: /etc/nginx/conf.d/pxe.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart nginx
+
+- name: Copy index.html
+  ansible.builtin.copy:
+    src: index.html
+    dest: /var/www/index.html
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Open necessary ports
+  ansible.posix.firewalld:
+    service: "{{ item }}"
+    state: enabled
+    permanent: true
+    immediate: true
+  loop: "{{ pxe_ports }}"
+
+- name: Copy necessary files to /var/lib/tftboot
+  ansible.builtin.copy:
+    src: /tftpboot/
+    dest: /var/lib/tftpboot
+    owner: root
+    group: root
+    mode: "0755"
+    remote_src: true
+
+- name: Mount ISOs
+  ansible.posix.mount:
+    src: "{{ item.key }}"
+    path: "/var/lib/tftpboot/{{ item.value }}"
+    fstype: iso9660
+    state: mounted
+    opts: loop
+    boot: true
+  loop: "{{ pxe_isos | dict2items }}"
+
+- name: Copy ISO contents to http server dir
+  ansible.builtin.copy:
+    src: "/var/lib/tftpboot/{{ item.value }}"
+    dest: /var/www
+    owner: root
+    group: root
+    mode: "0775"
+    remote_src: true
+  loop: "{{ pxe_isos | dict2items }}"
+
+- name: Create menu directory
+  ansible.builtin.file:
+    state: directory
+    path: /var/lib/tftpboot/pxelinux.cfg
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Copy default
+  ansible.builtin.copy:
+    src: default
+    dest: /var/lib/tftpboot/pxelinux.cfg/default
+    owner: root
+    group: root
+    mode: "0664"

@@ -1,9 +1,10 @@
 ---
 - name: Mount NFS share
   ansible.posix.mount:
-    src: "{{ nfs_client_source }}"
-    path: "{{ nfs_client_mountpoint }}"
+    src: "{{ item.key }}"
+    path: "{{ item.value }}"
     opts: rw,sync,hard
     boot: true
     state: mounted
     fstype: nfs
+  loop: "{{ nfs_client_mounts | dict2items }}"
