@@ -1,0 +1,7 @@
+---
+- name: Restart Netboot XYZ
+  containers.podman.podman_container:
+    name: netbootxyz
+    image: netbootxyz
+    state: started
+    force_restart: true

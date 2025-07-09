@@ -14,7 +14,7 @@ prometheus_home_hosts:
   - openbao
   - wazuh
   - test
-  - foreman
+  - netboot
 prometheus_mbc_hosts:
   - arch.internal
 prometheus_fw_hosts:

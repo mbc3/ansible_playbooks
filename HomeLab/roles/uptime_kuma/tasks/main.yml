@@ -5,9 +5,7 @@
       ansible.builtin.dnf:
         name: podman
         state: present
-    - name: Enable linger (for podman containers)
-      ansible.builtin.command: loginctl enable-linger
-      changed_when: false
+
     - name: Enable podman auto-update service
       ansible.builtin.systemd_service:
         name: podman-auto-update.timer
@@ -18,10 +16,12 @@
   containers.podman.podman_volume:
     name: uptime-kuma
     state: present
+
 - name: Pull Uptime Kuma image
   containers.podman.podman_image:
     name: docker.io/louislam/uptime-kuma
     tag: 1
+
 - name: Create Uptime Kuma quadlet file
   containers.podman.podman_container:
     name: uptime-kuma

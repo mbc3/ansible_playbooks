@@ -1,0 +1,50 @@
+---
+- name: Install Podman
+  block:
+    - name: Install Podman
+      ansible.builtin.dnf:
+        name: podman
+        state: present
+
+    - name: Enable podman auto-update service
+      ansible.builtin.systemd_service:
+        name: podman-auto-update.timer
+        enabled: true
+        state: started
+
+- name: Create netboot dirs
+  ansible.builtin.file:
+    name: "{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0664"
+  loop:
+    - /opt/netbootxyz/config
+    - /opt/netbootxyz/assets
+
+- name: Pull Netboot XYZ image
+  containers.podman.podman_image:
+    name: ghcr.io/netbootxyz/netbootxyz
+    tag: latest
+
+- name: Create Netboot XYZ quadlet file
+  containers.podman.podman_container:
+    name: netbootxyz
+    image: ghcr.io/netbootxyz/netbootxyz
+    state: quadlet
+    quadlet_filename: netbootxyz
+    quadlet_dir: "/etc/containers/systemd"
+    publish:
+      - 3000:3000
+    volumes:
+      - "/opt/netbootxyz/config:/config"
+      - "/opt/netbootxyz/assets:/assets"
+    quadlet_options:
+      - "AutoUpdate=registry"
+      - |
+        [Service]
+        Restart=always
+        [Install]
+        WantedBy=default.target
+  notify: Restart Netboot XYZ

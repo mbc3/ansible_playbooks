@@ -13,6 +13,7 @@
       - 107
       - 109
       - 110
+      - 113
 
   pre_tasks:
     # - name: Display vmid # Still testing this out
@@ -41,9 +42,9 @@
           loop: "{{ vm_ids }}"
           notify: Restart SSHD
 
-        - name: Create ansible service account on container (RHEL)
-          ansible.builtin.command: lxc-attach "{{ item }}" -- useradd -m -G wheel -p "{{ vault_container_password }} ansible"
-          loop: "{{ vm_ids }}"
+        # - name: Create ansible service account on container (RHEL)
+        #   ansible.builtin.command: lxc-attach "{{ item }}" -- useradd -m -G wheel -p "{{ vault_container_password }} ansible"
+        #   loop: "{{ vm_ids }}"
 
         # Curl the proxmox public key from github, put it in authorized_keys for ansible user
 

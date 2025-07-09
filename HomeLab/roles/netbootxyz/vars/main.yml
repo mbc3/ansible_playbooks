@@ -1,0 +1,5 @@
+---
+netbootxyz_ports:
+  - 80
+  - 69
+  - 3000
