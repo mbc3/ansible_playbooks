@@ -1,15 +1,23 @@
-default menu.c32
-prompt 0
-timeout 30
+DEFAULT menu
+PROMPT 0
+MENU TITLE MBC PXE BOOT
+TIMEOUT 200
+TOTALTIMEOUT 6000
 ONTIMEOUT local
 
-menu title PXE Boot Menu
+LABEL local
+        MENU LABEL (local)
+        MENU DEFAULT
+        LOCALBOOT -1
 
-label 1
-menu label ^1) Install AlmaLinux 10
-kernel almalinux/images/pxeboot/vmlinuz
-initrd almalinux/images/pxeboot/initrd.img
-append inst.repo=http://192.168.7.113/almalinux
-label 2
-menu label ^2) Boot from local drive
-localboot 0
+LABEL installer
+        kernel almalinux/vmlinuz
+        initrd almalinux/initrd.img
+        append inst.repo=http://192.168.7.113/almalinux/
+        MENU LABEL AlmaLinux 10 Installer
+
+LABEL rescue
+        kernel almalinux/vmlinuz
+        initrd almalinux/initrd.img
+        append inst.repo=http://192.168.7.113/almalinux/ inst.rescue
+        MENU LABEL AlmaLinux 10 Rescue

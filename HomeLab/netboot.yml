@@ -9,6 +9,7 @@
     - role: ca_client
     - role: freeipa_client
     - role: nfs_client
+    - role: wazuh_agent
     - role: pxe
     #- role: netbootxyz
     #- role: caddy

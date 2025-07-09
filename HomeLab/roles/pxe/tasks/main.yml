@@ -59,21 +59,50 @@
 - name: Mount ISOs
   ansible.posix.mount:
     src: "{{ item.key }}"
-    path: "/var/lib/tftpboot/{{ item.value }}"
+    path: "/mnt/{{ item.value }}"
     fstype: iso9660
-    state: mounted
+    state: ephemeral
     opts: loop
-    boot: true
   loop: "{{ pxe_isos | dict2items }}"
 
 - name: Copy ISO contents to http server dir
   ansible.builtin.copy:
-    src: "/var/lib/tftpboot/{{ item.value }}"
-    dest: /var/www
+    src: "/mnt/{{ item.value }}"
+    dest: "/var/www/"
     owner: root
     group: root
     mode: "0775"
     remote_src: true
+  loop: "{{ pxe_isos | dict2items }}"
+
+- name: Copy ISO vmlinuz to tftp server dir
+  ansible.builtin.copy:
+    src: "/mnt/{{ item.value }}/images/pxeboot/vmlinuz"
+    dest: "/var/lib/tftpboot/{{ item.value }}"
+    owner: root
+    group: root
+    mode: "0775"
+    remote_src: true
+  loop: "{{ pxe_isos | dict2items }}"
+
+- name: Copy ISO initrd.img to tftp server dir
+  ansible.builtin.copy:
+    src: "/mnt/{{ item.value }}/images/pxeboot/initrd.img"
+    dest: "/var/lib/tftpboot/{{ item.value }}"
+    owner: root
+    group: root
+    mode: "0775"
+    remote_src: true
+  loop: "{{ pxe_isos | dict2items }}"
+
+- name: Unmount ISOs
+  ansible.posix.mount:
+    src: "{{ item.key }}"
+    path: "/mnt/{{ item.value }}"
+    fstype: iso9660
+    state: unmounted
+    opts: loop
+    boot: false
   loop: "{{ pxe_isos | dict2items }}"
 
 - name: Create menu directory
