@@ -10,6 +10,12 @@ LABEL local
         MENU DEFAULT
         LOCALBOOT -1
 
+LABEL kickstart
+        kernel almalinux/vmlinuz
+        initrd almalinux/initrd.img
+        append inst.ks=http://192.168.7.113/alma10.ks inst.repo=http://192.168.7.113/almalinux/
+        MENU LABEL AlmaLinux 10 Kickstart
+
 LABEL installer
         kernel almalinux/vmlinuz
         initrd almalinux/initrd.img

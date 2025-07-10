@@ -39,6 +39,14 @@
     group: root
     mode: "0644"
 
+- name: Copy Kickstart file
+  ansible.builtin.copy:
+    src: alma10.ks
+    dest: /var/www/alma10.ks
+    owner: root
+    group: root
+    mode: "0644"
+
 - name: Open necessary ports
   ansible.posix.firewalld:
     service: "{{ item }}"

@@ -9,5 +9,5 @@ pxe_ports:
   - http
 pxe_isos:
   {
-    "/mnt/proto/torrents/AlmaLinux-10.0-x86_64/AlmaLinux-10.0-x86_64-boot.iso": "almalinux",
+    "/mnt/proto/torrents/AlmaLinux-10.0-x86_64/AlmaLinux-10.0-x86_64-minimal.iso": "almalinux",
   }
