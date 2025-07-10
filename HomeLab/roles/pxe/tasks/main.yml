@@ -65,6 +65,26 @@
     opts: loop
   loop: "{{ pxe_isos | dict2items }}"
 
+- name: Copy UEFI BOOTX64.EFI files from ISO
+  ansible.builtin.copy:
+    src: "/mnt/{{ item.value }}/EFI/BOOT/BOOTX64.EFI"
+    dest: "/var/lib/tftpboot"
+    owner: root
+    group: root
+    mode: "0775"
+    remote_src: true
+  loop: "{{ pxe_isos | dict2items }}"
+
+- name: Copy UEFI grubx64.efi files from ISO
+  ansible.builtin.copy:
+    src: "/mnt/{{ item.value }}/EFI/BOOT/grubx64.efi"
+    dest: "/var/lib/tftpboot"
+    owner: root
+    group: root
+    mode: "0775"
+    remote_src: true
+  loop: "{{ pxe_isos | dict2items }}"
+
 - name: Copy ISO contents to http server dir
   ansible.builtin.copy:
     src: "/mnt/{{ item.value }}"
