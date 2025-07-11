@@ -19,14 +19,17 @@
     group: root
     mode: "0664"
   notify: Restart Prometheus
+
 - name: Create Prometheus podman volume
   containers.podman.podman_volume:
     name: prometheus-data
     state: present
+
 - name: Pull Prometheus image
   containers.podman.podman_image:
     name: docker.io/prom/prometheus
     tag: latest
+
 - name: Create Prometheus quadlet file
   containers.podman.podman_container:
     name: prometheus
@@ -44,6 +47,8 @@
         [Service]
         Restart=always
         [Unit]
+        Wants=network-online.target
         After=network-online.target
         [Install]
         WantedBy=default.target
+  notify: Restart Prometheus

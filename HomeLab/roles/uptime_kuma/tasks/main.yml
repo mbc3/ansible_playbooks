@@ -36,6 +36,9 @@
     quadlet_options:
       - "AutoUpdate=registry"
       - |
+        [Unit]
+        Wants=network-online.target
+        After=network-online.target
         [Service]
         Restart=always
         [Install]
