@@ -15,6 +15,7 @@ semaphore_packages:
   - python3-PyMySQL
   - tofu
   - awscli2
+  - systemd-container
 semaphore_cloud_servers:
   charon: "173.230.144.162"
   sleepycow: "45.79.90.174"

@@ -4,17 +4,29 @@
     src: opentofu.repo
     dest: /etc/yum.repos.d/opentofu.repo
     mode: "0644"
+
 - name: Install necessary packages
   ansible.builtin.dnf:
     name: "{{ item }}"
     state: present
   loop: "{{ semaphore_packages }}"
+
 - name: Create semaphore user
   ansible.builtin.user:
     name: semaphore
     comment: Semaphore Service Account
     shell: /usr/bin/bash
     password: "{{ vault_semaphore_semaphore_password | password_hash('sha512', 'Dash0fSA1t') }}"
+
+- name: Disallow semaphore user from SSH
+  ansible.builtin.copy:
+    src: 69-semaphore.conf
+    dest: /etc/ssh/sshd_config.d/69-semaphore.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart SSHD
+
 - name: Make SSH directory
   become: true
   become_user: semaphore
@@ -22,6 +34,7 @@
     path: ~/.ssh
     state: directory
     mode: "0700"
+
 - name: Generate Github SSH key
   become: true
   become_user: semaphore
@@ -31,6 +44,7 @@
     group: semaphore
     comment: "MBC Github"
     type: "ed25519"
+
 - name: Set ssh config to use ipv4 to get around github's missing ipv6 support
   become: true
   become_user: semaphore
@@ -41,6 +55,7 @@
     state: present
     other_options:
       addressfamily: "inet"
+
 - name: Set ssh config to include cloud servers
   become: true
   community.general.ssh_config:
@@ -50,26 +65,31 @@
     identity_file: "/home/semaphore/.ssh/github"
     state: present
   loop: "{{ semaphore_cloud_servers | dict2items }}"
+
 - name: Download Semaphore package
   ansible.builtin.get_url:
     url: "https://github.com/semaphoreui/semaphore/releases/download/v{{ semaphore_version }}/semaphore_{{ semaphore_version }}_linux_amd64.rpm"
     dest: "{{ semaphore_package_location }}"
     mode: "0770"
+
 - name: Install Semaphore
   ansible.builtin.dnf:
     name: "{{ semaphore_package_location }}"
     state: present
     disable_gpg_check: true
+
 - name: Enable MariaDB
   ansible.builtin.systemd_service:
     name: mariadb
     state: started
     enabled: true
+
 - name: Create semaphore database
   community.mysql.mysql_db:
     name: semaphore
     state: present
     login_unix_socket: /var/lib/mysql/mysql.sock
+
 - name: Create semaphore db user
   community.mysql.mysql_user:
     state: present
@@ -78,9 +98,11 @@
     priv:
       'semaphore.*': 'ALL'
     login_unix_socket: /var/lib/mysql/mysql.sock
+
 - name: Tell user to run firstname setup
   ansible.builtin.debug:
     msg: "please run 'semphore setup'"
+
 - name: Copy ansible collections requirements.yml
   ansible.builtin.copy:
     src: requirements.yml
@@ -88,6 +110,7 @@
     owner: semaphore
     group: semaphore
     mode: "0644"
+
 - name: Allow semaphore user to own semaphore tmp dir
   ansible.builtin.file:
     path: /tmp/semaphore
@@ -95,6 +118,7 @@
     owner: semaphore
     group: semaphore
     mode: "0755"
+
 - name: Install semaphore systemd service
   ansible.builtin.copy:
     src: semaphore.service
@@ -102,12 +126,14 @@
     owner: root
     group: root
     mode: "0644"
+
 - name: Enable semaphore service
   ansible.builtin.systemd_service:
     name: semaphore
     daemon_reload: true
     state: started
     enabled: true
+
 - name: Remind user to configure aws credentials
   ansible.builtin.debug:
     msg: Set AWS credentials with 'aws configure'!
