@@ -32,6 +32,7 @@
     owner: root
     group: root
     mode: "0664"
+  notify: Restart OpenBao
 
 - name: Set VAULT_ADDR environment variable # needed by cli since I'm only using https to access ui
   ansible.builtin.lineinfile:
