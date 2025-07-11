@@ -33,6 +33,12 @@
     group: root
     mode: "0664"
 
+- name: Set VAULT_ADDR environment variable # needed by cli since I'm only using https to access ui
+  ansible.builtin.lineinfile:
+    path: /etc/environment
+    line: VAULT_ADDR=http://127.0.0.1:8200
+    state: present
+
 - name: Enable and start OpenBao service
   ansible.builtin.systemd_service:
     name: openbao
