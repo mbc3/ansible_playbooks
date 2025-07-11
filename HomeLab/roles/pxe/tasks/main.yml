@@ -141,10 +141,18 @@
     group: root
     mode: "0755"
 
-- name: Copy default
+- name: Copy default for BIOS boot
   ansible.builtin.copy:
     src: default
     dest: /var/lib/tftpboot/pxelinux.cfg/default
     owner: root
     group: root
     mode: "0664"
+
+- name: Copy grub.cfg for UEFI boot
+  ansible.builtin.copy:
+    src: grub.cfg
+    dest: /var/lib/tftpboot/grub.cfg
+    owner: root
+    group: root
+    mode: "0644"
