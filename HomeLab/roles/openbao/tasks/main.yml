@@ -46,3 +46,12 @@
     state: started
     enabled: true
     daemon_reload: true
+
+- name: Copy OpenBao logrotate for file audit
+  ansible.builtin.copy:
+    src: openbao
+    dest: /etc/logrotate.d/openbao
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart logrotate

@@ -1,0 +1,11 @@
+/var/log/openbao_audit.log {
+missingok
+monthly
+create 0664 openbao openbao
+minsize 100M
+rotate 6
+sharedscripts
+postrotate
+    /usr/bin/systemctl -s HUP kill openbao.service >/dev/null 2>&1 || true
+endscript
+}
