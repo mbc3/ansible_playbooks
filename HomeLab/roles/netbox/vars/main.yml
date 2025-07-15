@@ -1,0 +1,3 @@
+netbox_packages:
+  - podman
+  - systemd-container

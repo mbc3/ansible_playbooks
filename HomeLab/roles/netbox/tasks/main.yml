@@ -1,10 +1,29 @@
 ---
+- name: Setup user account
+  block:
+  - name: Create netbox user
+    ansible.builtin.user:
+      name: netbox
+      comment: netbox Service Account
+      shell: /usr/bin/bash
+      password: "{{ vault_netbox_netbox_password | password_hash('sha512', 'Dash0fSA1t') }}"
+
+  - name: Disallow netbox user from SSH
+    ansible.builtin.copy:
+      src: 69-netbox.conf
+      dest: /etc/ssh/sshd_config.d/69-netbox.conf
+      owner: root
+      group: root
+      mode: "0644"
+    notify: Restart SSHD
+
 - name: Install Podman
   block:
-    - name: Install Podman
+    - name: Install necessary packages
       ansible.builtin.dnf:
-        name: podman
+        name: "{{ item }}"
         state: present
+      loop: "{{ netbox_packages }}"
 
     - name: Enable podman auto-update service
       ansible.builtin.systemd_service:
@@ -12,18 +31,50 @@
         enabled: true
         state: started
 
-- name: Create netbox user
-  ansible.builtin.user:
-    name: netbox
-    comment: netbox Service Account
-    shell: /usr/bin/bash
-    password: "{{ vault_netbox_netbox_password | password_hash('sha512', 'Dash0fSA1t') }}"
+    - name: Enable linger
+      ansible.builtin.command: loginctl enable-linger netbox
+      changed_when: false
 
-- name: Disallow netbox user from SSH
-  ansible.builtin.copy:
-    src: 69-netbox.conf
-    dest: /etc/ssh/sshd_config.d/69-netbox.conf
-    owner: root
-    group: root
-    mode: "0644"
-  notify: Restart SSHD
+- name: Set up netbox container
+  become: true
+  become_user: netbox
+  block:
+    - name: Pull netbox image
+      containers.podman.podman_image:
+        name: lscr.io/linuxserver/netbox
+        tag: latest
+
+    - name: Create volume mount
+      ansible.builtin.file:
+        state: directory
+        path: /opt/netbox/config
+        owner: netbox
+        group: netbox
+        mode: "0775"
+
+    - name: Create netbox quadlet file
+      containers.podman.podman_container:
+        name: netbox
+        image: lscr.io/linuxserver/netbox
+        state: quadlet
+        quadlet_filename: netbox
+        quadlet_dir: "/home/netbox/.config/contaiers/systemd"
+        publish:
+          - "8000:8000"
+        volume:
+          - /opt/netbox/config:/config:z
+        quadlet_options:
+          - "AutoUpdate=registry"
+          - |
+            [Service]
+            Restart=always
+            [Install]
+            WantedBy=default.target
+      notify: Restart Netbox
+
+    - name: Start Netbox
+      ansible.builtin.systemd_service:
+        name: netbox
+        daemon_reload: true
+        scope: user
+        state: started

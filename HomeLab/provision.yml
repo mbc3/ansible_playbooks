@@ -41,6 +41,7 @@
         name: 99-ansible
         state: present
         user: ansible
+        runas: ALL
         commands: ALL
         host: ALL
         nopassword: true
