@@ -35,6 +35,14 @@
       ansible.builtin.command: loginctl enable-linger netbox
       changed_when: false
 
+    - name: Create volume mount
+      ansible.builtin.file:
+        state: directory
+        path: /opt/netbox/config
+        owner: netbox
+        group: netbox
+        mode: "0775"
+
 - name: Set up netbox container
   become: true
   become_user: netbox
@@ -44,21 +52,13 @@
         name: lscr.io/linuxserver/netbox
         tag: latest
 
-    - name: Create volume mount
-      ansible.builtin.file:
-        state: directory
-        path: /opt/netbox/config
-        owner: netbox
-        group: netbox
-        mode: "0775"
-
     - name: Create netbox quadlet file
       containers.podman.podman_container:
         name: netbox
         image: lscr.io/linuxserver/netbox
         state: quadlet
         quadlet_filename: netbox
-        quadlet_dir: "/home/netbox/.config/contaiers/systemd"
+        quadlet_dir: "/home/netbox/.config/containers/systemd"
         publish:
           - "8000:8000"
         volume:
