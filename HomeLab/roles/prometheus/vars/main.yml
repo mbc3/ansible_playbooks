@@ -15,6 +15,7 @@ prometheus_home_hosts:
   - wazuh
   - test
   - netboot
+  - netbox
 prometheus_mbc_hosts:
   - arch.internal
 prometheus_fw_hosts:

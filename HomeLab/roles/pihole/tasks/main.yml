@@ -4,6 +4,10 @@
   ansible.builtin.apt:
     name: git
     state: present
+- name: Set hostname to be FQDN
+  ansible.builtin.hostname:
+    name: "{{ inventory_hostname }}.{{ domain }}"
+    use: systemd
 - name: Checkout pihole repo
   become: true
   ansible.builtin.git:
