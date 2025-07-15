@@ -1,7 +1,7 @@
 ---
 - name: Add DNS
   community.general.nmcli:
-    conn_name: System eth0
+    conn_name: "{{ ansible_default_ipv4.interface }}"
     type: ethernet
     dns4:
       - "{{ dns_client_ipv4_server_1 }}"

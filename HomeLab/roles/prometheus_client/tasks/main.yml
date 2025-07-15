@@ -1,6 +1,7 @@
 ---
 - name: Populate service facts
   ansible.builtin.service_facts:
+
 - name: Add Prometheus Node Exporter service to firewalld
   ansible.posix.firewalld:
     service: "{{ item }}"
@@ -9,14 +10,28 @@
     permanent: true
   loop: "{{ prometheus_client_ports }}"
   when: ansible_facts.services['firewalld.service'].status is defined
+
+- name: Check if rhel9 prometheus node exporter service exists
+  ansible.builtin.stat:
+    path: /usr/lib/systemd/system/prometheus-node-exporter.service
+  register: prometheus_rhel9
+
 - name: Enable prometheus-node-exporter
   ansible.builtin.systemd_service:
     name: prometheus-node-exporter
     enabled: true
     state: started
+  when: prometheus_rhel9.stat.exists
+
+- name: Check if /etc/default/prometheus-node-exporter exists
+  ansible.builtin.stat:
+    path: /etc/default/prometheus-node-exporter
+  register: prometheus_settings
+
 - name: Add systemd and process collector
   ansible.builtin.lineinfile:
     path: /etc/default/prometheus-node-exporter
     regexp: "^ARGS="
     line: 'ARGS="--collector.systemd --collector.processes"'
+  when: prometheus_settings.stat.exists
   notify: Restart prometheus-node-exporter

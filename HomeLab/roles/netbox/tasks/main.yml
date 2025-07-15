@@ -11,3 +11,19 @@
         name: podman-auto-update.timer
         enabled: true
         state: started
+
+- name: Create netbox user
+  ansible.builtin.user:
+    name: netbox
+    comment: netbox Service Account
+    shell: /usr/bin/bash
+    password: "{{ vault_netbox_netbox_password | password_hash('sha512', 'Dash0fSA1t') }}"
+
+- name: Disallow netbox user from SSH
+  ansible.builtin.copy:
+    src: 69-netbox.conf
+    dest: /etc/ssh/sshd_config.d/69-netbox.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart SSHD
