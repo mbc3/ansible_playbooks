@@ -12,4 +12,5 @@
     - role: prometheus_client
     - role: wazuh_agent
     - role: netbox
+    - role: caddy
     - role: debug
