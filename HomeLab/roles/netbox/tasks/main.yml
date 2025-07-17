@@ -43,6 +43,14 @@
         group: netbox
         mode: "0775"
 
+    - name: Create db volume mount
+      ansible.builtin.file:
+        state: directory
+        path: /opt/postgres
+        owner: netbox
+        group: netbox
+        mode: "0775"
+
 - name: Set up netbox container
   become: true
   become_user: netbox
@@ -100,6 +108,8 @@
         state: quadlet
         quadlet_filename: netbox-db
         quadlet_dir: "/home/netbox/.config/containers/systemd"
+        volume:
+          - /opt/postgres:/var/lib/postgresql/data:z
         env:
           POSTGRES_PASSWORD: "{{ vault_netbox_postgres_password }}"
           POSTGRES_USER: "netbox"
@@ -155,8 +165,8 @@
           PGID: "1001" # netbox user
           TZ: "Etc/UTC"
           SUPERUSER_EMAIL: "cohen@matthewbriancohen.com"
-          # SUPERUSER_PASSWORD: "{{ vault_netbox_superuser_password }}"
-          ALLOWED_HOST: "box.netbox.localdomain"
+          SUPERUSER_PASSWORD: "{{ vault_netbox_superuser_password }}" # superuser account that is created by default is "admin"
+          ALLOWED_HOST: "*"
           DB_NAME: "netbox"
           DB_USER: "netbox"
           DB_PASSWORD: "{{ vault_netbox_postgres_password }}"
@@ -182,3 +192,7 @@
         daemon_reload: true
         scope: user
         state: started
+
+    - name: Remind user to edit configuartion.py
+      ansible.builtin.debug:
+        msg: "please edit /opt/netbox/config/configuration.py with the correct config details!"
