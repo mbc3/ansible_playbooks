@@ -166,7 +166,7 @@
           TZ: "Etc/UTC"
           SUPERUSER_EMAIL: "cohen@matthewbriancohen.com"
           SUPERUSER_PASSWORD: "{{ vault_netbox_superuser_password }}" # superuser account that is created by default is "admin"
-          ALLOWED_HOST: "*"
+          ALLOWED_HOST: "box.netbox.localdomain"
           DB_NAME: "netbox"
           DB_USER: "netbox"
           DB_PASSWORD: "{{ vault_netbox_postgres_password }}"
