@@ -1,0 +1,6 @@
+---
+smb_packages:
+  - samba
+smb_ports: "samba"
+smb_directory: "/srv/proto/samba"
+smb_guest_share: "guest_share"

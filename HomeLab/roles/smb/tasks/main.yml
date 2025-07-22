@@ -1,0 +1,66 @@
+---
+- name: Install SMB
+  block:
+    - name: Install packages
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ smb_packages }}"
+
+    - name: Open samba ports on firewalld
+      ansible.posix.firewalld:
+        service: "{{ smb_ports }}"
+        state: enabled
+        permanent: true
+        immediate: true
+
+    - name: Add guest user for anonymous SMB logins
+      ansible.builtin.user:
+        name: guest
+        shell: /usr/sbin/nologin
+        create_home: false
+        comment: Guest Account for SMB logins
+
+    - name: Add SMB share directory
+      ansible.builtin.file:
+        path: "{{ smb_directory }}"
+        owner: root
+        group: root
+        mode: "0777"
+
+    - name: Add SMB guest share directory
+      ansible.builtin.file:
+        path: "{{ smb_directory }}/{{ smb_guest_share }}"
+        owner: guest
+        group: guest
+        mode: "0777"
+
+- name: Configure SMB
+  block:
+    - name: Copy Samba config
+      ansible.builtin.template:
+        src: smb.conf.j2
+        dest: /etc/samba/smb.conf
+        owner: root
+        group: root
+        mode: "0644"
+      notify: Restart SMB
+
+    - name: Set proper SELinux context
+      community.general.sefcontext:
+        target: "{{ smb_directory }}(/.*)?"
+        setype: samba_share_t
+        state: present
+      notify: Apply SELinux context
+
+    - name: Enable SELinux boolean
+      ansible.posix.seboolean:
+        name: samba_export_all_rw
+        state: true
+        persistent: true
+
+- name: Start and enable SMB service
+  ansible.builtin.systemd_service:
+    name: smb
+    enabled: true
+    state: started

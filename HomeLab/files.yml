@@ -11,6 +11,7 @@
     - role: aide
     - role: opnsense_backups
     - role: nfs
+    - role: smb
     - role: resilio_sync
     - role: syncthing
     - role: torrent
