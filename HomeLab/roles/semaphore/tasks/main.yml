@@ -137,3 +137,27 @@
 - name: Remind user to configure aws credentials
   ansible.builtin.debug:
     msg: Set AWS credentials with 'aws configure'!
+
+- name: Upload AWS credentials
+  block:
+    - name: Create AWS directory
+      ansible.builtin.file:
+        state: directory
+        path: /home/semaphore/.aws
+        owner: semaphore
+        group: semaphore
+        mode: "0755"
+    - name: Copy AWS config
+      ansible.builtin.copy:
+        src: config
+        dest: /home/semaphore/.aws/config
+        owner: semaphore
+        group: semaphore
+        mode: "0600"
+    - name: Copy AWS credentials
+      ansible.builtin.template:
+        src: credentials
+        dest: /home/semaphore/.aws/credentials
+        owner: semaphore
+        group: semaphore
+        mode: "0600"
