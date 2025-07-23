@@ -12,7 +12,7 @@
 #     fstype: xfs
 - name: Ensure mountpoints exist
   ansible.builtin.file:
-    name: "{{ item }}"
+    path: "{{ item }}"
     state: directory
     owner: root
     group: root
