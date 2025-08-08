@@ -1,7 +1,9 @@
 #!/usr/bin/bash
 # Creates a pem file with the fullchain and key, as pihole annoyingly wants
 CERT="homelab_pihole_full.pem"
-CERT_DIR="/etc/letsencrypt/live/$(hostname)" # hostname needs to be set as the FQDN
+HOSTNAME=$(hostname | cut -f 1 -d ".")
+DOMAIN="localdomain"
+CERT_DIR="/etc/letsencrypt/live/$HOSTNAME.$DOMAIN"
 PIHOLE_CERT_DIR="/etc/pihole"
 
 # delete old pihole cert
