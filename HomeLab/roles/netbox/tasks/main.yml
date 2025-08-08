@@ -193,6 +193,6 @@
         scope: user
         state: started
 
-    - name: Remind user to edit configuartion.py
+    - name: Remind user to edit configuration.py
       ansible.builtin.debug:
         msg: "please edit /opt/netbox/config/configuration.py with the correct config details!"
