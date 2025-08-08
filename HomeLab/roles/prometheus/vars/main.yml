@@ -18,5 +18,6 @@ prometheus_home_hosts:
   - netbox
 prometheus_mbc_hosts:
   - arch.internal
+  - services
 prometheus_fw_hosts:
   - opnsense
