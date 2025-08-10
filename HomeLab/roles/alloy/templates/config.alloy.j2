@@ -23,11 +23,6 @@ loki.relabel "syslog" {
   forward_to = []
 
   rule {
-    target_label  = "os"
-    replacement = constants.os
-  }
-
-  rule {
     source_labels = ["__syslog_message_hostname"]
     target_label  = "hostname"
   }
