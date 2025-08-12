@@ -96,6 +96,7 @@
       ansible.builtin.debug:
         msg: "yes, this hit"
       when:
-        - dnf_updates is defined
-        - (dnf_updates.results | regex_search('kernel-\d'))
-        - ansible_distribution != "CentOS"
+        # - dnf_updates is defined
+        - '"kernel-" in dnf_updates.results'
+          #when: (dnf_updates.results | regex_search('kernel-\d'))
+        # - ansible_distribution != "CentOS"

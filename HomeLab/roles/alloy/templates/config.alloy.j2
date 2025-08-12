@@ -25,6 +25,9 @@ loki.relabel "syslog" {
   rule {
     source_labels = ["__syslog_message_hostname"]
     target_label  = "hostname"
+    action = "lowercase"
+    regex = "([a-zA-Z0-9]+?)"
+    separator = "."
   }
 
   rule {

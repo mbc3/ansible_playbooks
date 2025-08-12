@@ -38,12 +38,8 @@
     - name: Reboot AlmaLinux machine
       ansible.builtin.reboot:
         msg: "Rebooting system for kernel updates..."
-      when:
-        - dnf_updates is defined
-        - (dnf_updates.results | regex_search('kernel-\d'))
+      when: '"kernel-" in dnf_updates.results'
     - name: Reboot Debian machine
       ansible.builtin.reboot:
         msg: "Rebooting system for kernel updates..."
-      when:
-        - apt_updates is defined
-        - (apt_updates.stdout | regex_search('kernel-\d'))
+      when: '"kernel-" in apt_updates.results'
