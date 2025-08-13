@@ -5,25 +5,38 @@
   become: true
 
   tasks:
-    - name: Update all packages (with apt)
-      ansible.builtin.apt:
-        update-cache: true
-        upgrade: true
+    - name: APT Update
+      block:
+        - name: Update all packages (with apt)
+          ansible.builtin.apt:
+            update-cache: true
+            upgrade: true
+          register: apt_updates
+          notify:
+            - Display updated apt packages
+            - Reboot Debian machine
+        - name: Check if reboot is required (apt)
+          ansible.builtin.command: needrestart -b
+          register: apt_reboot
+          changed_when: false
       when: ansible_distribution == "Debian"
-      register: apt_updates
-      notify:
-        - Display updated apt packages
-        - Reboot Debian machine
-    - name: Update all packages (with dnf)
-      ansible.builtin.dnf:
-        name: "*"
-        state: latest
-        update_cache: true
+
+    - name: DNF Update
+      block:
+        - name: Update all packages (with dnf)
+          ansible.builtin.dnf:
+            name: "*"
+            state: latest
+            update_cache: true
+          register: dnf_updates
+          notify:
+            - Display updated dnf packages
+            - Reboot AlmaLinux machine
+        - name: Check if reboot is required (dnf)
+          ansible.builtin.command: dnf needs-restarting -r
+          register: dnf_reboot
+          changed_when: false
       when: ansible_distribution == "AlmaLinux"
-      register: dnf_updates
-      notify:
-        - Display updated dnf packages
-        - Reboot AlmaLinux machine
 
   handlers:
     - name: Display updated apt packages
@@ -37,9 +50,9 @@
 
     - name: Reboot AlmaLinux machine
       ansible.builtin.reboot:
-        msg: "Rebooting system for kernel updates..."
-      when: '"kernel-" in dnf_updates.results'
+        msg: "Rebooting system..."
+      when: dnf_reboot.rc | default(0) == 1
     - name: Reboot Debian machine
       ansible.builtin.reboot:
-        msg: "Rebooting system for kernel updates..."
-      when: '"kernel-" in apt_updates.results'
+        msg: "Rebooting system..."
+      when: apt_reboot.rc | default(0) == 1

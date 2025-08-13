@@ -21,6 +21,11 @@
       when: inventory_hostname == "mediapi"
       changed_when: not "'nothing to do' in flatpak_output.stdout"
 
+    - name: Check if reboot is required
+      ansible.builtin.command: dnf needs-restarting -r
+      register: dnf_reboot
+      changed_when: false
+
   handlers:
     - name: Display updated packages
       ansible.builtin.debug:
@@ -32,7 +37,5 @@
       when: flatpak_output is defined
     - name: Reboot AlmaLinux machine
       ansible.builtin.reboot:
-        msg: "Rebooting system for kernel updates..."
-      when:
-        - dnf_updates is defined
-        - (dnf_updates.results | regex_search('kernel-\d'))
+        msg: "Rebooting system..."
+      when: dnf_reboot.rc | default(0) == 1
