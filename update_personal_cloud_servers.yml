@@ -19,6 +19,7 @@
           ansible.builtin.command: needrestart -b
           register: apt_reboot
           changed_when: false
+          failed_when: apt_reboot.rc > 1
       when: ansible_distribution == "Debian"
 
     - name: DNF Update
@@ -36,6 +37,7 @@
           ansible.builtin.command: dnf needs-restarting -r
           register: dnf_reboot
           changed_when: false
+          failed_when: dnf_reboot.rc > 1
       when: ansible_distribution == "AlmaLinux"
 
   handlers:
