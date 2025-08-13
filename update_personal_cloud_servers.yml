@@ -12,14 +12,13 @@
             update-cache: true
             upgrade: true
           register: apt_updates
-          notify:
-            - Display updated apt packages
-            - Reboot Debian machine
+          notify: Display updated apt packages
         - name: Check if reboot is required (apt)
           ansible.builtin.command: needrestart -b
           register: apt_reboot
-          changed_when: false
-          failed_when: apt_reboot.rc > 1
+          changed_when: apt_reboot.rc != 0
+          failed_when: false
+          notify: Reboot Debian machine
       when: ansible_distribution == "Debian"
 
     - name: DNF Update
@@ -30,14 +29,13 @@
             state: latest
             update_cache: true
           register: dnf_updates
-          notify:
-            - Display updated dnf packages
-            - Reboot AlmaLinux machine
+          notify: Display updated dnf packages
         - name: Check if reboot is required (dnf)
           ansible.builtin.command: dnf needs-restarting -r
           register: dnf_reboot
-          changed_when: false
-          failed_when: dnf_reboot.rc > 1
+          changed_when: dnf_reboot.rc != 0
+          failed_when: false
+          notify: Reboot AlmaLinux machine
       when: ansible_distribution == "AlmaLinux"
 
   handlers:
@@ -53,8 +51,10 @@
     - name: Reboot AlmaLinux machine
       ansible.builtin.reboot:
         msg: "Rebooting system..."
-      when: dnf_reboot.rc | default(0) == 1
+        reboot_timeout: 3600
+        test_command: uptime
     - name: Reboot Debian machine
       ansible.builtin.reboot:
         msg: "Rebooting system..."
-      when: apt_reboot.rc | default(0) == 1
+        reboot_timeout: 3600
+        test_command: uptime
