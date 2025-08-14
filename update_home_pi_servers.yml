@@ -12,7 +12,6 @@
       register: dnf_updates
       notify:
         - Display updated packages
-        - Reboot AlmaLinux machine
 
     - name: Update flatpaks
       ansible.builtin.command: /usr/bin/flatpak update --noninteractive
