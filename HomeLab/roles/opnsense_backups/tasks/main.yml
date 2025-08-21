@@ -13,8 +13,8 @@
     key: "{{ lookup('file', '/home/mbc/.ssh/opnsense_backups.pub') }}"
 - name: Add symlink to files mount
   ansible.builtin.file:
-    src: /srv/files/opnsense_backups
-    dest: /home/opnsense/opnsense_backups
+    src: "{{ opnsense_backups_source }}"
+    dest: "{{ opnsense_backups_dest }}"
     owner: opnsense
     group: opnsense
     state: link

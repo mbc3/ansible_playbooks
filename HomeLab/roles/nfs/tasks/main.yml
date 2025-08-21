@@ -1,25 +1,22 @@
 ---
-# TO DO: Improve partitioning / filesystem creation
-# - name: Create a new primary partition for proto external disk
-#   community.general.parted:
-#     device: /dev/sdc
-#     number: 1
-#     state: present
-#     part_end: "100%"
-# - name: Create xfs filesystem on proto
-#   community.general.filesystem:
-#     dev: /dev/sdc1
-#     fstype: xfs
+# TO DO: Improve partitioning / filesystem creation - what if device changes
+- name: Create a new primary partition for proto external disk
+  community.general.parted:
+    device: /dev/sdd
+    number: 1
+    state: present
+    part_end: "100%"
+- name: Create xfs filesystem on proto
+  community.general.filesystem:
+    dev: /dev/sdd1
+    fstype: xfs
 - name: Ensure mountpoints exist
   ansible.builtin.file:
-    path: "{{ item }}"
+    path: "{{ nfs_directory }}"
     state: directory
     owner: root
     group: root
     mode: "0777"
-  loop:
-    - "{{ nfs_directory }}"
-    - "{{ nfs_directory_other }}"
 # TO DO: Improve the mounting here
 # - name: Mount external file partion - files
 #   ansible.posix.mount:
