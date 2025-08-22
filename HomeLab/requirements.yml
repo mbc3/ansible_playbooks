@@ -2,3 +2,4 @@
 collections:
   - "prometheus.prometheus"
   - "community.crypto"
+  - "community.mysql"
