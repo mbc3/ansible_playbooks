@@ -8,9 +8,11 @@
       ansible.builtin.stat:
         path: /usr/sbin/aide
       register: aide
+
     - name: Output AIDE status
       ansible.builtin.debug:
         var: aide
+
     - name: Update all packages
       ansible.builtin.package:
         name: "*"
@@ -21,22 +23,36 @@
         - Run AIDE update
         - Use new AIDE DB
 
+    - name: Check if reboot is required (dnf)
+      when: ansible_distribution == "AlmaLinux"
+      ansible.builtin.command: dnf needs-restarting -r
+      register: dnf_reboot
+      changed_when: dnf_reboot.rc != 0
+      failed_when: false
+      notify: Reboot AlmaLinux machine
+
   handlers:
     - name: Display updated packages
+      when: updates is defined
       ansible.builtin.debug:
         var: updates
-      when: updates is defined
 
     - name: Run AIDE update
-      ansible.builtin.command: /usr/sbin/aide --update
       when: aide.stat.exists
+      ansible.builtin.command: /usr/sbin/aide --update
       register: aide_update
       failed_when: aide_update.rc > 7 # see https://linux.die.net/man/1/aide for how aide generates return codes
 
     - name: Use new AIDE DB
+      when: aide.stat.exists
       ansible.builtin.copy:
         remote_src: true
         src: /var/lib/aide/aide.db.new.gz
         dest: /var/lib/aide/aide.db.gz
         mode: preserve
-      when: aide.stat.exists
+
+    - name: Reboot AlmaLinux machine
+      ansible.builtin.reboot:
+        msg: "Rebooting system..."
+        reboot_timeout: 3600
+        test_command: uptime
