@@ -1,3 +1,0 @@
----
-opnsense_backups_source: "/srv/files/opnsense_backups"
-opnsense_backups_dest: "/srv/files/opnsense_backups"
