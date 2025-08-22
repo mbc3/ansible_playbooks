@@ -12,6 +12,8 @@ semaphore_packages:
   - podman
   - ansible-core
   - ansible-collection-community-general
+  - ansible-collection-ansible-posix
+  - ansible-collection-containers-podman
   - python3-paramiko
   - mariadb-server
   - python3-PyMySQL
