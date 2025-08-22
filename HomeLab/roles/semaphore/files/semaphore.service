@@ -17,6 +17,8 @@ ExecStartPre=/bin/bash -c 'ansible-galaxy collection install --upgrade -r /home/
 ExecStartPre=/bin/bash -c 'ansible-galaxy role install --force -r /home/semaphore/requirements.yml'
 Restart=always
 RestartSec=10s
+User=semaphore
+Group=semaphore
 
 [Install]
 WantedBy=multi-user.target

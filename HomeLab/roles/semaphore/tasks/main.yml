@@ -59,7 +59,7 @@
 - name: Set ssh config to include cloud servers
   become: true
   community.general.ssh_config:
-    user: root # needs to be for root, otherwise semaphore won't use config
+    user: semaphore
     host: "{{ item.key }}"
     hostname: "{{ item.value }}"
     identity_file: "/home/semaphore/.ssh/github"
@@ -126,6 +126,7 @@
     owner: root
     group: root
     mode: "0644"
+  notify: Restart Semaphore
 
 - name: Enable semaphore service
   ansible.builtin.systemd_service:
