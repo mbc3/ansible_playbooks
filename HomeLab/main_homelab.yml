@@ -1,0 +1,25 @@
+---
+- name: Provision CA
+  ansible.builtin.import_playbook: ca.yml
+- name: Provision Files
+  ansible.builtin.import_playbook: files.yml
+- name: Provision FreeIPA
+  ansible.builtin.import_playbook: freeipa.yml
+- name: Provision Graphs
+  ansible.builtin.import_playbook: graphs.yml
+- name: Provision Logs
+  ansible.builtin.import_playbook: logs.yml
+- name: Provision Netboot
+  ansible.builtin.import_playbook: netboot.yml
+- name: Provision Netbox
+  ansible.builtin.import_playbook: netbox.yml
+- name: Provision OpenBao
+  ansible.builtin.import_playbook: openbao.yml
+- name: Provision Semaphore
+  ansible.builtin.import_playbook: semaphore.yml
+- name: Provision Uptime
+  ansible.builtin.import_playbook: uptime.yml
+- name: Provision Wazuh
+  ansible.builtin.import_playbook: wazuh.yml
+- name: Provision DNS
+  ansible.builtin.import_playbook: dns.yml
