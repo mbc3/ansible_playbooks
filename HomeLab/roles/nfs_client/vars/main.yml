@@ -1,3 +1,2 @@
 ---
-nfs_client_mounts:
-  { "files:/srv/files": "/mnt/files", "files:/srv/proto": "/mnt/proto" }
+nfs_client_mounts: { "files:/srv/proto": "/mnt/proto" }
