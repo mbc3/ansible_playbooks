@@ -1,3 +1,4 @@
 ---
 collections:
   - "prometheus.prometheus"
+  - "community.crypto"
