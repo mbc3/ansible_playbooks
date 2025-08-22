@@ -13,7 +13,6 @@ prometheus_home_hosts:
   - uptime
   - openbao
   - wazuh
-  - test
   - netboot
   - netbox
   - services

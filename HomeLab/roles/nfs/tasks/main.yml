@@ -1,5 +1,5 @@
 ---
-# TO DO: Improve partitioning / filesystem creation - what if device changes
+# TO DO: Improve partitioning / filesystem creation - what if device changes?
 - name: Create a new primary partition for proto external disk
   community.general.parted:
     device: /dev/sdb
