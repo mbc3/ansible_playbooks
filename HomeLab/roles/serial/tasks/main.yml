@@ -9,4 +9,4 @@
     name: serial-getty@ttyS0
     enabled: true
     state: started
-  when: serial_check.exists
+  when: serial_check.stat.exists
