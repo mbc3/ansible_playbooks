@@ -5,16 +5,46 @@
 
   roles:
     - role: rsyslog
+      tags: base
+
     - role: prometheus_client
+      tags: base
+
     - role: freeipa_client
+      tags: base
+
     - role: ca_client
+      tags: base
+
     - role: aide
+      tags: base
+
     - role: opnsense_backups
+      tags: backup
+
     - role: nfs
+      tags: server
+
     - role: smb
+      tags: server
+
     - role: resilio_sync
+      tags: server
+
     - role: syncthing
+      tags: server
+
     - role: torrent
+      tags: server
+
     - role: caddy
+      tags: web
+
     - role: wazuh_agent
+      tags: security
+
+    - role: serial
+      tags: test
+
     - role: debug
+      tags: test
