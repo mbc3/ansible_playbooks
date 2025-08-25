@@ -60,4 +60,5 @@
   ansible.posix.authorized_key:
     state: present
     user: "{{ freeipa_username }}"
-    key: "{{ lookup('file', '/home/mbc/.ssh/id_ed25519.pub') }}"
+    #key: "{{ lookup('file', '/home/mbc/.ssh/id_ed25519.pub') }}"
+    key: "{{ mbc_pub_key }}"

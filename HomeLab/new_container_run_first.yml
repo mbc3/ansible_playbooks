@@ -33,7 +33,8 @@
       ansible.posix.authorized_key:
         user: root
         state: present
-        key: "{{ lookup('file', '/home/mbc/.ssh/proxmox.pub') }}"
+        #key: "{{ lookup('file', '/home/mbc/.ssh/proxmox.pub') }}"
+        key: "{{ proxmox_pub_key }}"
 
     - name: Container Provision
       block:

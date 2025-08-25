@@ -10,4 +10,5 @@
   ansible.posix.authorized_key:
     user: opnsense
     state: present
-    key: "{{ lookup('file', '/home/mbc/.ssh/opnsense_backups.pub') }}"
+    key: "{{ opnsense_backup_pub_key }}"
+    #key: "{{ lookup('file', '/home/mbc/.ssh/opnsense_backups.pub') }}"

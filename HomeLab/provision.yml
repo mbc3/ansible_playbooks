@@ -35,7 +35,8 @@
       ansible.posix.authorized_key:
         user: ansible
         state: present
-        key: "{{ lookup('file', '/home/mbc/.ssh/proxmox.pub') }}"
+        key: "{{ proxmox_pub_key }}"
+        #key: "{{ lookup('file', '/home/mbc/.ssh/proxmox.pub') }}"
     - name: Set Ansible user to NOPASSWD in sudoers
       community.general.sudoers:
         name: 99-ansible
@@ -49,7 +50,8 @@
       ansible.posix.authorized_key:
         user: ansible
         state: absent
-        key: "{{ lookup('file', '/home/mbc/.ssh/id_ed25519.pub') }}"
+        key: "{{ mbc_pub_key }}"
+        #key: "{{ lookup('file', '/home/mbc/.ssh/id_ed25519.pub') }}"
     - name: Alma/RHEL specific tasks
       when: ansible_distribution != "Debian"
       block:
