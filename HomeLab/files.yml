@@ -5,19 +5,19 @@
 
   roles:
     - role: rsyslog
-      tags: base
+      tags: logs
 
     - role: prometheus_client
-      tags: base
+      tags: metrics
 
     - role: freeipa_client
-      tags: base
+      tags: auth
 
     - role: ca_client
-      tags: base
+      tags: auth
 
     - role: aide
-      tags: base
+      tags: security
 
     - role: opnsense_backups
       tags: backup

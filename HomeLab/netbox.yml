@@ -5,12 +5,34 @@
 
   roles:
     - role: rsyslog
+      tags: logs
+
     - role: freeipa_client
+      tags: auth
+
     - role: ca_client
+      tags: auth
+
     - role: dns_client
+      tags: dns
+
     - role: prometheus.prometheus.node_exporter # installs prometheus on rhel10, install with ansible-galaxy collection install prometheus.prometheus
+      tags: metrics
+
     - role: prometheus_client
+      tags: metrics
+
     - role: wazuh_agent
+      tags: security
+
     - role: netbox
+      tags: management
+
     - role: caddy
+      tags: web
+
+    - role: serial
+      tags: test
+
     - role: debug
+      tags: test

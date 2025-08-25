@@ -5,11 +5,28 @@
 
   roles:
     - role: rsyslog
+      tags: logs
+
     - role: prometheus_client
+      tags: metrics
+
     - role: ca_client
+      tags: auth
+
     - role: freeipa_client
+      tags: auth
+
     - role: nfs_client
+      tags: files
+
     - role: wazuh_agent
+      tags: security
+
     - role: pxe
+      tags: boot
+
+    - role: serial
+      tags: test
+
     #- role: netbootxyz
     #- role: caddy
