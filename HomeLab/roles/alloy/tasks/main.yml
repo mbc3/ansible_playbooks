@@ -13,11 +13,11 @@
     name: alloy
     state: present
   notify: Enable Alloy
-- name: Disable reporting
+- name: Disable reporting and allow debug web ui on all interfaces
   ansible.builtin.lineinfile:
     path: "/etc/sysconfig/alloy"
     regexp: "^CUSTOM_ARGS="
-    line: 'CUSTOM_ARGS="--disable-reporting=true"'
+    line: 'CUSTOM_ARGS="--disable-reporting=true --server.http.listen-addr=0.0.0.0:12345"'
   notify: Restart Alloy
 - name: Copy Alloy config
   ansible.builtin.template:

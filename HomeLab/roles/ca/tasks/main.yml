@@ -40,11 +40,6 @@
     mode: '0640'
     remote_src: true
     force: false # won't copy if destination already exists
-# - name: Edit config
-#   ansible.builtin.lineinfile:
-#     path: '{{ ca_smallstep_global_directory }}/config/ca.json'
-#     regexp: .dataSource.:.*
-#     line: "\t\t\"dataSource\": \"{{ ca_smallstep_global_directory }}/db\","
 - name: Edit config file
   ansible.builtin.replace:
     path: '{{ ca_smallstep_global_directory }}/config/ca.json'

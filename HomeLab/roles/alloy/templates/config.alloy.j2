@@ -23,11 +23,17 @@ loki.relabel "syslog" {
   forward_to = []
 
   rule {
+    action = "lowercase"
     source_labels = ["__syslog_message_hostname"]
     target_label  = "hostname"
-    action = "lowercase"
-    regex = "([a-zA-Z0-9]+?)"
-    separator = "."
+  }
+
+  rule {
+    action = "replace"
+    regex = "(opnsense).(localdomain)"
+    replacement   = "$1"
+    source_labels = ["hostname"]
+    target_label  = "hostname"
   }
 
   rule {
