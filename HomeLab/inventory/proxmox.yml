@@ -2,7 +2,7 @@
 # ansible-inventory -i proxmox.yml --vault-id @prompt --list
 # ansible-inventory -i proxmox.yml --ask-vault-pass --list
 # ansible-inventory -i proxmox.yml --vault-password-file .vault --list
-plugin: community.general.proxmox
+plugin: community.proxmox.proxmox
 url: https://services.localdomain:8006
 user: ansible@pve
 password: !vault |
