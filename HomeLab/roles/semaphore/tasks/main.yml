@@ -93,6 +93,7 @@
 - name: Create semaphore db user
   community.mysql.mysql_user:
     state: present
+    column_case_sensitive: true
     name: semaphore
     password: "{{ vault_semaphore_db_password }}"
     priv:
