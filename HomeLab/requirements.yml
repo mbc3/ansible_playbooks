@@ -1,5 +1,6 @@
 ---
 collections:
-  - "prometheus.prometheus"
-  - "community.crypto"
-  - "community.mysql"
+- "community.proxmox"
+- "community.crypto"
+- "community.mysql"
+- "prometheus.prometheus"
