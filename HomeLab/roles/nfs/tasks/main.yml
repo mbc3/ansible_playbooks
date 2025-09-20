@@ -60,6 +60,13 @@
     path: /etc/idmapd.conf
     regexp: "Domain ="
     line: "Domain = {{ domain }}"
+- name: Enable NFSv4 id mapping
+  ansible.builtin.copy:
+    src: nfsd.conf
+    dest: /etc/modprobe.d
+    owner: root
+    group: root
+    mode: "0644"
 - name: Edit /etc/exports to enable share
   ansible.builtin.template:
     src: templates/exports.j2

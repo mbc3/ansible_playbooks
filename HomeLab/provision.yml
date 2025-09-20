@@ -22,21 +22,33 @@
         state: latest
       register: package_updates
       notify: Display updated packages
+
     - name: Set hostname to be FQDN
       ansible.builtin.hostname:
         name: "{{ inventory_hostname }}.{{ domain }}"
         use: systemd
       when: inventory_hostname != "freeipa"
+
+    - name: Ensure group "ansible" exists with correct gid
+      ansible.builtin.group:
+        name: ansible
+        state: present
+        gid: 1069
+
     - name: Make sure ansible service account user exists
       ansible.builtin.user:
         name: ansible
+        uid: 1069
+        group: ansible
         comment: Ansible Service Account
+
     - name: Copy Proxmox SSH key
       ansible.posix.authorized_key:
         user: ansible
         state: present
         key: "{{ proxmox_pub_key }}"
         #key: "{{ lookup('file', '/home/mbc/.ssh/proxmox.pub') }}"
+
     - name: Set Ansible user to NOPASSWD in sudoers
       community.general.sudoers:
         name: 99-ansible
@@ -46,12 +58,14 @@
         commands: ALL
         host: ALL
         nopassword: true
+
     - name: Remove MBC SSH key from Ansible service account
       ansible.posix.authorized_key:
         user: ansible
         state: absent
         key: "{{ mbc_pub_key }}"
         #key: "{{ lookup('file', '/home/mbc/.ssh/id_ed25519.pub') }}"
+
     - name: Alma/RHEL specific tasks
       when: ansible_distribution != "Debian"
       block:
@@ -59,15 +73,18 @@
           ansible.builtin.stat:
             path: /etc/yum.repos.d/epel.repo
           register: epel
+
         - name: Install EPEL repo
           ansible.builtin.dnf:
             name: epel-release
             state: present
+
         - name: Enable EPEL CRB
           ansible.builtin.command: dnf config-manager --set-enabled crb
           register: crb_output
           changed_when: crb_output.rc != 0
           when: not epel.stat.exists
+
         - name: Install necessary packages
           ansible.builtin.dnf:
             name: "{{ item }}"
