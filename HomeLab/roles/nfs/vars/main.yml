@@ -6,5 +6,6 @@ nfs_firewall_ports:
   - rpc-bind
 nfs_directory: "/srv/proto"
 nfs_ip_range: "192.168.0.0/16"
+nfs_ip6_range: "2600:6c50:77f:af0::/60"
 nfs_user: "share"
 nfs_group: "share"
