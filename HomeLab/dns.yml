@@ -5,6 +5,13 @@
 
   roles:
     - role: rsyslog
+      tags: logs
+
     - role: prometheus_client
+
     - role: ca_client
+
     - role: pihole
+
+    - role: tailscale
+      tags: tailscale
