@@ -19,7 +19,7 @@
           changed_when: apt_reboot.rc != 0
           failed_when: false
           notify: Reboot Debian machine
-      when: ansible_distribution == "Debian"
+      when: ansible_facts["distribution"] == "Debian"
 
     - name: DNF Update
       block:
@@ -36,7 +36,7 @@
           changed_when: dnf_reboot.rc != 0
           failed_when: false
           notify: Reboot AlmaLinux machine
-      when: ansible_distribution == "AlmaLinux"
+      when: ansible_facts["distribution"]  == "AlmaLinux"
 
   handlers:
     - name: Display updated apt packages
