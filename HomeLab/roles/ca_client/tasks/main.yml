@@ -4,7 +4,7 @@
 
 - name: Install Smallstep CLI
   when:
-    - ansible_distribution != "Debian"
+    - ansible_facts["distribution"] != "Debian"
     - inventory_hostname != "ca"
   block:
     - name: Create Smallstep repo
@@ -23,7 +23,7 @@
 
 - name: Install Smallstep CLI (Debian)
   when:
-    - ansible_distribution == "Debian"
+    - ansible_facts["distribution"] == "Debian"
     - inventory_hostname != "ca"
   block:
     - name: Add Smallstep key (Debian)

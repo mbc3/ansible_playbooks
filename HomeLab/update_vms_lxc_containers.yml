@@ -24,7 +24,7 @@
         - Use new AIDE DB
 
     - name: Check if reboot is required (dnf)
-      when: ansible_distribution == "AlmaLinux"
+      when: ansible_facts["distribution"]  == "AlmaLinux"
       ansible.builtin.command: dnf needs-restarting -r
       register: dnf_reboot
       changed_when: dnf_reboot.rc != 0

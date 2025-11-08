@@ -1,18 +1,10 @@
 ---
 - name: Install Rsyslog package
   become: true
-  ansible.builtin.dnf:
+  ansible.builtin.package:
     name: rsyslog
     state: installed
   notify: Enable Rsyslog
-  when: ansible_distribution != "Debian"
-- name: Install Rsyslog package (Debian)
-  become: true
-  ansible.builtin.apt:
-    name: rsyslog
-    state: present
-  notify: Enable Rsyslog
-  when: ansible_distribution == "Debian"
 - name: Copy config
   become: true
   ansible.builtin.template:
