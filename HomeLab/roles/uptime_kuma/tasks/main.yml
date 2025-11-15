@@ -29,6 +29,7 @@
     state: quadlet
     quadlet_filename: uptime-kuma
     quadlet_dir: "/etc/containers/systemd/"
+    cap_add: "NET_RAW"
     ports:
       - 3001:3001
     volumes:
