@@ -14,6 +14,7 @@
       url: https://pkgs.tailscale.com/stable/debian/bookworm.noarmor.gpg
       keyring: /usr/share/keyrings/tailscale-archive-keyring.gpg
       state: present
+    run_once: true
 
   - name: Install Tailscale repo
     ansible.builtin.apt_repository:
