@@ -33,7 +33,7 @@
 - name: Create Prometheus quadlet file
   containers.podman.podman_container:
     name: prometheus
-    image: docker.io/prom/prometheus
+    image: docker.io/prom/prometheus:latest
     ports: "9090:9090"
     volume:
       - "/opt/prometheus.yml:/etc/prometheus/prometheus.yml"

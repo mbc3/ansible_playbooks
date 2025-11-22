@@ -150,7 +150,7 @@
     - name: Create netbox app quadlet file
       containers.podman.podman_container:
         name: netbox-app
-        image: lscr.io/linuxserver/netbox
+        image: lscr.io/linuxserver/netbox:latest
         pod: netbox.pod
         network: netbox.network
         state: quadlet
