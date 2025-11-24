@@ -16,7 +16,7 @@
     immediate: true
     state: enabled
   loop: "{{ caddy_ports }}"
-  when: ansible_facts.services['firewalld.service'].status is defined
+  when: ansible_facts.services["firewalld.service"].status is defined
 
 - name: Check for Caddy Copr reo
   ansible.builtin.stat:
@@ -30,7 +30,7 @@
     responses:
       "enable": "y"
   when:
-    - hostvars[inventory_hostname].ansible_distribution_major_version == "10" # only needed for RHEL10, as they took out caddy from EPEL
+    - ansible_facts["distribution_major_version"] == "10" # only needed for RHEL10, as they took out caddy from EPEL
     - not caddy_copr.stat.exists
 
 - name: Install Caddy

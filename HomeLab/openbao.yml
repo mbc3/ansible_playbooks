@@ -5,7 +5,11 @@
 
   roles:
     - role: rsyslog
+
     - role: prometheus_client
+
     - role: ca_client
+
     - role: openbao
+
     - role: caddy

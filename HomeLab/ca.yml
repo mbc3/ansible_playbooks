@@ -5,5 +5,7 @@
 
   roles:
     - role: rsyslog
+
     - role: prometheus_client
+
     - role: ca

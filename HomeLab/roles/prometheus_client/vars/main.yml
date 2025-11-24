@@ -1,3 +1,5 @@
 ---
+prometheus_client_package: node-exporter
+prometheus_client_package_rhel9: golang-github-prometheus-node-exporter
 prometheus_client_ports:
   - prometheus-node-exporter

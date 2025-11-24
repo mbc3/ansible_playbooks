@@ -7,7 +7,6 @@
     rhel_package_list:
       - openssh-server
       - python3-pexpect # for expect module
-      - golang-github-prometheus-node-exporter
       - vim
       - lsof
       - iperf3

@@ -2,36 +2,42 @@
 - name: Populate service facts
   ansible.builtin.service_facts:
 
-- name: Add Prometheus Node Exporter service to firewalld
-  ansible.posix.firewalld:
-    service: "{{ item }}"
-    state: enabled
-    immediate: true
-    permanent: true
-  loop: "{{ prometheus_client_ports }}"
-  when: ansible_facts.services['firewalld.service'].status is defined
+- name: Firewall rules
+  block:
+    - name: Add Prometheus Node Exporter service to firewalld
+      ansible.posix.firewalld:
+        service: "{{ item }}"
+        state: enabled
+        immediate: true
+        permanent: true
+      loop: "{{ prometheus_client_ports }}"
+  when: ansible_facts.services["firewalld.service"].status is defined
 
-- name: Check if rhel9 prometheus node exporter service exists
-  ansible.builtin.stat:
-    path: /usr/lib/systemd/system/prometheus-node-exporter.service
-  register: prometheus_rhel9
+- name: Install node-exporter (RHEL10)
+  block:
+    - name: Install node-exporter (rhel10)
+      ansible.builtin.dnf:
+        name: "{{ prometheus_client_package }}"
+        state: present
+  when: ansible_facts["distribution_major_version"] == "10"
+
+- name: Install prometheus-node-exporter (RHEL10)
+  block:
+    - name: Install node-exporter (rhel9)
+      ansible.builtin.dnf:
+        name: "{{ prometheus_client_package_rhel9 }}"
+        state: present
+  when:  ansible_facts["distribution_major_version"] == "9"
 
 - name: Enable prometheus-node-exporter
   ansible.builtin.systemd_service:
     name: prometheus-node-exporter
     enabled: true
     state: started
-  when: prometheus_rhel9.stat.exists
-
-- name: Check if /etc/default/prometheus-node-exporter exists
-  ansible.builtin.stat:
-    path: /etc/default/prometheus-node-exporter
-  register: prometheus_settings
 
 - name: Add systemd and process collector
   ansible.builtin.lineinfile:
     path: /etc/default/prometheus-node-exporter
     regexp: "^ARGS="
     line: 'ARGS="--collector.systemd --collector.processes"'
-  when: prometheus_settings.stat.exists
   notify: Restart prometheus-node-exporter
