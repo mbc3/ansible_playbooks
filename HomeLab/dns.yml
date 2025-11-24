@@ -8,8 +8,10 @@
       tags: logs
 
     - role: prometheus_client
+      tags: metrics
 
     - role: ca_client
+      tags: auth
 
     - role: pihole
 
