@@ -3,4 +3,3 @@ collections:
   - "community.proxmox"
   - "community.crypto"
   - "community.mysql"
-  - "prometheus.prometheus"
