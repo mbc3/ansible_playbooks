@@ -3,3 +3,15 @@
   ansible.builtin.systemd_service:
     name: firewalld
     state: restarted
+
+- name: Restart SSHD
+  ansible.builtin.systemd_service:
+    name: sshd
+    state: restarted
+
+- name: Restart qbittorrent-nox
+  become_user: "{{ torrent_user }}"
+  ansible.builtin.systemd_service:
+    name: qbittorrent-nox
+    state: restarted
+    scope: user

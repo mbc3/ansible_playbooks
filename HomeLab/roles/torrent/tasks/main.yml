@@ -1,17 +1,27 @@
 ---
 - name: Create torrent service account
   ansible.builtin.user:
-    name: torrent
+    name: "{{ torrent_user }}"
     comment: Qbittorrent Service Account
-    shell: /sbin/nologin
+    shell: /usr/bin/bash
     state: present
+
 - name: Create torrent directory
   ansible.builtin.file:
     name: /srv/proto/torrents
     state: directory
-    owner: torrent
-    group: torrent
+    owner: "{{ torrent_user }}"
+    group: "{{ torrent_user }}"
     mode: "0777"
+
+- name: Create torrent config directory
+  ansible.builtin.file:
+    name: "{{ torrent_config_directory }}"
+    state: directory
+    owner: "{{ torrent_user }}"
+    group: "{{ torrent_user }}"
+    mode: "0777"
+
 - name: Add qbittorrent custom firewalld service
   ansible.builtin.copy:
     src: qbittorrent.xml
@@ -19,18 +29,72 @@
     owner: root
     group: root
     mode: "0644"
+
 - name: Add qbittorrent firewalld service
   ansible.posix.firewalld:
     service: qbittorrent
     permanent: true
     immediate: true
     state: enabled
-- name: Install qbittorent-nox
+
+- name: Install necessary packages
   ansible.builtin.dnf:
-    name: qbittorrent-nox
+    name: "{{ item }}"
     state: present
-- name: Enable Qbittorrent-nox service
-  ansible.builtin.systemd_service:
-    name: qbittorrent-nox@torrent
-    enabled: true
-    state: started
+  loop: "{{ torrent_packages }}"
+
+- name: Disallow torrent user from SSH
+  ansible.builtin.copy:
+    src: 69-torrent.conf
+    dest: /etc/ssh/sshd_config.d/69-torrent.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart SSHD
+
+- name: Install Qbittorent-nox container
+  block:
+    - name: Install Podman
+      ansible.builtin.dnf:
+        name: podman
+        state: present
+
+    - name: Enable podman auto-update service
+      ansible.builtin.systemd_service:
+        name: podman-auto-update.timer
+        enabled: true
+        state: started
+
+    - name: Enable linger
+      ansible.builtin.command: loginctl enable-linger "{{ torrent_user }}"
+      changed_when: false
+
+    - name: Pull nox image
+      become_user: "{{ torrent_user }}"
+      containers.podman.podman_image:
+        name: docker.io/qbittorrentofficial/qbittorrent-nox
+        tag: latest
+
+    - name: Create Nox quadlet file
+      become_user: "{{ torrent_user }}"
+      containers.podman.podman_container:
+        name: qbittorrent
+        image: docker.io/qbittorrentofficial/qbittorrent-nox:latest
+        ports: "{{ torrent_port }}:{{ torrent_port }}"
+        volume:
+          - "{{ torrent_config_directory }}:/config/qBittorrent:z"
+          - "{{ torrent_torrent_directory }}:/downloads:z"
+        state: quadlet
+        quadlet_filename: qbittorrent-nox
+        quadlet_dir: "/home/{{ torrent_user }}/.config/containers/systemd"
+        quadlet_options:
+          - "AutoUpdate=registry"
+          - |
+            [Service]
+            Restart=always
+            [Unit]
+            Wants=network-online.target
+            After=network-online.target
+            [Install]
+            WantedBy=default.target
+      notify: Restart qbittorrent-nox

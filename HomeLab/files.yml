@@ -35,7 +35,7 @@
       tags: server
 
     - role: torrent
-      tags: server
+      tags: torrent
 
     - role: caddy
       tags: web
