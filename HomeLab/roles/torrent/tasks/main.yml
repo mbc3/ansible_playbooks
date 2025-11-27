@@ -84,6 +84,8 @@
         volume:
           - "{{ torrent_config_directory }}:/config/qBittorrent:z"
           - "{{ torrent_torrent_directory }}:/downloads:z"
+        env:
+          TZ: America/Los_Angeles
         state: quadlet
         quadlet_filename: qbittorrent-nox
         quadlet_dir: "/home/{{ torrent_user }}/.config/containers/systemd"
