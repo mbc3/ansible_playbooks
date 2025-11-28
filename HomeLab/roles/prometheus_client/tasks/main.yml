@@ -3,6 +3,9 @@
   ansible.builtin.service_facts:
 
 - name: Firewall rules
+  when:
+    - ansible_facts.services["firewalld.service"].status is defined
+    - ansible_facts["distribution"] == "AlmaLinux"
   block:
     - name: Add Prometheus Node Exporter service to firewalld
       ansible.posix.firewalld:
@@ -11,23 +14,24 @@
         immediate: true
         permanent: true
       loop: "{{ prometheus_client_ports }}"
-  when: ansible_facts.services["firewalld.service"].status is defined
+
 
 - name: Install node-exporter (RHEL10)
+  when: ansible_facts["distribution_major_version"] == "10"
   block:
     - name: Install node-exporter (rhel10)
       ansible.builtin.dnf:
         name: "{{ prometheus_client_package }}"
         state: present
-  when: ansible_facts["distribution_major_version"] == "10"
+
 
 - name: Install prometheus-node-exporter (RHEL10)
+  when:  ansible_facts["distribution_major_version"] == "9"
   block:
     - name: Install node-exporter (rhel9)
       ansible.builtin.dnf:
         name: "{{ prometheus_client_package_rhel9 }}"
         state: present
-  when:  ansible_facts["distribution_major_version"] == "9"
 
 - name: Enable prometheus-node-exporter
   ansible.builtin.systemd_service:

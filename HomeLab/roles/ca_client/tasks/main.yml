@@ -26,11 +26,18 @@
     - ansible_facts["distribution"] == "Debian"
     - inventory_hostname != "ca"
   block:
+
+    - name: Install GPG
+      ansible.builtin.apt:
+        name: gpg
+        state: present
+
     - name: Add Smallstep key (Debian)
       ansible.builtin.get_url:
         url: "{{ ca_smallstep_deb_gpg }}"
         dest: /etc/apt/trusted.gpg.d/smallstep.asc
         mode: "0644"
+
     - name: Add Smallstep repo (Debian)
       ansible.builtin.apt_repository:
         repo: "deb [signed-by=/etc/apt/trusted.gpg.d/smallstep.asc] https://packages.smallstep.com/stable/debian debs main"
@@ -52,13 +59,12 @@
       ansible.builtin.stat:
         path: "{{ ca_root_ca }}"
       register: root_ca
-    - name: Tell user to trust Root CA
-      ansible.builtin.debug:
-        msg: "Make sure you run 'step ca bootstrap --ca-url CA_URL --fingerprint CA_FINGERPRINT'!"
+
     - name: Bootstrap Smallstep with Root CA and trust it
       ansible.builtin.command: step ca bootstrap --ca-url {{ ca_url }} --fingerprint {{ ca_fingerprint }} --install
       when: not root_ca.stat.exists
       changed_when: false
+
     - name: Set REQUESTS_CA_BUNDLE env variable to step path
       ansible.builtin.lineinfile:
         path: /etc/environment

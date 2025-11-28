@@ -3,7 +3,7 @@
   become: true
   ansible.builtin.package:
     name: rsyslog
-    state: installed
+    state: present
   notify: Enable Rsyslog
 - name: Copy config
   become: true
