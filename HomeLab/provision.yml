@@ -63,10 +63,9 @@
         user: ansible
         state: absent
         key: "{{ mbc_pub_key }}"
-        #key: "{{ lookup('file', '/home/mbc/.ssh/id_ed25519.pub') }}"
 
     - name: Alma/RHEL specific tasks
-      when: ansible_distribution != "Debian"
+      when: ansible_facts["distribution"] != "Debian"
       block:
         - name: Check if EPEL is installed
           ansible.builtin.stat:
