@@ -16,6 +16,9 @@
     - role: ca_client
       tags: auth
 
+    - role: selinux
+      tags: security
+
     - role: aide
       tags: security
 

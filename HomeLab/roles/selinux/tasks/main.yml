@@ -1,0 +1,8 @@
+---
+- name: Configure SELinux
+  when: ansible_facts["distribution"] == "AlmaLinux"
+  block:
+    - name: Set SELinux to enforcing
+      ansible.posix.selinux:
+        policy: targeted
+        state: enforcing

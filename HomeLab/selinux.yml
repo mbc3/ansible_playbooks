@@ -1,0 +1,8 @@
+---
+- name: Set SELinux
+  become: true
+  hosts: proxmox_all_qemu
+
+  roles:
+    - role: selinux
+      tags: selinux

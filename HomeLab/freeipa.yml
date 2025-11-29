@@ -28,6 +28,9 @@
     - role: wazuh_agent
       tags: security
 
+    - role: selinux
+      tags: security
+
     - role: serial
       tags: test
 
