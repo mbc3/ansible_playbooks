@@ -1,4 +1,4 @@
--a always,exit -F arch=b64 -F path=/etc/selinux -F perm=wa -F key=selinux
--a always,exit -F arch=b32 -F path=/etc/selinux -F perm=wa -F key=selinux
--a always,exit -F arch=b64 -F path=/usr/share/selinux -F perm=wa -F key=selinux
--a always,exit -F arch=b32 -F path=/usr/share/selinux -F perm=wa -F key=selinux
+-a always,exit -F arch=b64 -F dir=/etc/selinux -F perm=wa -F key=selinux
+-a always,exit -F arch=b32 -F dir=/etc/selinux -F perm=wa -F key=selinux
+-a always,exit -F arch=b64 -F dir=/usr/share/selinux -F perm=wa -F key=selinux
+-a always,exit -F arch=b32 -F dir=/usr/share/selinux -F perm=wa -F key=selinux
