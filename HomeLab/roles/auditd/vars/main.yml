@@ -1,0 +1,2 @@
+---
+auditd_path: "/etc/audit/rules.d/"

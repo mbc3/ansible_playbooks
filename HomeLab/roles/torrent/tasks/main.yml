@@ -4,7 +4,7 @@
     name: "{{ torrent_user }}"
     comment: Qbittorrent Service Account
     shell: /usr/bin/bash
-    state: present
+    password: "{{ vault_files_torrent_password | password_hash('sha512', 'Dash0fSA1t') }}"
 
 - name: Create torrent directory
   ansible.builtin.file:
@@ -52,12 +52,12 @@
     mode: "0644"
   notify: Restart SSHD
 
-- name: Install Qbittorent-nox container
+- name: Setup Podman
   block:
     - name: Install Podman
       ansible.builtin.dnf:
-        name: podman
-        state: present
+      name: podman
+      state: present
 
     - name: Enable podman auto-update service
       ansible.builtin.systemd_service:
@@ -66,9 +66,12 @@
         state: started
 
     - name: Enable linger
+      become_user: "{{ torrent_user }}"
       ansible.builtin.command: loginctl enable-linger "{{ torrent_user }}"
       changed_when: false
 
+- name: Install Qbittorent-nox container
+  block:
     - name: Pull nox image
       become_user: "{{ torrent_user }}"
       containers.podman.podman_image:

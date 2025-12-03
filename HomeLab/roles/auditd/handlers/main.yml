@@ -1,0 +1,5 @@
+---
+- name: Load rules
+  become: true
+  ansible.builtin.command: augenrules --load
+  changed_when: false

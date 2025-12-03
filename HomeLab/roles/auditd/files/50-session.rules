@@ -1,0 +1,6 @@
+-a always,exit -F arch=b64 -F path=/var/run/utmp -F perm=wa -F key=session
+-a always,exit -F arch=b32 -F path=/var/run/utmp -F perm=wa -F key=session
+-a always,exit -F arch=b64 -F path=/var/log/wtmp -F perm=wa -F key=session
+-a always,exit -F arch=b32 -F path=/var/log/wtmp -F perm=wa -F key=session
+-a always,exit -F arch=b64 -F path=/var/log/btmp -F perm=wa -F key=session
+-a always,exit -F arch=b32 -F path=/var/log/btmp -F perm=wa -F key=session

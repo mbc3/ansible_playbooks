@@ -1,0 +1,11 @@
+---
+- name: Add custom auditd rules
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ auditd_path }}"
+    owner: root
+    group: root
+    mode: "0600"
+  with_fileglob:
+    - "files/*.rules"
+  notify: "Load rules"
