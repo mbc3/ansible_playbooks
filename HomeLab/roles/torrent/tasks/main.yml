@@ -56,8 +56,8 @@
   block:
     - name: Install Podman
       ansible.builtin.dnf:
-      name: podman
-      state: present
+        name: podman
+        state: present
 
     - name: Enable podman auto-update service
       ansible.builtin.systemd_service:
