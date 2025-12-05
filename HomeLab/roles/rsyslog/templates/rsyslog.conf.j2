@@ -1,4 +1,11 @@
 ### this file is managed by ansible ###
+
+### reduce permissions for created logs ###
+
+$FileCreateMode 0640
+
+### log forwarding config ###
+
 *.* action (
 type="omfwd"
 queue.filename="{{ inventory_hostname }}_logs"       # unique name prefix for spool files
