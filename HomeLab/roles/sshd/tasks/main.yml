@@ -7,9 +7,14 @@
     mode: "0644"
   notify: Restart SSHD
 
+- name: Remove old misc sshd config
+  ansible.builtin.file:
+    name: /etc/ssh/sshd_config.d/69-sshd-config.conf
+    state: absent
+
 - name: Copy misc sshd config
   ansible.builtin.copy:
-    src: 69-sshd-config.conf
+    src: 16-sshd-config.conf
     dest: /etc/ssh/sshd_config.d/
     owner: root
     group: root
