@@ -1,0 +1,18 @@
+---
+- name: Set Ansible user to NOPASSWD in sudoers
+  community.general.sudoers:
+    name: 99-ansible
+    state: present
+    user: ansible
+    runas: ALL
+    commands: ALL
+    host: ALL
+    nopassword: true
+
+- name: Copy pty and log config
+  ansible.builtin.copy:
+    src: 69-pty-logs
+    dest: /etc/sudoers.d/
+    owner: root
+    group: root
+    mode: "0440"

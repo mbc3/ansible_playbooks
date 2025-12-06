@@ -1,0 +1,17 @@
+- name: Copy allow-users config
+  ansible.builtin.template:
+    src: 69-allow-users.j2
+    dest: /etc/ssh/sshd_config.d/69-allow-users.conf
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart SSHD
+
+- name: Copy misc sshd config
+  ansible.builtin.copy:
+    src: 69-sshd-config.conf
+    dest: /etc/ssh/sshd_config.d/
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart SSHD

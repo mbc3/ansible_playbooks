@@ -1,3 +1,8 @@
+sshd_allowed_users:
+  - ansible
+  - mbc
+  - opnsense
+
 caddy_services:
 # key is subdomain, ie pihole.mediapi.localdomain
 # value is port for reverse proxy, ie 8080

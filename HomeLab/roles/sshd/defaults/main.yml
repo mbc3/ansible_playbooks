@@ -1,0 +1,4 @@
+---
+sshd_allowed_users:
+  - ansible
+  - mbc

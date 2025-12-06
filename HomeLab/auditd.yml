@@ -1,8 +1,0 @@
----
-- name: Set auditd rules
-  become: true
-  hosts: proxmox_all_qemu
-
-  roles:
-    - role: auditd
-      tags: audit

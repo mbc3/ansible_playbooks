@@ -7,6 +7,13 @@
     - role: rsyslog
       tags: logs
 
+    - role: auditd
+      tags: audit
+
+    - role: sshd
+
+    - role: sudo
+
     - role: prometheus_client
       tags: metrics
 

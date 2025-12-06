@@ -7,14 +7,18 @@
     - role: rsyslog
       tags: logs
 
+    - role: auditd
+      tags: audit
+
+    - role: sshd
+
+    - role: sudo
+
     - role: freeipa_client
       tags: auth
 
     - role: ca_client
       tags: auth
-
-    # - role: dns_client
-    #   tags: dns
 
     - role: prometheus_client
       tags: metrics
