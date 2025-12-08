@@ -23,44 +23,45 @@
 
 - name: TLS Cert
   block:
+    - name: Run certbot
+      ansible.builtin.command: > # the ">" here is yaml syntax to treat newlines like spaces
+        "certbot certonly -n --standalone -d wazuh.localdomain --server https://ca.localdomain:8443/acme/acme/directory
+        --agree-tos --email cohen@matthewbriancohen.com"
+      changed_when: false
 
-  - name: Run certbot
-    ansible.builtin.command: certbot certonly -n --standalone -d wazuh.localdomain --server https://ca.localdomain:8443/acme/acme/directory --agree-tos --email cohen@matthewbriancohen.com
-    changed_when: false
+    - name: Copy Root CA to Wazuh directory
+      ansible.builtin.copy:
+        remote_src: true
+        src: /root/.step/certs/root_ca.crt
+        dest: /etc/wazuh-dashboard/certs/step_root_ca.pem
+        mode: "0500"
 
-  - name: Copy Root CA to Wazuh directory
-    ansible.builtin.copy:
-      remote_src: true
-      src: /root/.step/certs/root_ca.crt
-      dest: /etc/wazuh-dashboard/certs/step_root_ca.pem
-      mode: "0500"
+    - name: Add Root CA to Wazuh dashboard trust
+      ansible.builtin.lineinfile:
+        path: /etc/wazuh-dashboard/opensearch_dashboards.yml
+        regexp: '^opensearch.ssl.certificateAuthorities'
+        line: 'opensearch.ssl.certificateAuthorities: ["/etc/wazuh-dashboard/certs/root-ca.pem", "/etc/wazuh-dashboard/certs/step_root_ca.pem"]'
 
-  - name: Add Root CA to Wazuh dashboard trust
-    ansible.builtin.lineinfile:
-      path: /etc/wazuh-dashboard/opensearch_dashboards.yml
-      regexp: '^opensearch.ssl.certificateAuthorities'
-      line: 'opensearch.ssl.certificateAuthorities: ["/etc/wazuh-dashboard/certs/root-ca.pem", "/etc/wazuh-dashboard/certs/step_root_ca.pem"]'
+    - name: Copy TLS certs
+      ansible.builtin.copy:
+        remote_src: true
+        src: "{{ wazuh_server_tls_directory_src }}/{{ item }}"
+        dest: "{{ wazuh_server_tls_directory_dest }}/{{ item }}"
+        owner: wazuh-dashboard
+        group: wazuh-dashboard
+        mode: "0440"
+      loop: "{{ wazuh_server_tls_certs }}"
 
-  - name: Copy TLS certs
-    ansible.builtin.copy:
-      remote_src: true
-      src: "{{ wazuh_server_tls_directory_src }}/{{ item }}"
-      dest: "{{ wazuh_server_tls_directory_dest }}/{{ item }}"
-      owner: wazuh-dashboard
-      group: wazuh-dashboard
-      mode: "0440"
-    loop: "{{ wazuh_server_tls_certs }}"
+    - name: Modify Lets Encrypt conf to set renewal at 14 days
+      ansible.builtin.lineinfile:
+        path: /etc/letsencrypt/renewal/wazuh.localdomain.conf
+        regexp: 'renew_before_expiry'
+        line: 'renew_before_expiry = 14 days'
 
-  - name: Modify Lets Encrypt conf to set renewal at 14 days
-    ansible.builtin.lineinfile:
-      path: /etc/letsencrypt/renewal/wazuh.localdomain.conf
-      regexp: 'renew_before_expiry'
-      line: 'renew_before_expiry = 14 days'
-
-  - name: Copy renewal hook
-    ansible.builtin.copy:
-      src: wazuh.sh
-      dest: /etc/letsencrypt/renewal-hooks/post
-      owner: root
-      group: root
-      mode: "0755"
+    - name: Copy renewal hook
+      ansible.builtin.copy:
+        src: wazuh.sh
+        dest: /etc/letsencrypt/renewal-hooks/post
+        owner: root
+        group: root
+        mode: "0755"
