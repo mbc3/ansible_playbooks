@@ -10,6 +10,7 @@
     state: restarted
 
 - name: Restart qbittorrent-nox
+  become: true
   become_user: "{{ torrent_user }}"
   ansible.builtin.systemd_service:
     name: qbittorrent-nox
