@@ -34,6 +34,8 @@
     state: present
 
 # to install with just foreman:
-# sudo foreman-installer --scenario=foreman --foreman-initial-organization=HomeLab --foreman-initial-location="LA" --foreman-initial-admin-username="admin" --foreman-initial-admin-password="PASSWORD" --foreman-proxy-templates=true
+# sudo foreman-installer --scenario=foreman --foreman-initial-organization=HomeLab --foreman-initial-location="LA" \
+# --foreman-initial-admin-username="admin" --foreman-initial-admin-password="PASSWORD" --foreman-proxy-templates=true
 # to install with katello (needs 20GB of RAM)
-# sudo foreman-installer --scenario=katello --foreman-initial-organization=HomeLab --foreman-initial-location="LA" --foreman-initial-admin-username="admin" --foreman-initial-admin-password="PASSWORD" --foreman-proxy-templates=true
+# sudo foreman-installer --scenario=katello --foreman-initial-organization=HomeLab --foreman-initial-location="LA" \
+# --foreman-initial-admin-username="admin" --foreman-initial-admin-password="PASSWORD" --foreman-proxy-templates=true

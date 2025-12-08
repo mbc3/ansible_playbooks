@@ -13,10 +13,6 @@
       notify: Display updated packages
 
   roles:
-    # There's no rhyme or reason why some things are in all pis -- I should break these out to separate roles
-    - role: all_pis
-      tags: setup
-
     - role: rsyslog
       tags: setup
 
@@ -24,12 +20,6 @@
       tags:
         - setup
         - certs
-
-    - role: homepi
-      when: inventory_hostname == "homepi"
-      tags:
-        - homepi
-        - container
 
     - role: mediapi
       when: inventory_hostname == "mediapi"

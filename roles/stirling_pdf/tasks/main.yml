@@ -8,13 +8,13 @@
   ansible.builtin.stat:
     path: "{{ item }}"
   loop: "{{ stirling_pdf_directories }}"
-  register: dir_output
+  register: stirling_pdf_dir_output
 - name: Create directories for volume mount
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     mode: "0751"
-  loop: "{{ dir_output.results }}"
+  loop: "{{ stirling_pdf_dir_output.results }}"
   when: item.stat.uid != 100999
 - name: Create Stirling PDF quadlet file
   containers.podman.podman_container:

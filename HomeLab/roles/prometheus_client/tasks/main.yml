@@ -26,7 +26,7 @@
 
 
 - name: Install prometheus-node-exporter (RHEL10)
-  when:  ansible_facts["distribution_major_version"] == "9"
+  when: ansible_facts["distribution_major_version"] == "9"
   block:
     - name: Install node-exporter (rhel9)
       ansible.builtin.dnf:

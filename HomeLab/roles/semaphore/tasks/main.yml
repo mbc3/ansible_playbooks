@@ -72,7 +72,6 @@
     url: "https://github.com/semaphoreui/semaphore/releases/download/v{{ semaphore_version }}/semaphore_{{ semaphore_version }}_linux_amd64.rpm"
     dest: "{{ semaphore_package_location }}"
     mode: "0770"
-  run_once: true
 
 - name: Install Semaphore
   ansible.builtin.dnf:

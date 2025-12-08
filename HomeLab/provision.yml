@@ -46,7 +46,6 @@
         user: ansible
         state: present
         key: "{{ proxmox_pub_key }}"
-        #key: "{{ lookup('file', '/home/mbc/.ssh/proxmox.pub') }}"
 
     - name: Set Ansible user to NOPASSWD in sudoers
       community.general.sudoers:

@@ -24,12 +24,11 @@
         - Use new AIDE DB
 
     - name: Check if reboot is required (dnf)
-      when: ansible_facts["distribution"]  == "AlmaLinux"
+      when: ansible_facts["distribution"] == "AlmaLinux"
       ansible.builtin.command: dnf needs-restarting -r
       register: dnf_reboot
       changed_when: dnf_reboot.rc != 0
       failed_when: false
-      #notify: Reboot AlmaLinux machine # don't want to reboot via ansible in homelab anymore
 
   handlers:
     - name: Display updated packages

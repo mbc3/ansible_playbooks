@@ -6,6 +6,7 @@
 
   tasks:
     - name: APT Update
+      when: ansible_facts["distribution"] == "Debian"
       block:
         - name: Update all packages (with apt)
           ansible.builtin.apt:
@@ -19,9 +20,9 @@
           changed_when: apt_reboot.rc != 0
           failed_when: false
           notify: Reboot Debian machine
-      when: ansible_facts["distribution"] == "Debian"
 
     - name: DNF Update
+      when: ansible_facts["distribution"] == "AlmaLinux"
       block:
         - name: Update all packages (with dnf)
           ansible.builtin.dnf:
@@ -36,7 +37,6 @@
           changed_when: dnf_reboot.rc != 0
           failed_when: false
           notify: Reboot AlmaLinux machine
-      when: ansible_facts["distribution"]  == "AlmaLinux"
 
   handlers:
     - name: Display updated apt packages

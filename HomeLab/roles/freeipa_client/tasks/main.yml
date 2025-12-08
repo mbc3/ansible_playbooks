@@ -18,7 +18,8 @@
   ansible.builtin.user:
     name: mbc
   check_mode: true
-  register: user_check
+  register: freeipa_client_user_check
+
 - name: Bind to FreeIPA domain
   become: true
   ansible.builtin.expect:
@@ -40,7 +41,7 @@
       "Password for":
         - "{{ vault_freeipa_admin_password }}"
   no_log: false
-  when: user_check.state is not defined
+  when: freeipa_client_user_check.state is not defined
 
 - name: Allow FreeIPA user in sudoers
   community.general.sudoers:

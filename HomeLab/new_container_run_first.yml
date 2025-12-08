@@ -32,7 +32,6 @@
       ansible.posix.authorized_key:
         user: root
         state: present
-        #key: "{{ lookup('file', '/home/mbc/.ssh/proxmox.pub') }}"
         key: "{{ proxmox_pub_key }}"
 
     - name: Container Provision
@@ -41,6 +40,7 @@
           ansible.builtin.command: lxc-attach "{{ item }}" -- dnf install -y openssh-server
           loop: "{{ vm_ids }}"
           notify: Restart SSHD
+          changed_when: false
 
         # - name: Create ansible service account on container (RHEL)
         #   ansible.builtin.command: lxc-attach "{{ item }}" -- useradd -m -G wheel -p "{{ vault_container_password }} ansible"

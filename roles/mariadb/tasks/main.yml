@@ -1,7 +1,7 @@
 ---
 - name: Install MariaDB
   ansible.builtin.dnf:
-    name: 
+    name:
       - mariadb-server
       - python3-PyMySQL
     state: present
@@ -11,9 +11,9 @@
     name: ''
     host_all: true
     state: absent
-    login_unix_socket: "{{ socket }}" 
+    login_unix_socket: "{{ mariadb_socket }}"
 - name: Remove test database
   community.mysql.mysql_db:
     name: test
     state: absent
-    login_unix_socket: "{{ socket }}"
+    login_unix_socket: "{{ maria_dbsocket }}"

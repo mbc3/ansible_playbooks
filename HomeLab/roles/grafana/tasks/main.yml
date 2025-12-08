@@ -28,30 +28,34 @@
     user: root
     group: grafana
     mode: "0640"
-
   notify: Restart Grafana
-- name: Warn about requesting cert
-  ansible.builtin.debug:
-    msg: "Make sure you request a https certificate: certbot certonly -n -d graphs.localdomain --server https://ca.localdomain:8443/acme/acme/directory --agree-tos --email cohen@matthewbriancohen.com --standalone"
-- name: Enable certbot timer
-  ansible.builtin.systemd_service:
-    name: certbot-renew.timer
-    enabled: true
 
-- name: Create symlinks to crt and key files in grafana directory
-  ansible.builtin.file:
-    state: link
-    src: "/etc/letsencrypt/live/graphs.localdomain/{{ item.key }}"
-    dest: "/etc/grafana/{{ item.value }}"
-    owner: root
-    group: grafana
-    mode: "0440"
-  loop: "{{ grafana_certs | dict2items }}"
+- name: TLS Cert
+  block:
 
-- name: Give Grafana group ownership and read/execute permissions on /etc/letsencrypt
-  ansible.builtin.file:
-    path: /etc/letsencrypt
-    owner: root
-    group: grafana
-    mode: g+rx
-    recurse: true
+    - name: Request TLS cert
+      ansible.builtin.command: certbot certonly -n -d graphs.localdomain --server https://ca.localdomain:8443/acme/acme/directory --agree-tos --email cohen@matthewbriancohen.com --standalone
+      changed_when: false
+
+    - name: Enable certbot timer
+      ansible.builtin.systemd_service:
+        name: certbot-renew.timer
+        enabled: true
+
+    - name: Create symlinks to crt and key files in grafana directory
+      ansible.builtin.file:
+        state: link
+        src: "/etc/letsencrypt/live/graphs.localdomain/{{ item.key }}"
+        dest: "/etc/grafana/{{ item.value }}"
+        owner: root
+        group: grafana
+        mode: "0440"
+      loop: "{{ grafana_certs | dict2items }}"
+
+    - name: Give Grafana group ownership and read/execute permissions on /etc/letsencrypt
+      ansible.builtin.file:
+        path: /etc/letsencrypt
+        owner: root
+        group: grafana
+        mode: g+rx
+        recurse: true
