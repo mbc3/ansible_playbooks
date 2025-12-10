@@ -1,1 +1,4 @@
 ansible_user: "ansible"
+sshd_allowed_users:
+  - ansible
+  - mbc

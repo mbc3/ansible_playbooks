@@ -9,3 +9,12 @@
   with_fileglob:
     - "files/*.rules"
   notify: "Load rules"
+
+- name: Add custom dynamic auditd rules
+  ansible.builtin.template:
+    src: 50-ssh-authorized-keys.rules.j2
+    dest: "{{ auditd_path }}50-ssh-authorized-keys.rules"
+    owner: root
+    group: root
+    mode: "0600"
+  notify: "Load rules"

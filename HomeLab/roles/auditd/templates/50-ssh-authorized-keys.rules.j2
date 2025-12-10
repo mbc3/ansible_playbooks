@@ -1,0 +1,4 @@
+{% for item in sshd_allowed_users %}
+-a always,exit -F arch=b64 -F path=/home/{{ item }}/.ssh/authorized_keys -F perm=w -F key=sshd
+-a always,exit -F arch=b32 -F path=/home/{{ item }}/.ssh/authorized_keys -F perm=w -F key=sshd
+{% endfor %}
