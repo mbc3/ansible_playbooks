@@ -3,3 +3,4 @@ syncthing_ports:
   - syncthing
   - syncthing-gui
   - syncthing-relay
+syncthing_user: "syncthing"
