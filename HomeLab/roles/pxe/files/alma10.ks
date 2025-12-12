@@ -41,6 +41,8 @@ user --name=ansible --password=$y$j9T$CQJ4/qQB3pxF5EJtTNAvf/$xXkoECoivdug8QCHggr
 reboot
 
 %post
+dnf install -y qemu-guest-agent
+systemctl enable qemu-guest-agent
 mkdir -p /home/ansible/.ssh
 chmod 0700 /home/ansible/.ssh
 echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE5jb8Vcw0M2BxH4+LxWWc6oBJxa2VsGxlmOjUUGFVpk mbc@arch" > /home/ansible/.ssh/authorized_keys
