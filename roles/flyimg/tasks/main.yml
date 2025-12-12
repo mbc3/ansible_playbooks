@@ -4,7 +4,6 @@
   ansible.builtin.dnf:
     name: podman
     state: present
-  loop: "{{ flyimg_port }}"
 - name: Create Flyimg quadlet file
   containers.podman.podman_container:
     name: flyimg
