@@ -35,7 +35,7 @@ timezone America/Los_Angeles --utc
 
 #Root password
 rootpw --lock
-user --name=ansible --password=$y$j9T$CQJ4/qQB3pxF5EJtTNAvf/$xXkoECoivdug8QCHggrWWLfDd5Lvxj2R3NgIyNX/w07 --iscrypted --gecos="Ansible Service Account" --uid="1069" --gid="1069"
+user --name=ansible --password=$y$j9T$CQJ4/qQB3pxF5EJtTNAvf/$xXkoECoivdug8QCHggrWWLfDd5Lvxj2R3NgIyNX/w07 --iscrypted --gecos="Ansible Service Account" --uid=1069 --gid=1069
 
 # Reboot the node
 reboot
