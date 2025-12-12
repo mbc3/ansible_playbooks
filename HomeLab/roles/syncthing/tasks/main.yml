@@ -16,12 +16,15 @@
   ansible.builtin.user:
     name: syncthing
     comment: Syncthing Service Account
-    shell: /sbin/nologin
+    shell: /bin/bash
     state: present
 - name: Enable Syncthing service
+  become: true
+  become_user: syncthing
   ansible.builtin.systemd_service:
-    name: syncthing@syncthing
+    name: syncthing
     enabled: true
+    scope: user
     state: started
 - name: Set Syncthing to listen on all interfaces
   ansible.builtin.replace:
