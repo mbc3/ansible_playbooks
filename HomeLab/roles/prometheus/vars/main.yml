@@ -16,6 +16,7 @@ prometheus_home_hosts:
   - netboot
   - netbox
   - services
+  - hosted
 prometheus_mbc_hosts:
   - arch.internal
 prometheus_fw_hosts:
