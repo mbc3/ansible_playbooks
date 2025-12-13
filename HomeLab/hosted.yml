@@ -35,5 +35,8 @@
     - role: serial
       tags: test
 
+    - role: cooking
+      tags: hosted
+
     - role: debug
       tags: test

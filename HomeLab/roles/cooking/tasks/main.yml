@@ -1,0 +1,26 @@
+- name: Create Selfie User
+  ansible.builtin.user:
+    name: selfie
+    state: present
+    create_home: true
+    shell: /bin/bash
+    uid: 1777
+
+- name: Setup Podman
+  block:
+    - name: Install Podman
+      ansible.builtin.dnf:
+        name: podman
+        state: present
+
+    - name: Enable podman auto-update service
+      ansible.builtin.systemd_service:
+        name: podman-auto-update.timer
+        enabled: true
+        state: started
+
+    - name: Enable linger
+      become: true
+      become_user: selfie
+      ansible.builtin.command: loginctl enable-linger selfie
+      changed_when: false
