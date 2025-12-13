@@ -3,6 +3,7 @@
   become: true
   ansible.builtin.command: /usr/sbin/aide -i
   changed_when: false
+
 - name: Use new AIDE DB
   ansible.builtin.copy:
     remote_src: true

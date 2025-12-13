@@ -8,10 +8,11 @@
 
 - name: Setup Podman
   block:
-    - name: Install Podman
+    - name: Install podman packages
       ansible.builtin.dnf:
-        name: podman
+        name: "{{ item }}"
         state: present
+      loop: "{{ cooking_packages }}"
 
     - name: Enable podman auto-update service
       ansible.builtin.systemd_service:

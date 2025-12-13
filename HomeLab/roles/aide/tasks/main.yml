@@ -6,6 +6,7 @@
   notify:
     - Initialize AIDE
     - Use new AIDE DB
+
 - name: Create AIDE cronjob
   ansible.builtin.cron:
     name: "run aide check"
