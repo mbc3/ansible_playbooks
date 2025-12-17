@@ -1,0 +1,5 @@
+---
+mealie_packages:
+  - podman
+  - systemd-container
+mealie_user: selfie

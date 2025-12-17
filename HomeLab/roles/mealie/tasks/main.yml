@@ -1,0 +1,65 @@
+---
+- name: Install Podman
+  block:
+    - name: Install necessary packages
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ mealie_packages }}"
+
+    - name: Enable podman auto-update service
+      ansible.builtin.systemd_service:
+        name: podman-auto-update.timer
+        enabled: true
+        state: started
+
+    - name: Enable linger
+      become: true
+      become_user: "{{ mealie_user }}"
+      ansible.builtin.command: loginctl enable-linger "{{ mealie_user }}"
+      changed_when: false
+
+- name: Create mealie bind mount mount
+  ansible.builtin.file:
+    state: directory
+    path: /opt/mealie-data
+    owner: "{{ mealie_user }}"
+    group: "{{ mealie_user }}"
+    mode: "0775"
+
+- name: Set up mealie
+  become: true
+  become_user: "{{ mealie_user }}"
+  notify: Restart Mealie
+  block:
+    - name: Pull mealie image
+      containers.podman.podman_image:
+        name: ghcr.io/mealie-recipes/mealie
+        tag: v3.7.0
+
+    - name: Create mealie quadlet file
+      containers.podman.podman_container:
+        name: mealie
+        image: ghcr.io/mealie-recipes/mealie:v3.7.0
+        state: quadlet
+        quadlet_filename: mealie-app
+        quadlet_dir: "/home/{{ mealie_user }}/.config/containers/systemd"
+        volume:
+          - /opt/mealie-data:/app/data/:z
+        publish:
+         - 9925:9000
+        env:
+          TZ: "America/Los_Angeles"
+          BASE_URL: "https://cooking.hosted.localdomain"
+          PUID: 1777 # selfie user
+          PGID: 1777 # selfie group
+          ALLOW_SIGNUP: "false"
+
+- name: Start mealie
+  become: true
+  become_user: "{{ mealie_user }}"
+  ansible.builtin.systemd_service:
+    name: mealie-app
+    daemon_reload: true
+    scope: user
+    state: started

@@ -35,8 +35,11 @@
     - role: serial
       tags: test
 
-    - role: cooking
-      tags: hosted
-
     - role: debug
       tags: test
+
+    - role: caddy
+      tags: web
+
+    - role: mealie
+      tags: cooking
