@@ -35,25 +35,50 @@
     - name: Pull mealie image
       containers.podman.podman_image:
         name: ghcr.io/mealie-recipes/mealie
-        tag: v3.7.0
+        tag: latest
+
+    - name: Create mealie podman network
+      containers.podman.podman_network:
+        name: mealie
+        state: quadlet
+        subnet: 192.168.25.0/24
+        gateway: 192.168.25.1
+        quadlet_options:
+          - |
+            [Unit]
+            Wants=network-online.target
+            After=network-online.target
+            [Install]
+            WantedBy=default.target
 
     - name: Create mealie quadlet file
       containers.podman.podman_container:
         name: mealie
-        image: ghcr.io/mealie-recipes/mealie:v3.7.0
+        image: ghcr.io/mealie-recipes/mealie:latest
+        network: mealie.network
         state: quadlet
         quadlet_filename: mealie-app
         quadlet_dir: "/home/{{ mealie_user }}/.config/containers/systemd"
         volume:
           - /opt/mealie-data:/app/data/:z
         publish:
-         - 9925:9000
+          - 9925:9000
         env:
           TZ: "America/Los_Angeles"
           BASE_URL: "https://cooking.hosted.localdomain"
           PUID: 1777 # selfie user
           PGID: 1777 # selfie group
           ALLOW_SIGNUP: "false"
+        quadlet_options:
+          - "AutoUpdate=registry"
+          - |
+            [Unit]
+            Wants=network-online.target
+            After=network-online.target
+            [Service]
+            Restart=always
+            [Install]
+            WantedBy=default.target
 
 - name: Start mealie
   become: true
