@@ -3,8 +3,8 @@
   block:
     - name: Create netbox user
       ansible.builtin.user:
-        name: netbox
-        comment: netbox Service Account
+        name: "{{ netbox_user }}"
+        comment: "{{ netbox_user }} Service Account"
         shell: /usr/bin/bash
         password: "{{ vault_netbox_netbox_password | password_hash('sha512', 'Dash0fSA1t') }}"
 
@@ -32,28 +32,28 @@
         state: started
 
     - name: Enable linger
-      ansible.builtin.command: loginctl enable-linger netbox
+      ansible.builtin.command: loginctl enable-linger "{{ netbox_user }}"
       changed_when: false
 
     - name: Create volume mount
       ansible.builtin.file:
         state: directory
         path: /opt/netbox/config
-        owner: netbox
-        group: netbox
+        owner: "{{ netbox_user }}"
+        group: "{{ netbox_user }}"
         mode: "0775"
 
     - name: Create db volume mount
       ansible.builtin.file:
         state: directory
         path: /opt/postgres
-        owner: netbox
-        group: netbox
+        owner: "{{ netbox_user }}"
+        group: "{{ netbox_user }}"
         mode: "0775"
 
 - name: Set up netbox container
   become: true
-  become_user: netbox
+  become_user: "{{ netbox_user }}"
   block:
     - name: Pull netbox image
       containers.podman.podman_image:
@@ -107,7 +107,7 @@
         network: netbox.network
         state: quadlet
         quadlet_filename: netbox-db
-        quadlet_dir: "/home/netbox/.config/containers/systemd"
+        quadlet_dir: "/home/{{ netbox_user }}/.config/containers/systemd"
         volume:
           - /opt/postgres:/var/lib/postgresql/data:z
         env:
@@ -134,7 +134,7 @@
         network: netbox.network
         state: quadlet
         quadlet_filename: netbox-redis
-        quadlet_dir: "/home/netbox/.config/containers/systemd"
+        quadlet_dir: "/home/{{ netbox_user }}/.config/containers/systemd"
         quadlet_options:
           - "AutoUpdate=registry"
           - |
@@ -155,7 +155,7 @@
         network: netbox.network
         state: quadlet
         quadlet_filename: netbox-app
-        quadlet_dir: "/home/netbox/.config/containers/systemd"
+        quadlet_dir: "/home/{{ netbox_user }}/.config/containers/systemd"
         volume:
           - /opt/netbox/config:/config:z
         publish:
@@ -187,6 +187,8 @@
       notify: Restart Netbox
 
     - name: Start Netbox
+      become: true
+      become_user: "{{ netbox_user }}"
       ansible.builtin.systemd_service:
         name: netbox-pod
         daemon_reload: true

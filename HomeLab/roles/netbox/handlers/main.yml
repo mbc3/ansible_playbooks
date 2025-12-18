@@ -1,7 +1,7 @@
 ---
 - name: Restart Netbox
   become: true
-  become_user: netbox
+  become_user: "{{ netbox_user }}"
   ansible.builtin.systemd_service:
     name: netbox-pod
     state: restarted

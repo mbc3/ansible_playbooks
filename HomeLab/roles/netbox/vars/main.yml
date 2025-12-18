@@ -1,3 +1,4 @@
 netbox_packages:
   - podman
   - systemd-container
+netbox_user: netbox
