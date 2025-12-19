@@ -3,3 +3,5 @@ wazuh_server_tls_certs:
   - "privkey.pem"
 wazuh_server_tls_directory_src: "/etc/letsencrypt/live/wazuh.localdomain"
 wazuh_server_tls_directory_dest: "/etc/wazuh-dashboard/certs"
+wazuh_server_recipient: "cohen@matthewbriancohen.com"
+wazuh_server_sender: "no-reply@sleepycow.fun"

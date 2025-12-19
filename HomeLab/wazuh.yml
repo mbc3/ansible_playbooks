@@ -32,6 +32,9 @@
     - role: wazuh_server
       tags: security
 
+    - role: postfix
+      tags: mail
+
     - role: serial
       tags: test
 

@@ -1,0 +1,66 @@
+---
+- name: Install necessary packages
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ postfix_packages }}"
+
+- name: Set up password
+  notify: Restart Postfix
+  block:
+    - name: Copy password file
+      ansible.builtin.template:
+        src: sasl_passwd.j2
+        dest: "{{ postfix_password_file }}"
+        owner: root
+        group: root
+        mode: "0600"
+
+    - name: Run postmap
+      become: true
+      ansible.builtin.command: "postmap {{ postfix_password_file }}"
+      changed_when: false
+
+    - name: Chown db to root
+      become: true
+      ansible.builtin.file:
+        path: /etc/postfix/sasl_passwd.db
+        owner: root
+        group: root
+        mode: "0600"
+
+- name: Set postfix hostname
+  ansible.builtin.lineinfile:
+    path: "{{ postfix_config }}"
+    line: "myhostname = {{ inventory_hostname }}.{{ domain }}"
+
+- name: Enable SASL auth
+  ansible.builtin.lineinfile:
+    path: "{{ postfix_config }}"
+    line: "smtp_sasl_auth_enable = yes"
+
+- name: Enable password hash
+  ansible.builtin.lineinfile:
+    path: "{{ postfix_config }}"
+    line: "smtp_sasl_password_maps = hash:{{ postfix_password_file }}"
+
+- name: Disable anonymous postfix
+  ansible.builtin.lineinfile:
+    path: "{{ postfix_config }}"
+    line: "smtp_sasl_security_options = noanonymous"
+
+- name: Enforce TLS
+  ansible.builtin.lineinfile:
+    path: "{{ postfix_config }}"
+    line: smtp_tls_security_level = encrypt
+
+- name: Allow wrapper # needed because I don't have starttls set up on port 587 -- doing port 465 instead
+  ansible.builtin.lineinfile:
+    path: "{{ postfix_config }}"
+    line: smtp_tls_wrappermode = yes
+
+- name: Add relayhost
+  ansible.builtin.lineinfile:
+    path: "{{ postfix_config }}"
+    line: "relayhost = [{{ postfix_server_smtp }}]:{{ postfix_server_port }}"
+  notify: Restart Postfix
