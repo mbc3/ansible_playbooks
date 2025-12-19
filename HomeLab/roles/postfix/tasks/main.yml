@@ -54,7 +54,7 @@
     path: "{{ postfix_config }}"
     line: smtp_tls_security_level = encrypt
 
-- name: Allow wrapper # needed because I don't have starttls set up on port 587 -- doing port 465 instead
+- name: Allow wrapper # needed becaudr I'm connecting over port 465 instead of 587
   ansible.builtin.lineinfile:
     path: "{{ postfix_config }}"
     line: smtp_tls_wrappermode = yes
