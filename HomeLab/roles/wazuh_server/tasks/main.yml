@@ -39,7 +39,7 @@
     ansible.builtin.lineinfile:
       path: /var/ossec/etc/ossec.conf
       regexp: '<email_from>'
-      line: "<email_from>{{ wazuh_server_sender }}</email_to>"
+      line: "<email_from>{{ wazuh_server_sender }}</email_from>"
 
   - name: Set recipient email address
     ansible.builtin.lineinfile:
