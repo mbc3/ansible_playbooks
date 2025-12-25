@@ -1,7 +1,7 @@
 ---
-- name: Start SearXNG Systemd unit file
+- name: Restart SearXNG
   ansible.builtin.systemd_service:
     name: searxng
-    state: started
+    state: restarted
     scope: user
     daemon_reload: true

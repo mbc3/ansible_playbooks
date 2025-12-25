@@ -1,0 +1,59 @@
+---
+- name: Install Podman
+  block:
+    - name: Install necessary packages
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ searxng_packages }}"
+
+    - name: Enable podman auto-update service
+      ansible.builtin.systemd_service:
+        name: podman-auto-update.timer
+        enabled: true
+        state: started
+
+    - name: Enable linger
+      become: true
+      become_user: "{{ searxng_user }}"
+      ansible.builtin.command: loginctl enable-linger "{{ searxng_user }}"
+      changed_when: false
+
+- name: Set up SearXNG
+  become: true
+  become_user: "{{ searxng_user }}"
+  notify: Restart SearXNG
+  block:
+    - name: Pull SearXNG image
+      containers.podman.podman_image:
+        name: ghcr.io/searxng/searxng
+        tag: latest
+
+    - name: Create SearXNG quadlet file
+      containers.podman.podman_container:
+        name: searxng
+        image: ghcr.io/searxng/searxng:latest
+        state: quadlet
+        quadlet_filename: searxng
+        quadlet_dir: "/home/{{ searxng_user }}/.config/containers/systemd"
+        ports:
+          - 8081:8080
+        quadlet_options:
+          - "AutoUpdate=registry"
+          - |
+            [Unit]
+            Wants=network-online.target
+            After=network-online.target
+            [Service]
+            Restart=always
+            [Install]
+            WantedBy=default.target
+
+- name: Start SearXNG
+  become: true
+  become_user: "{{ searxng_user }}"
+  ansible.builtin.systemd_service:
+    name: searxng
+    daemon_reload: true
+    scope: user
+    state: started

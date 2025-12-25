@@ -1,0 +1,5 @@
+---
+searxng_packages:
+  - podman
+  - systemd-container
+searxng_user: selfie

@@ -43,3 +43,6 @@
 
     - role: mealie
       tags: cooking
+
+    - role: searxng
+      tags: search
