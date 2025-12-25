@@ -23,29 +23,29 @@
 
 - name: Enable email alerts
   block:
-  - name: Enable email notifications
-    ansible.builtin.lineinfile:
-      path: /var/ossec/etc/ossec.conf
-      regexp: '<email_notification>'
-      line: <email_notification>yes</email_notification>
+    - name: Enable email notifications
+      ansible.builtin.lineinfile:
+        path: /var/ossec/etc/ossec.conf
+        regexp: '<email_notification>'
+        line: <email_notification>yes</email_notification>
 
-  - name: Enable smtp
-    ansible.builtin.lineinfile:
-      path: /var/ossec/etc/ossec.conf
-      regexp: '<smtp_server>'
-      line: <smtp_server>localhost</smtp_server>
+    - name: Enable smtp
+      ansible.builtin.lineinfile:
+        path: /var/ossec/etc/ossec.conf
+        regexp: '<smtp_server>'
+        line: <smtp_server>localhost</smtp_server>
 
-  - name: Set sender email address
-    ansible.builtin.lineinfile:
-      path: /var/ossec/etc/ossec.conf
-      regexp: '<email_from>'
-      line: "<email_from>{{ wazuh_server_sender }}</email_from>"
+    - name: Set sender email address
+      ansible.builtin.lineinfile:
+        path: /var/ossec/etc/ossec.conf
+        regexp: '<email_from>'
+        line: "<email_from>{{ wazuh_server_sender }}</email_from>"
 
-  - name: Set recipient email address
-    ansible.builtin.lineinfile:
-      path: /var/ossec/etc/ossec.conf
-      regexp: '<email_to>'
-      line: "<email_to>{{ wazuh_server_recipient }}</email_to>"
+    - name: Set recipient email address
+      ansible.builtin.lineinfile:
+        path: /var/ossec/etc/ossec.conf
+        regexp: '<email_to>'
+        line: "<email_to>{{ wazuh_server_recipient }}</email_to>"
 
 - name: TLS Cert
   block:
