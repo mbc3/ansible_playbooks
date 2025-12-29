@@ -63,17 +63,15 @@
       changed_when: false
 
 - name: Install Qbittorent-nox container
+  become: true
+  become_user: "{{ torrent_user }}"
   block:
     - name: Pull nox image
-      become: true
-      become_user: "{{ torrent_user }}"
       containers.podman.podman_image:
         name: docker.io/qbittorrentofficial/qbittorrent-nox
         tag: latest
 
     - name: Create Nox quadlet file
-      become: true
-      become_user: "{{ torrent_user }}"
       containers.podman.podman_container:
         name: qbittorrent
         image: docker.io/qbittorrentofficial/qbittorrent-nox:latest

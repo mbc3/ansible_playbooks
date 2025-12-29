@@ -25,11 +25,6 @@
       ansible.builtin.command: loginctl enable-linger "{{ grafana_user }}"
       changed_when: false
 
-- name: Create Grafana podman volume
-  containers.podman.podman_volume:
-    name: grafana-storage
-    state: present
-
 - name: Set up Grafana
   become: true
   become_user: "{{ grafana_user }}"
@@ -39,6 +34,11 @@
       containers.podman.podman_image:
         name: docker.io/grafana/grafana
         tag: latest
+
+    - name: Create Grafana podman volume
+      containers.podman.podman_volume:
+        name: grafana-storage
+        state: present
 
     - name: Create Grafana quadlet file
       containers.podman.podman_container:
