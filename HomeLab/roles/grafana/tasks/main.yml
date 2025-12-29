@@ -52,6 +52,8 @@
           - "grafana-storage:/var/lib/grafana"
         publish:
           - 3000:3000
+        env:
+          GF_ANALYTICS_REPORTING_ENABLED: false
         quadlet_options:
           - "AutoUpdate=registry"
           - |
