@@ -1,61 +1,93 @@
 ---
-- name: Import GPG key
-  ansible.builtin.rpm_key:
-    state: present
-    key: https://{{ grafana_url }}/gpg.key
+- name: Create grafana account
+  ansible.builtin.user:
+    name: "{{ prometheus_user }}"
+    shell: /bin/bash
+    password: "{{ vault_grafana_password | password_hash('sha512', 'Dash0fSA1t') }}"
 
-- name: Create Grafana repo
-  ansible.builtin.template:
-    src: grafana.repo.j2
-    dest: /etc/yum.repos.d/grafana.repo
-    mode: "0644"
-
-- name: Install Grafana and plugins
-  ansible.builtin.dnf:
-    name: "{{ item }}"
-    state: present
-  loop: "{{ grafana_packages }}"
-
-  notify: Enable Grafana
-- name: Install performance co pilot plugin
-  ansible.builtin.command: grafana-cli plugins install performancecopilot-pcp-app
-  changed_when: false
-
-- name: Copy Grafana config
-  ansible.builtin.copy:
-    src: grafana.ini
-    dest: /etc/grafana/grafana.ini
-    user: root
-    group: grafana
-    mode: "0640"
-  notify: Restart Grafana
-
-- name: TLS Cert
+- name: Install Podman
   block:
+    - name: Install necessary packages
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ grafana_packages }}"
 
-    - name: Request TLS cert
-      ansible.builtin.command: certbot certonly -n -d graphs.localdomain --server https://ca.localdomain:8443/acme/acme/directory --agree-tos --email cohen@matthewbriancohen.com --standalone
+    - name: Enable podman auto-update service
+      ansible.builtin.systemd_service:
+        name: podman-auto-update.timer
+        enabled: true
+        state: started
+
+    - name: Enable linger
+      become: true
+      become_user: "{{ grafana_user }}"
+      ansible.builtin.command: loginctl enable-linger "{{ grafana_user }}"
       changed_when: false
 
-    - name: Enable certbot timer
-      ansible.builtin.systemd_service:
-        name: certbot-renew.timer
-        enabled: true
+- name: Create Grafana podman volume
+  containers.podman.podman_volume:
+    name: grafana-storage
+    state: present
 
-    - name: Create symlinks to crt and key files in grafana directory
-      ansible.builtin.file:
-        state: link
-        src: "/etc/letsencrypt/live/graphs.localdomain/{{ item.key }}"
-        dest: "/etc/grafana/{{ item.value }}"
-        owner: root
-        group: grafana
-        mode: "0440"
-      loop: "{{ grafana_certs | dict2items }}"
+- name: Set up Grafana
+  become: true
+  become_user: "{{ grafana_user }}"
+  notify: Restart Grafana
+  block:
+    - name: Pull Grafana image
+      containers.podman.podman_image:
+        name: docker.io/grafana/grafana
+        tag: latest
 
-    - name: Give Grafana group ownership and read/execute permissions on /etc/letsencrypt
-      ansible.builtin.file:
-        path: /etc/letsencrypt
-        owner: root
-        group: grafana
-        mode: g+rx
-        recurse: true
+    - name: Create graphs podman network
+      containers.podman.podman_network:
+      name: graphs
+      state: quadlet
+      subnet: 192.168.79.0/24
+      gateway: 192.168.79.1
+      quadlet_options:
+        - |
+          [Unit]
+          Wants=network-online.target
+          After=network-online.target
+          [Install]
+          WantedBy=default.target
+
+    - name: Create graphs pod
+      containers.podman.podman_pod:
+        name: graphs
+        state: quadlet
+        network: graphs.network
+        quadlet_options:
+          - |
+            [Unit]
+            Wants=network-online.target
+            After=network-online.target
+            [Service]
+            Restart=always
+            [Install]
+            WantedBy=default.target
+
+    - name: Create Grafana quadlet file
+      containers.podman.podman_container:
+        name: prometheus
+        image: docker.io/grafana/grafana:latest
+        network: graphs
+        state: quadlet
+        quadlet_filename: grafana
+        quadlet_dir: "/home/{{ grafana_user }}/.config/containers/systemd"
+        volume:
+          - "grafana-storage:/var/lib/grafana"
+        publish:
+          - 3000:3000
+        quadlet_options:
+          - "AutoUpdate=registry"
+          - |
+            [Unit]
+            Wants=network-online.target
+            After=network-online.target
+            [Service]
+            Restart=always
+            [Install]
+            WantedBy=default.target

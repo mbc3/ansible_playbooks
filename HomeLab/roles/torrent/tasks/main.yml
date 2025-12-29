@@ -43,15 +43,6 @@
     state: present
   loop: "{{ torrent_packages }}"
 
-- name: Disallow torrent user from SSH
-  ansible.builtin.copy:
-    src: 69-torrent.conf
-    dest: /etc/ssh/sshd_config.d/69-torrent.conf
-    owner: root
-    group: root
-    mode: "0644"
-  notify: Restart SSHD
-
 - name: Setup Podman
   block:
     - name: Install Podman

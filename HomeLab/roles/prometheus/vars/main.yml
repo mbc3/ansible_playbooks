@@ -1,4 +1,8 @@
 ---
+prometheus_user: "grafana"
+prometheus_packages:
+  - podman
+  - systemd-container
 prometheus_port: "9100"
 prometheus_systemd_port: "9558"
 prometheus_home_hosts:

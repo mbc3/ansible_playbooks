@@ -19,7 +19,7 @@
       ansible.builtin.command: loginctl enable-linger "{{ mealie_user }}"
       changed_when: false
 
-- name: Create mealie bind mount mount
+- name: Create mealie bind mount
   ansible.builtin.file:
     state: directory
     path: /opt/mealie-data

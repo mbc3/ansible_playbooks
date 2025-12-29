@@ -1,22 +1,36 @@
 ---
+- name: Create grafana account
+  ansible.builtin.user:
+    name: "{{ prometheus_user }}"
+    shell: /bin/bash
+    password: "{{ vault_grafana_password | password_hash('sha512', 'Dash0fSA1t') }}"
+
 - name: Install Podman
   block:
-    - name: Install Podman
+    - name: Install necessary packages
       ansible.builtin.dnf:
-        name: podman
+        name: "{{ item }}"
         state: present
+      loop: "{{ prometheus_packages }}"
+
     - name: Enable podman auto-update service
       ansible.builtin.systemd_service:
         name: podman-auto-update.timer
         enabled: true
         state: started
 
+    - name: Enable linger
+      become: true
+      become_user: "{{ prometheus_user }}"
+      ansible.builtin.command: loginctl enable-linger "{{ prometheus_user }}"
+      changed_when: false
+
 - name: Copy Prometheus config
   ansible.builtin.template:
     src: prometheus.yml.j2
     dest: /opt/prometheus.yml
-    owner: root
-    group: root
+    owner: "{{ prometheus_user }}"
+    group: "{{ prometheus_user }}"
     mode: "0664"
   notify: Restart Prometheus
 
@@ -25,33 +39,68 @@
     name: prometheus-data
     state: present
 
-- name: Pull Prometheus image
-  containers.podman.podman_image:
-    name: docker.io/prom/prometheus
-    tag: latest
-
-- name: Create Prometheus quadlet file
-  containers.podman.podman_container:
-    name: prometheus
-    image: docker.io/prom/prometheus:latest
-    ports: "9090:9090"
-    command:
-      - --config.file=/etc/prometheus/prometheus.yml
-      - --storage.tsdb.path=/prometheus
-    volume:
-      - "/opt/prometheus.yml:/etc/prometheus/prometheus.yml"
-      - "prometheus-data:/prometheus"
-    state: quadlet
-    quadlet_filename: prometheus
-    quadlet_dir: "/etc/containers/systemd/"
-    quadlet_options:
-      - "AutoUpdate=registry"
-      - |
-        [Service]
-        Restart=always
-        [Unit]
-        Wants=network-online.target
-        After=network-online.target
-        [Install]
-        WantedBy=default.target
+- name: Set up Prometheus
+  become: true
+  become_user: "{{ prometheus_user }}"
   notify: Restart Prometheus
+  block:
+    - name: Pull Prometheus image
+      containers.podman.podman_image:
+        name: docker.io/prom/prometheus
+        tag: latest
+
+    - name: Create graphs podman network
+      containers.podman.podman_network:
+      name: graphs
+      state: quadlet
+      subnet: 192.168.79.0/24
+      gateway: 192.168.79.1
+      quadlet_options:
+        - |
+          [Unit]
+          Wants=network-online.target
+          After=network-online.target
+          [Install]
+          WantedBy=default.target
+
+    - name: Create graphs pod
+      containers.podman.podman_pod:
+        name: graphs
+        state: quadlet
+        network: graphs.network
+        quadlet_options:
+          - |
+            [Unit]
+            Wants=network-online.target
+            After=network-online.target
+            [Service]
+            Restart=always
+            [Install]
+            WantedBy=default.target
+
+    - name: Create Prometheus quadlet file
+      containers.podman.podman_container:
+        name: prometheus
+        image: docker.io/prom/prometheus:latest
+        network: graphs
+        state: quadlet
+        quadlet_filename: prometheus
+        quadlet_dir: "/home/{{ prometheus_user }}/.config/containers/systemd"
+        volume:
+          - "/opt/prometheus.yml:/etc/prometheus/prometheus.yml:z"
+          - "prometheus-data:/prometheus"
+        publish:
+          - 9090:9090
+        command:
+          - --config.file=/etc/prometheus/prometheus.yml
+          - --storage.tsdb.path=/prometheus
+        quadlet_options:
+          - "AutoUpdate=registry"
+          - |
+            [Unit]
+            Wants=network-online.target
+            After=network-online.target
+            [Service]
+            Restart=always
+            [Install]
+            WantedBy=default.target
