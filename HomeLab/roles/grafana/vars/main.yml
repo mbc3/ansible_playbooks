@@ -1,5 +1,5 @@
 ---
-grafana_certs: { "fullchain.pem": "grafana.crt", "privkey.pem": "grafana.key" }
+grafana_user: "grafana"
 grafana_packages:
   - podman
   - systemd-container

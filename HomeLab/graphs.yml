@@ -38,9 +38,11 @@
     - role: debug
       tags: test
 
-    - role: caddy
-      tags: web
-
     - role: prometheus
+      tags: prometheus
 
     - role: grafana
+      tags: grafana
+
+    - role: caddy
+      tags: web

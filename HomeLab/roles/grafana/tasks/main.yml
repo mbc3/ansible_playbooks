@@ -71,7 +71,7 @@
 
     - name: Create Grafana quadlet file
       containers.podman.podman_container:
-        name: prometheus
+        name: grafana
         image: docker.io/grafana/grafana:latest
         network: graphs
         state: quadlet
