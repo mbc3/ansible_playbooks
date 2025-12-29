@@ -42,17 +42,17 @@
 
     - name: Create graphs podman network
       containers.podman.podman_network:
-      name: graphs
-      state: quadlet
-      subnet: 192.168.79.0/24
-      gateway: 192.168.79.1
-      quadlet_options:
-        - |
-          [Unit]
-          Wants=network-online.target
-          After=network-online.target
-          [Install]
-          WantedBy=default.target
+        name: graphs
+        state: quadlet
+        subnet: 192.168.79.0/24
+        gateway: 192.168.79.1
+        quadlet_options:
+          - |
+            [Unit]
+            Wants=network-online.target
+            After=network-online.target
+            [Install]
+            WantedBy=default.target
 
     - name: Create graphs pod
       containers.podman.podman_pod:
