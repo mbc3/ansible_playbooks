@@ -4,6 +4,7 @@
     name: loki
     enabled: true
     state: started
+
 - name: Restart Loki
   ansible.builtin.systemd_service:
     name: loki

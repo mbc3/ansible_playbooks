@@ -1,0 +1,4 @@
+caddy_services:
+# key is subdomain, ie pihole.mediapi.localdomain
+# value is port for reverse proxy, ie 8080
+    loki: "3100"

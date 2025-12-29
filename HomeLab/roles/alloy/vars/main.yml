@@ -1,5 +1,6 @@
 ---
 alloy_url: "rpm.grafana.com"
+alloy_url_deb: "apt.grafana.com"
 alloy_port: "1514"
 alloy_protocol: "udp"
 alloy_loki_port: "3100"

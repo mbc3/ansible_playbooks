@@ -8,12 +8,8 @@
   # TO DO: loop over each container in inventory, get proxmox_hostname["ansible_inventory"].proxmox_vmid
   vars:
     vm_ids:
-      - 102
-      - 103
       - 107
       - 110
-      - 113
-
   pre_tasks:
     # - name: Display vmid # Still testing this out
     #   ansible.builtin.debug:

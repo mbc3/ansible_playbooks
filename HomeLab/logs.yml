@@ -18,5 +18,10 @@
       tags: auth
 
     - role: loki
+      tags: loki
 
     - role: alloy
+      tags: alloy
+
+    - role: caddy
+      tags: web

@@ -1,24 +1,58 @@
 ---
-- name: Import GPG key
-  ansible.builtin.rpm_key:
-    state: present
-    key: https://{{ alloy_url }}/gpg.key
-- name: Create Grafana Alloy repo
-  ansible.builtin.template:
-    src: alloy.repo.j2
-    dest: /etc/yum.repos.d/grafana.repo
-    mode: "0644"
+- name: RHEL setup
+  when: ansible_facts["distribution"] == "AlmaLinux"
+  block:
+    - name: Import GPG key
+      ansible.builtin.rpm_key:
+        state: present
+        key: https://{{ alloy_url }}/gpg.key
+
+    - name: Create Grafana Alloy repo
+      ansible.builtin.template:
+        src: alloy.repo.j2
+        dest: /etc/yum.repos.d/grafana.repo
+        mode: "0644"
+
+- name: Debian setup
+  when: ansible_facts["distribution"] == "Debian"
+  block:
+    - name: Import GPG key
+      ansible.builtin.get_url:
+        url: https://{{ alloy_url_deb }}/gpg.key
+        dest: /etc/apt/keyrings/grafana.gpg
+
+    - name: Create Grafana Alloy repo
+      ansible.builtin.template:
+        src: grafana.list.j2
+        dest: /etc/apt/sources.list.d/grafana.list
+        mode: "0644"
+
 - name: Install Grafana Alloy
-  ansible.builtin.dnf:
+  ansible.builtin.package:
     name: alloy
     state: present
   notify: Enable Alloy
-- name: Disable reporting and allow debug web ui on all interfaces
-  ansible.builtin.lineinfile:
-    path: "/etc/sysconfig/alloy"
-    regexp: "^CUSTOM_ARGS="
-    line: 'CUSTOM_ARGS="--disable-reporting=true --server.http.listen-addr=0.0.0.0:12345"'
+
+- name: Custom config (RHEL)
+  when: ansible_facts["distribution"] == "AlmaLinux"
   notify: Restart Alloy
+  block:
+    - name: Disable reporting and allow debug web ui on all interfaces
+      ansible.builtin.lineinfile:
+        path: "/etc/sysconfig/alloy"
+        regexp: "^CUSTOM_ARGS="
+        line: 'CUSTOM_ARGS="--disable-reporting=true --server.http.listen-addr=0.0.0.0:12345"'
+
+- name: Custom config (Deb)
+  when: ansible_facts["distribution"] == "Debian"
+  notify: Restart Alloy
+  block:
+    - name: Disable reporting and allow debug web ui on all interfaces
+      ansible.builtin.lineinfile:
+        path: "/etc/default/alloy"
+        regexp: "^CUSTOM_ARGS="
+        line: 'CUSTOM_ARGS="--disable-reporting=true --server.http.listen-addr=0.0.0.0:12345"'
+
 - name: Copy Alloy config
   ansible.builtin.template:
     src: config.alloy.j2

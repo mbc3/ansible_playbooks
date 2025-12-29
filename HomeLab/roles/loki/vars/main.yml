@@ -1,3 +1,4 @@
 ---
 loki_url: "rpm.grafana.com"
+loki_url_deb: "apt.grafana.com"
 loki_port: "3100"

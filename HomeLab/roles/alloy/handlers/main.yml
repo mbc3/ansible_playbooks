@@ -4,6 +4,7 @@
     name: alloy
     enabled: true
     state: started
+
 - name: Restart Alloy
   ansible.builtin.systemd_service:
     name: alloy

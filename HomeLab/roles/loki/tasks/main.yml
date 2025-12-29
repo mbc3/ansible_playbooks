@@ -1,18 +1,38 @@
 ---
-- name: Import GPG key
-  ansible.builtin.rpm_key:
-    state: present
-    key: https://{{ loki_url }}/gpg.key
-- name: Create Grafana Loki repo
-  ansible.builtin.template:
-    src: loki.repo.j2
-    dest: /etc/yum.repos.d/grafana.repo
-    mode: "0644"
+- name: RHEL setup
+  when: ansible_facts["distribution"] == "AlmaLinux"
+  block:
+    - name: Import GPG key
+      ansible.builtin.rpm_key:
+        state: present
+        key: https://{{ loki_url }}/gpg.key
+
+    - name: Create Grafana Loki repo
+      ansible.builtin.template:
+        src: loki.repo.j2
+        dest: /etc/yum.repos.d/grafana.repo
+        mode: "0644"
+
+- name: Debian setup
+  when: ansible_facts["distribution"] == "Debian"
+  block:
+    - name: Import GPG key
+      ansible.builtin.get_url:
+        url: https://{{ loki_url_deb }}/gpg.key
+        dest: /etc/apt/keyrings/grafana.gpg
+
+    - name: Create Grafana Loki repo
+      ansible.builtin.template:
+        src: grafana.list.j2
+        dest: /etc/apt/sources.list.d/grafana.list
+        mode: "0644"
+
 - name: Install Grafana Loki
-  ansible.builtin.dnf:
+  ansible.builtin.package:
     name: loki
     state: present
   notify: Enable Loki
+
 - name: Copy Loki config
   ansible.builtin.template:
     src: config.yml.j2
