@@ -1,43 +1,93 @@
 ---
-- name: RHEL setup
-  when: ansible_facts["distribution"] == "AlmaLinux"
+- name: Create grafana account
+  ansible.builtin.user:
+    name: "{{ loki_user }}"
+    shell: /bin/bash
+    password: "{{ vault_grafana_password | password_hash('sha512', 'Dash0fSA1t') }}"
+
+- name: Install Podman
   block:
-    - name: Import GPG key
-      ansible.builtin.rpm_key:
+    - name: Install necessary packages
+      ansible.builtin.dnf:
+        name: "{{ item }}"
         state: present
-        key: https://{{ loki_url }}/gpg.key
+      loop: "{{ loki_packages }}"
 
-    - name: Create Grafana Loki repo
-      ansible.builtin.template:
-        src: loki.repo.j2
-        dest: /etc/yum.repos.d/grafana.repo
-        mode: "0644"
+    - name: Enable podman auto-update service
+      ansible.builtin.systemd_service:
+        name: podman-auto-update.timer
+        enabled: true
+        state: started
 
-- name: Debian setup
-  when: ansible_facts["distribution"] == "Debian"
-  block:
-    - name: Import GPG key
-      ansible.builtin.get_url:
-        url: https://{{ loki_url_deb }}/gpg.key
-        dest: /etc/apt/keyrings/grafana.gpg
+    - name: Enable linger
+      become: true
+      become_user: "{{ loki_user }}"
+      ansible.builtin.command: loginctl enable-linger "{{ loki_user }}"
+      changed_when: false
 
-    - name: Create Grafana Loki repo
-      ansible.builtin.template:
-        src: grafana.list.j2
-        dest: /etc/apt/sources.list.d/grafana.list
-        mode: "0644"
-
-- name: Install Grafana Loki
-  ansible.builtin.package:
-    name: loki
-    state: present
-  notify: Enable Loki
-
-- name: Copy Loki config
-  ansible.builtin.template:
-    src: config.yml.j2
-    dest: /etc/loki/config.yml
+- name: Add logging custom firewalld service
+  ansible.builtin.copy:
+    src: logging.xml
+    dest: /etc/firewalld/services/logging.xml
     owner: root
     group: root
     mode: "0644"
+  notify: Restart firewalld
+
+- name: Add logging firewalld service
+  ansible.posix.firewalld:
+    service: logging
+    permanent: true
+    immediate: true
+    state: enabled
+
+- name: Make Loki config dir
+  ansible.builtin.file:
+    name: /opt/loki
+    state: directory
+    owner: "{{ loki_user }}"
+    group: "{{ loki_user }}"
+    mode: "0775"
+
+- name: Copy Loki config
+  ansible.builtin.template:
+    src: config.yaml.j2
+    dest: /opt/loki/loki-config.yaml
+    owner: "{{ loki_user }}"
+    group: "{{ loki_user }}"
+    mode: "0664"
   notify: Restart Loki
+
+- name: Set up Loki
+  become: true
+  become_user: "{{ loki_user }}"
+  notify: Restart Loki
+  block:
+    - name: Pull Loki image
+      containers.podman.podman_image:
+        name: docker.io/grafana/loki
+        tag: latest
+
+    - name: Create Loki quadlet file
+      containers.podman.podman_container:
+        name: loki
+        image: docker.io/grafana/loki:latest
+        network: host
+        state: quadlet
+        quadlet_filename: loki
+        quadlet_dir: "/home/{{ loki_user }}/.config/containers/systemd"
+        volume:
+          - "/opt/loki:/mnt/config:z"
+        command: -config.file=/mnt/config/loki-config.yaml
+        publish:
+          - 3100:3100
+        quadlet_options:
+          - "AutoUpdate=registry"
+          - |
+            [Unit]
+            Wants=network-online.target
+            After=network-online.target
+            [Service]
+            Restart=always
+            [Install]
+            WantedBy=default.target

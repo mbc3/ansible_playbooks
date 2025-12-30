@@ -1,4 +1,6 @@
 ---
-loki_url: "rpm.grafana.com"
-loki_url_deb: "apt.grafana.com"
+loki_user: "grafana"
+loki_packages:
+  - podman
+  - systemd-container
 loki_port: "3100"

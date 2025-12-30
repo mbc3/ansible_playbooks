@@ -1,61 +1,69 @@
 ---
-- name: RHEL setup
-  when: ansible_facts["distribution"] == "AlmaLinux"
+- name: Create grafana account
+  ansible.builtin.user:
+    name: "{{ alloy_user }}"
+    shell: /bin/bash
+    password: "{{ vault_grafana_password | password_hash('sha512', 'Dash0fSA1t') }}"
+
+- name: Install Podman
   block:
-    - name: Import GPG key
-      ansible.builtin.rpm_key:
+    - name: Install necessary packages
+      ansible.builtin.dnf:
+        name: "{{ item }}"
         state: present
-        key: https://{{ alloy_url }}/gpg.key
+      loop: "{{ alloy_packages }}"
 
-    - name: Create Grafana Alloy repo
-      ansible.builtin.template:
-        src: alloy.repo.j2
-        dest: /etc/yum.repos.d/grafana.repo
-        mode: "0644"
+    - name: Enable podman auto-update service
+      ansible.builtin.systemd_service:
+        name: podman-auto-update.timer
+        enabled: true
+        state: started
 
-- name: Debian setup
-  when: ansible_facts["distribution"] == "Debian"
-  block:
-    - name: Import GPG key
-      ansible.builtin.get_url:
-        url: https://{{ alloy_url_deb }}/gpg.key
-        dest: /etc/apt/keyrings/grafana.gpg
-
-    - name: Create Grafana Alloy repo
-      ansible.builtin.template:
-        src: grafana.list.j2
-        dest: /etc/apt/sources.list.d/grafana.list
-        mode: "0644"
-
-- name: Install Grafana Alloy
-  ansible.builtin.package:
-    name: alloy
-    state: present
-  notify: Enable Alloy
-
-- name: Custom config (RHEL)
-  when: ansible_facts["distribution"] == "AlmaLinux"
-  notify: Restart Alloy
-  block:
-    - name: Disable reporting and allow debug web ui on all interfaces
-      ansible.builtin.lineinfile:
-        path: "/etc/sysconfig/alloy"
-        regexp: "^CUSTOM_ARGS="
-        line: 'CUSTOM_ARGS="--disable-reporting=true --server.http.listen-addr=0.0.0.0:12345"'
-
-- name: Custom config (Deb)
-  when: ansible_facts["distribution"] == "Debian"
-  notify: Restart Alloy
-  block:
-    - name: Disable reporting and allow debug web ui on all interfaces
-      ansible.builtin.lineinfile:
-        path: "/etc/default/alloy"
-        regexp: "^CUSTOM_ARGS="
-        line: 'CUSTOM_ARGS="--disable-reporting=true --server.http.listen-addr=0.0.0.0:12345"'
+    - name: Enable linger
+      become: true
+      become_user: "{{ alloy_user }}"
+      ansible.builtin.command: loginctl enable-linger "{{ alloy_user }}"
+      changed_when: false
 
 - name: Copy Alloy config
   ansible.builtin.template:
     src: config.alloy.j2
-    dest: /etc/alloy/config.alloy
-    mode: "0644"
+    dest: /opt/config.alloy
+    owner: "{{ alloy_user }}"
+    group: "{{ alloy_user }}"
+    mode: "0664"
   notify: Restart Alloy
+
+- name: Set up Alloy
+  become: true
+  become_user: "{{ alloy_user }}"
+  notify: Restart Alloy
+  block:
+    - name: Pull Alloy image
+      containers.podman.podman_image:
+        name: docker.io/grafana/alloy
+        tag: latest
+
+    - name: Create Alloy quadlet file
+      containers.podman.podman_container:
+        name: alloy
+        image: docker.io/grafana/alloy:latest
+        network: host
+        state: quadlet
+        quadlet_filename: alloy
+        quadlet_dir: "/home/{{ alloy_user }}/.config/containers/systemd"
+        volume:
+          - "/opt/config.alloy:/etc/alloy/config.alloy:z"
+        publish:
+          - 12345:12345
+        command: "run --disable-reporting=true --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy"
+        quadlet_options:
+          - "AutoUpdate=registry"
+          - |
+            [Unit]
+            Wants=network-online.target
+            After=network-online.target
+            [Service]
+            Restart=always
+            [Install]
+            WantedBy=default.target

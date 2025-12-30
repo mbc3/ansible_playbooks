@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<service>
+<short>Logging</short>
+<description>Logging ports for Loki/Alloy</description>
+<port port="1514" protocol="tcp" />
+<port port="1514" protocol="udp" />
+<port port="3100" protocol="tcp" />
+<port port="3100" protocol="udp" />
+</service>

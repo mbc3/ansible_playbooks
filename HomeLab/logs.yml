@@ -7,6 +7,9 @@
     - role: rsyslog
       tags: logs
 
+    - role: auditd
+      tags: audit
+
     - role: sshd
 
     - role: sudo
@@ -14,8 +17,26 @@
     - role: prometheus_client
       tags: metrics
 
+    - role: freeipa_client
+      tags: auth
+
     - role: ca_client
       tags: auth
+
+    - role: aide
+      tags: security
+
+    - role: wazuh_agent
+      tags: security
+
+    - role: selinux
+      tags: security
+
+    - role: serial
+      tags: test
+
+    - role: debug
+      tags: test
 
     - role: loki
       tags: loki

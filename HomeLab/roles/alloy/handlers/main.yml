@@ -1,11 +1,9 @@
 ---
-- name: Enable Alloy
-  ansible.builtin.systemd_service:
-    name: alloy
-    enabled: true
-    state: started
-
 - name: Restart Alloy
+  become: true
+  become_user: "{{ alloy_user }}"
   ansible.builtin.systemd_service:
     name: alloy
+    scope: user
+    daemon_reload: true
     state: restarted
