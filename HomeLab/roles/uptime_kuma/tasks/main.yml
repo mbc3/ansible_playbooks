@@ -3,8 +3,9 @@
   block:
     - name: Install Podman
       ansible.builtin.package:
-        name: podman
+        name: "{{ item }}"
         state: present
+      loop: "{{ uptime_kuma_packages }}"
 
     - name: Enable podman auto-update service
       ansible.builtin.systemd_service:
@@ -12,41 +13,46 @@
         enabled: true
         state: started
 
-- name: Create Uptime Kuma podman volume
-  containers.podman.podman_volume:
-    name: uptime-kuma
-    state: present
+    - name: Enable linger
+      become: true
+      become_user: "{{ uptime_kuma_user }}"
+      ansible.builtin.command: loginctl enable-linger "{{ uptime_kuma_user }}"
+      changed_when: false
 
-- name: Pull Uptime Kuma image
-  containers.podman.podman_image:
-    name: docker.io/louislam/uptime-kuma
-    tag: "{{ uptime_kuma_version }}"
-
-- name: Create Uptime Kuma quadlet file
-  containers.podman.podman_container:
-    name: uptime-kuma
-    image: "docker.io/louislam/uptime-kuma:{{ uptime_kuma_version }}"
-    state: quadlet
-    quadlet_filename: uptime-kuma
-    quadlet_dir: "/etc/containers/systemd/"
-    cap_add: "NET_RAW"
-    ports:
-      - 3001:3001
-    volumes:
-      - "uptime-kuma:/app/data"
-    quadlet_options:
-      - "AutoUpdate=registry"
-      - |
-        [Unit]
-        Wants=network-online.target
-        After=network-online.target
-        [Service]
-        Restart=always
-        [Install]
-        WantedBy=default.target
+- name: Set up Uptime Kuma
+  become: true
+  become_user: "{{ uptime_kuma_user }}"
   notify: Restart Uptime Kuma
+  block:
+    - name: Create Uptime Kuma podman volume
+      containers.podman.podman_volume:
+        name: uptime-kuma
+        state: present
 
-- name: Start Uptime Kuma systemd unit
-  ansible.builtin.systemd_service:
-    name: uptime-kuma
-    state: started
+    - name: Pull Uptime Kuma image
+      containers.podman.podman_image:
+        name: docker.io/louislam/uptime-kuma
+        tag: "{{ uptime_kuma_version }}"
+
+    - name: Create Uptime Kuma quadlet file
+      containers.podman.podman_container:
+        name: uptime-kuma
+        image: "docker.io/louislam/uptime-kuma:{{ uptime_kuma_version }}"
+        state: quadlet
+        quadlet_filename: uptime-kuma
+        quadlet_dir: "/home/{{ uptime_kuma_user }}/.config/containers/systemd"
+        cap_add: "NET_RAW"
+        ports:
+          - 3001:3001
+        volumes:
+          - "uptime-kuma:/app/data"
+        quadlet_options:
+          - "AutoUpdate=registry"
+          - |
+            [Unit]
+            Wants=network-online.target
+            After=network-online.target
+            [Service]
+            Restart=always
+            [Install]
+            WantedBy=default.target

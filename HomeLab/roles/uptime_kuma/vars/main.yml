@@ -1,2 +1,6 @@
 ---
 uptime_kuma_version: "2"
+uptime_kuma_user: "selfie"
+uptime_kuma_packages:
+  - podman
+  - systemd-container

@@ -3,3 +3,4 @@ caddy_services:
 # value is port for reverse proxy, ie 8080
     cooking: "9925"
     search: "8081"
+    up: "3001"

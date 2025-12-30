@@ -1,6 +1,9 @@
 ---
 - name: Restart Uptime Kuma
-  containers.podman.podman_container:
+  become: true
+  become_user: "{{ uptime_kuma_user }}"
+  ansible.builtin.systemd_service:
     name: uptime-kuma
-    state: started
-    force_restart: true
+    scope: user
+    daemon_reload: true
+    state: restarted
