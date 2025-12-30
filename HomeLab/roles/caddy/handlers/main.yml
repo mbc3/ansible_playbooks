@@ -1,11 +1,10 @@
 ---
 - name: Run Caddy trust
-  become: true
   ansible.builtin.command: caddy trust
   changed_when: false
   ignore_errors: true # ok if this fails -- only effects if machine trusts caddy's local CA. I'm using my own CA, so this shouldn't matter
+
 - name: Restart Caddy
-  become: true
   ansible.builtin.systemd_service:
     name: caddy
     state: restarted
