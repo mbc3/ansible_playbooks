@@ -14,7 +14,6 @@ prometheus_home_hosts:
   - freeipa
   - files
   - semaphore
-  - uptime
   - openbao
   - wazuh
   - netboot
