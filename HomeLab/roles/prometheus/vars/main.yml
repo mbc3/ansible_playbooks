@@ -20,6 +20,7 @@ prometheus_home_hosts:
   - netbox
   - services
   - hosted
+  - proxy
 prometheus_mbc_hosts:
   - arch.internal
 prometheus_fw_hosts:

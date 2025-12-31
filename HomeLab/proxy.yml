@@ -11,8 +11,8 @@
 
     - role: sudo
 
-    # - role: prometheus_client
-    #   tags: metrics
+    - role: prometheus_client
+      tags: metrics
 
     - role: ca_client
       tags: auth
