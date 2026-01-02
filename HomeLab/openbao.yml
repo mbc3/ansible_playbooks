@@ -21,3 +21,6 @@
 
     - role: caddy
       tags: web
+
+    - role: dnf
+      tags: proxy,dnf

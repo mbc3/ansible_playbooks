@@ -35,8 +35,8 @@
     - role: pxe
       tags: boot
 
+    - role: dnf
+      tags: proxy,dnf
+
     - role: serial
       tags: test
-
-    # - role: netbootxyz
-    # - role: caddy

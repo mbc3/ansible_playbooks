@@ -1,5 +1,5 @@
 ---
-- name: Set up prxoy server
+- name: Set up proxy server
   hosts: proxy
   become: true
 

@@ -1,0 +1,4 @@
+---
+squid_cache_dir: "/opt/squid"
+squid_port: 3128
+squid_cache_size: 2000 # in MB

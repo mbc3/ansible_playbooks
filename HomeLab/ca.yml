@@ -14,4 +14,7 @@
     - role: prometheus_client
       tags: metrics
 
+    - role: dnf
+      tags: proxy,dnf
+
     - role: ca

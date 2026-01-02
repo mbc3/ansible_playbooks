@@ -35,6 +35,9 @@
     - role: postfix
       tags: mail
 
+    - role: dnf
+      tags: proxy,dnf
+
     - role: serial
       tags: test
 

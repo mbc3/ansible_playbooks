@@ -1,0 +1,6 @@
+---
+- name: Configure DNF to use squid proxy
+  ansible.builtin.lineinfile:
+    name: /etc/dnf/dnf.conf
+    line: "proxy={{ dnf_proxy_host }}.{{ domain }}:{{ dnf_proxy_port }}"
+    state: present

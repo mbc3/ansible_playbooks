@@ -34,6 +34,9 @@
     - role: selinux
       tags: security
 
+    - role: dnf
+      tags: proxy,dnf
+
     - role: serial
       tags: test
 
