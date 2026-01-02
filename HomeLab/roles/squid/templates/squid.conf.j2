@@ -96,7 +96,7 @@ cache_mgr {{ squid_email }}
 
 ### MBC CHANGE
 ### config for SSL Bump
-http_port {{ squid_port }} ssl-bump tls-cert={{ squid_cert }} tls-key={{ squid_cert_key }} generate-host-certificates=on dynamic_cert_mem_cache_size=4MB options=SINGLE_DH_USE,SINGLE_ECDH_USE tls-dh={{ squid_cert_dhparams }}
+http_port {{ squid_port }} ssl-bump tls-cert={{ squid_cert }} tls-key={{ squid_cert_key }} generate-host-certificates=on dynamic_cert_mem_cache_size=4MB options=NO_SSLv3,NO_TLSv1,NO_TLSv1_1,SINGLE_DH_USE,SINGLE_ECDH_USE tls-dh={{ squid_cert_dhparams }}
 
 sslcrtd_program /usr/lib64/squid/security_file_certgen -s /var/lib/ssl_db -M 4MB
 
