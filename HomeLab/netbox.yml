@@ -23,6 +23,9 @@
     - role: prometheus_client
       tags: metrics
 
+    - role: aide
+      tags: security
+
     - role: wazuh_agent
       tags: security
 

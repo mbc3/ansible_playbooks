@@ -1,8 +1,9 @@
 ---
 - name: Install Squid
   ansible.builtin.package:
-    name: squid
+    name: "{{ item }}"
     state: present
+  loop: "{{ squid_packages }}"
 
 - name: Create cache dir
   ansible.builtin.file:
@@ -11,6 +12,25 @@
     owner: squid
     group: squid
     mode: "0750"
+  notify: Run Squid cache dir creation
+
+- name: Add system logging option to squid
+  ansible.builtin.lineinfile:
+    name: /etc/environment
+    line: SQUID_OPTS="$SQUID_OPTS -s"
+    state: present
+  notify: Restart Squid
+
+- name: Create cronjob to rotate squid logs
+  ansible.builtin.cron:
+    name: "rotate squid logs"
+    user: root
+    minute: "45"
+    hour: "4"
+    weekday: MON
+    job: "/sbin/squid -k rotate"
+    cron_file: squid-rotate
+    state: present
 
 - name: Copy Squid config
   ansible.builtin.template:
@@ -21,9 +41,56 @@
     mode: "0640"
   notify: Restart Squid
 
-- name: Run Squid cache dir creation
-  ansible.builtin.command: /sbin/squid -z
-  changed_when: false
+- name: TLS Cert for SSL Bumping
+  notify:
+    - Create Squid cert dir
+    - Chown Squid cert dir
+  block:
+    - name: Create TLS/SSL dir
+      ansible.builtin.file:
+        name: /etc/squid/tls
+        state: directory
+        owner: squid
+        group: squid
+        mode: "0700"
+
+    - name: Generate private key
+      community.crypto.openssl_privatekey:
+        path: "{{ squid_cert_key }}"
+        size: 2048
+        type: RSA
+
+    - name: Generate signing request
+      community.crypto.openssl_csr:
+        path: /etc/squid/tls/squid.csr
+        privatekey_path: "{{ squid_cert_key }}"
+        common_name: squid
+        use_common_name_for_san: false
+        basic_constraints:
+          - 'CA:TRUE'
+        basic_constraints_critical: true
+        key_usage:
+          - keyCertSign
+        key_usage_critical: true
+
+    - name: Generate a Self Signed OpenSSL certificate
+      community.crypto.x509_certificate:
+        path: "{{ squid_cert }}"
+        privatekey_path: "{{ squid_cert_key }}"
+        csr_path: /etc/squid/tls/squid.csr
+        provider: selfsigned
+
+    - name: Convert PEM X.509 certificate to DER format
+      community.crypto.x509_certificate_convert:
+        src_path: "{{ squid_cert }}"
+        dest_path: /etc/squid/tls/squid_ca.der
+        format: der
+
+    - name: Generate DH Parameters
+      community.crypto.openssl_dhparam:
+        path: "{{ squid_cert_dhparams }}"
+        size: 2048
+
 
 - name: Enable and start Squid
   ansible.builtin.systemd_service:

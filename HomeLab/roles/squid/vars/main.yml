@@ -1,4 +1,14 @@
 ---
+squid_packages:
+  - squid
+  - openssl
+  - python3-cryptography # for generating tls cert
 squid_cache_dir: "/opt/squid"
 squid_port: 3128
-squid_cache_size: 2000 # in MB
+squid_cache_size: 5000 # in MB
+squid_cache_max_object_size: 16 # in MB
+squid_email: cohen@matthewbriancohen.com
+squid_cert_dir: "/var/lib/ssl_db"
+squid_cert: "/etc/squid/tls/squid_ca.pem"
+squid_cert_key: "/etc/squid/tls/squid.pem"
+squid_cert_dhparams: "/etc/squid/tls/dhparams.pem"

@@ -3,3 +3,19 @@
   ansible.builtin.systemd_service:
     name: squid
     state: restarted
+
+- name: Run Squid cache dir creation
+  ansible.builtin.command: /sbin/squid -z
+  changed_when: false
+
+- name: Create Squid cert dir
+  ansible.builtin.command: "/usr/lib64/squid/security_file_certgen -c -s {{ squid_cert_dir }} -M 4MB"
+  changed_when: false
+
+- name: Chown Squid cert dir
+  ansible.builtin.file:
+    name: "{{ squid_cert_dir }}"
+    state: directory
+    owner: squid
+    group: squid
+    recurse: true

@@ -4,3 +4,12 @@
     name: /etc/dnf/dnf.conf
     line: "proxy={{ dnf_proxy_host }}.{{ domain }}:{{ dnf_proxy_port }}"
     state: present
+
+- name: Copy squid certificate for SSL bumping
+  ansible.builtin.copy:
+    content: "{{ dnf_squid_ca }}"
+    dest: /etc/pki/ca-trust/source/anchors/squid_ca.pem
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Run update-ca-trust

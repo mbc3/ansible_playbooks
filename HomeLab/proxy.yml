@@ -16,3 +16,6 @@
 
     - role: ca_client
       tags: auth
+
+    - role: squid
+      tags: proxy,squid

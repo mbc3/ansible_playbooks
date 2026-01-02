@@ -6,3 +6,10 @@
   roles:
     - role: dnf
       tags: proxy,dnf
+
+  tasks:
+    - name: Install htop
+      ansible.builtin.dnf:
+        name: htop
+        state: present
+      tags: htop

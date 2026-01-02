@@ -28,6 +28,9 @@
     - role: caddy
       tags: web
 
+    - role: aide
+      tags: security
+
     - role: wazuh_agent
       tags: security
 

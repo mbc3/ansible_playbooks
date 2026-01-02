@@ -26,6 +26,9 @@
     - role: nfs_client
       tags: files
 
+    - role: aide
+      tags: security
+
     - role: wazuh_agent
       tags: security
 
