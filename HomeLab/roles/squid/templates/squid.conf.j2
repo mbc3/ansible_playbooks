@@ -13,7 +13,7 @@ acl localnet src 172.16.0.0/12          # RFC 1918 local private network (LAN)
 acl localnet src 192.168.0.0/16         # RFC 1918 local private network (LAN)
 acl localnet src fc00::/7               # RFC 4193 local private network range
 acl localnet src fe80::/10              # RFC 4291 link-local (directly plugged) machines
-acl localnet src 2600:6c50:77f:af01::1/60 # MBC CHANGE -- local ipv6
+acl localnet src 2600:6c50:77f:af01::/60 # MBC CHANGE -- local ipv6
 
 acl SSL_ports port 443
 acl Safe_ports port 80          # http
@@ -96,9 +96,16 @@ cache_mgr {{ squid_email }}
 
 ### MBC CHANGE
 ### config for SSL Bump
-http_port {{ squid_port }} ssl-bump tls-cert={{ squid_cert }} tls-key={{ squid_cert_key }} generate-host-certificates=on dynamic_cert_mem_cache_size=4MB options=NO_SSLv3,NO_TLSv1,NO_TLSv1_1,SINGLE_DH_USE,SINGLE_ECDH_USE tls-dh={{ squid_cert_dhparams }}
 
+# for internal connections
+http_port {{ squid_port }} ssl-bump tls-cert={{ squid_cert }} tls-key={{ squid_cert_key }} generate-host-certificates=on dynamic_cert_mem_cache_size=4MB options=NO_SSLv3,NO_TLSv1,NO_TLSv1_1 cipher={{ squid_cert_ciphers }} tls-dh={{ squid_cert_dhparams }}
+
+# for outgoing connections
+tls_outgoing_options options=NO_SSLv3,NO_TLSv1,NO_TLSv1_1 cipher={{ squid_cert_ciphers }}
+
+# to generate certificate
 sslcrtd_program /usr/lib64/squid/security_file_certgen -s /var/lib/ssl_db -M 4MB
 
+# how to handle https traffic
 ssl_bump stare all
 ssl_bump bump all # can change this to "ssl_bump splice all" to just pass through https tunnel
