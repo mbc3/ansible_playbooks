@@ -47,5 +47,8 @@
     - role: grafana
       tags: grafana
 
+    - role: pve_exporter
+      tags: pve,prometheus
+
     - role: caddy
       tags: web

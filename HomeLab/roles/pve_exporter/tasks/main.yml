@@ -1,0 +1,67 @@
+---
+- name: Create grafana account
+  ansible.builtin.user:
+    name: "{{ pve_exporter_user }}"
+    shell: /bin/bash
+    password: "{{ vault_grafana_password | password_hash('sha512', 'Dash0fSA1t') }}"
+
+- name: Install Podman
+  block:
+    - name: Install necessary packages
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ pve_exporter_packages }}"
+
+    - name: Enable podman auto-update service
+      ansible.builtin.systemd_service:
+        name: podman-auto-update.timer
+        enabled: true
+        state: started
+
+    - name: Enable linger
+      become: true
+      become_user: "{{ pve_exporter_user }}"
+      ansible.builtin.command: loginctl enable-linger "{{ pve_exporter_user }}"
+      changed_when: false
+
+- name: Copy PVE Exporter config
+  ansible.builtin.template:
+    src: pve.yml.j2
+    dest: "{{ pve_exporter_config }}"
+    owner: "{{ pve_exporter_user }}"
+    group: "{{ pve_exporter_user }}"
+    mode: "0664"
+  notify: Restart PVE Exporter
+
+- name: Set up PVE Exporter
+  become: true
+  become_user: "{{ pve_exporter_user }}"
+  notify: Restart PVE Exporter
+  block:
+    - name: Pull PVE Exporter image
+      containers.podman.podman_image:
+        name: docker.io/prompve/prometheus-pve-exporter
+        tag: latest
+
+    - name: Create PVE Exporter quadlet file
+      containers.podman.podman_container:
+        name: pve-exporter
+        image: docker.io/prompve/prometheus-pve-exporter:latest
+        network: host
+        state: quadlet
+        quadlet_filename: pve-exporter
+        quadlet_dir: "/home/{{ pve_exporter_user }}/.config/containers/systemd"
+        volume:
+          - "{{ pve_exporter_config }}:/etc/prometheus/pve.yml:z"
+        command: "--web.listen-address [::]:{{ pve_exporter_port }}"
+        quadlet_options:
+          - "AutoUpdate=registry"
+          - |
+            [Unit]
+            Wants=network-online.target
+            After=network-online.target
+            [Service]
+            Restart=always
+            [Install]
+            WantedBy=default.target

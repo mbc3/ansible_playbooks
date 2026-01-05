@@ -1,0 +1,10 @@
+---
+pve_exporter_user: "grafana"
+pve_exporter_packages:
+  - podman
+  - systemd-container
+pve_exporter_port: "9221"
+pve_exporter_pxmx_user: exporter@pve
+pve_exporter_token_name: exporter
+pve_exporter_token: "{{ vault_pve_exporter_token }}"
+pve_exporter_config: "/opt/pve.yml"

@@ -25,3 +25,5 @@ prometheus_mbc_hosts:
   - arch.internal
 prometheus_fw_hosts:
   - opnsense
+prometheus_pve_host: services
+prometheus_pve_port: "9221"

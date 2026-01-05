@@ -1,0 +1,9 @@
+---
+- name: Restart PVE Exporter
+  become: true
+  become_user: "{{ pve_exporter_user }}"
+  ansible.builtin.systemd_service:
+    name: pve-exporter
+    scope: user
+    daemon_reload: true
+    state: restarted

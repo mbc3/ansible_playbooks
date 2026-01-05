@@ -28,3 +28,14 @@ scrape_configs:
   - job_name: "mbc"
     static_configs:
       - targets: [{% for item in prometheus_mbc_hosts %}"{{ item }}:{{ prometheus_port }}"{%if item != prometheus_mbc_hosts[-1]%},{% endif %}{% endfor %},{% for item in prometheus_mbc_hosts %}"{{ item }}:{{ prometheus_systemd_port }}"{%if item != prometheus_mbc_hosts[-1]%},{% endif %}{% endfor %}]
+
+  - job_name: "pve"
+    static_configs:
+      - targets:
+        - localhost:{{ prometheus_pve_port }}
+    metrics_path: /pve
+    params:
+      module: [default]
+      target: ["{{ prometheus_pve_host }}"]
+      cluster: ["1"]
+      node: ["1"]
