@@ -1,0 +1,7 @@
+---
+- name: Set AIDE config
+  become: true
+  hosts: proxmox_all_qemu
+
+  roles:
+    - role: aide
