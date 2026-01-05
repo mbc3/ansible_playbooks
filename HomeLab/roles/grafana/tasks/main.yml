@@ -54,6 +54,10 @@
           - 3000:3000
         env:
           GF_ANALYTICS_REPORTING_ENABLED: false
+          GF_SMTP_ENABLED: true
+          GF_SMTP_HOST: "mail.sleepycow.fun:465"
+          GF_SMTP_FROM_ADDRESS: "no-reply@sleepycow.fun"
+          GF_SMTP_PASSWORD: "{{ grafana_email_password }}"
         quadlet_options:
           - "AutoUpdate=registry"
           - |
