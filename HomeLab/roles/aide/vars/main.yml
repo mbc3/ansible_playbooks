@@ -1,2 +1,3 @@
 ---
 aide_random_delay_seconds: 10800
+aide_cpu_limit: 50

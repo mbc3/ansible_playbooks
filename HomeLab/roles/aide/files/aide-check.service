@@ -2,4 +2,5 @@
 Description=AIDE check
 [Service]
 Type=oneshot
+Slice=aide-check.slice
 ExecStart=/usr/sbin/aide --check

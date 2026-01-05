@@ -7,17 +7,18 @@
     - Initialize AIDE
     - Use new AIDE DB
 
-# - name: Create AIDE cronjob
-#   ansible.builtin.cron:
-#     name: "run aide check"
-#     minute: "05"
-#     hour: "2"
-#     job: "/usr/sbin/aide --check"
-
 - name: Remove old AIDE cronjob
   ansible.builtin.cron:
     name: "run aide check"
     state: absent
+
+- name: Copy aide-check cgroup slice
+  ansible.builtin.template:
+    src: aide-check.slice.j2
+    dest: /etc/systemd/system/aide-check.slice
+    owner: root
+    group: root
+    mode: "0644"
 
 - name: Copy aide-check systemd unit file
   ansible.builtin.copy:
