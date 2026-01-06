@@ -21,14 +21,6 @@
       ansible.builtin.command: "postmap {{ postfix_password_file }}"
       changed_when: false
 
-    - name: Chown db to root
-      become: true
-      ansible.builtin.file:
-        path: /etc/postfix/sasl_passwd.db
-        owner: root
-        group: root
-        mode: "0600"
-
 - name: Set postfix hostname
   ansible.builtin.lineinfile:
     path: "{{ postfix_config }}"
@@ -42,7 +34,7 @@
 - name: Enable password hash
   ansible.builtin.lineinfile:
     path: "{{ postfix_config }}"
-    line: "smtp_sasl_password_maps = hash:{{ postfix_password_file }}"
+    line: "smtp_sasl_password_maps = lmdb:{{ postfix_password_file }}"
 
 - name: Disable anonymous postfix
   ansible.builtin.lineinfile:

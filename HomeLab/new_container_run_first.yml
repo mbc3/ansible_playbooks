@@ -11,18 +11,7 @@
       - 107
       - 110
       - 116
-  pre_tasks:
-    # - name: Display vmid # Still testing this out
-    #   ansible.builtin.debug:
-    #     var: graphs.proxmox_hostname.graphs.proxmox_vmid
-    - name: Update all packages
-      ansible.builtin.apt:
-        name: "*"
-        state: latest
-    - name: Install unattended-upgrades
-      ansible.builtin.apt:
-        name: unattended-upgrades
-        state: present
+      - 117
 
   tasks:
     - name: Copy Proxmox SSH key

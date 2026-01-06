@@ -3,4 +3,3 @@ grafana_user: "grafana"
 grafana_packages:
   - podman
   - systemd-container
-grafana_email_password: "{{ vault_sleepycow_email_password }}"

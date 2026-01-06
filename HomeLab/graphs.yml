@@ -52,3 +52,6 @@
 
     - role: caddy
       tags: web
+
+    - role: postfix
+      tags: mail
