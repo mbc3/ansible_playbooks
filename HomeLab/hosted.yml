@@ -32,9 +32,6 @@
     - role: selinux
       tags: security
 
-    - role: dnf
-      tags: proxy,dnf
-
     - role: serial
       tags: test
 
@@ -52,3 +49,6 @@
 
     - role: uptime_kuma
       tags: monitoring
+
+    - role: dnf
+      tags: proxy,dnf

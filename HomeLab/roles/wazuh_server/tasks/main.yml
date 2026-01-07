@@ -1,4 +1,10 @@
 ---
+- name: Install necessary packages
+  ansible.builtin.dnf:
+    name: "{{ item }}"
+    state: present
+  loop: "{{ wazuh_packages }}"
+
 - name: Add wazuh custom firewalld service
   ansible.builtin.copy:
     src: wazuh.xml
@@ -33,7 +39,7 @@
       ansible.builtin.lineinfile:
         path: /var/ossec/etc/ossec.conf
         regexp: '<smtp_server>'
-        line: <smtp_server>localhost</smtp_server>
+        line: "<smtp_server>{{ wazuh_server_mail_server }}</smtp_server>"
 
     - name: Set sender email address
       ansible.builtin.lineinfile:
@@ -78,9 +84,15 @@
 
     - name: Modify Lets Encrypt conf to set renewal at 14 days
       ansible.builtin.lineinfile:
-        path: /etc/letsencrypt/renewal/wazuh.localdomain.conf
-        regexp: 'renew_before_expiry'
-        line: 'renew_before_expiry = 14 days'
+        path: "/etc/letsencrypt/renewal/{{ inventory_hostname }}.{{ domain }}.conf"
+        regexp: "renew_before_expiry"
+        line: "renew_before_expiry = 14 days"
+
+    - name: Enable certbot renewal timer
+      ansible.builtin.systemd_service:
+        name: certbot-renew
+        enabled: true
+        state: started
 
     - name: Copy renewal hook
       ansible.builtin.copy:

@@ -1,7 +1,8 @@
 postfix_packages:
   - postfix
   - s-nail
-  - cyrus-sasl-plain
+  # - cyrus-sasl-plain
+  # - certbot
 postfix_config: "/etc/postfix/main.cf"
 postfix_server_smtp: "mail.sleepycow.fun"
 postfix_user: "cohenma"

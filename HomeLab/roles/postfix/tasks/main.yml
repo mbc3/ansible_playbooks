@@ -5,54 +5,91 @@
     state: present
   loop: "{{ postfix_packages }}"
 
-- name: Set up password
-  notify: Restart Postfix
-  block:
-    - name: Copy password file
-      ansible.builtin.template:
-        src: sasl_passwd.j2
-        dest: "{{ postfix_password_file }}"
-        owner: root
-        group: root
-        mode: "0600"
+# - name: Set up Postfix
+#   notify: Restart Postfix
+#   block:
+#     - name: Copy password file
+#       ansible.builtin.template:
+#         src: sasl_passwd.j2
+#         dest: "{{ postfix_password_file }}"
+#         owner: root
+#         group: root
+#         mode: "0600"
 
-    - name: Run postmap
-      become: true
-      ansible.builtin.command: "postmap {{ postfix_password_file }}"
-      changed_when: false
+#     - name: Run postmap
+#       become: true
+#       ansible.builtin.command: "postmap {{ postfix_password_file }}"
+#       changed_when: false
 
-- name: Set postfix hostname
-  ansible.builtin.lineinfile:
-    path: "{{ postfix_config }}"
-    line: "myhostname = {{ inventory_hostname }}.{{ domain }}"
+#     - name: Set postfix hostname
+#       ansible.builtin.lineinfile:
+#         path: "{{ postfix_config }}"
+#         line: "myhostname = {{ inventory_hostname }}.{{ domain }}"
 
-- name: Enable SASL auth
-  ansible.builtin.lineinfile:
-    path: "{{ postfix_config }}"
-    line: "smtp_sasl_auth_enable = yes"
+#     - name: Enable postfix listening on all interfaces
+#       ansible.builtin.lineinfile:
+#         path: "{{ postfix_config }}"
+#         regexp: "^inet_interfaces"
+#         line: "inet_interfaces = all"
 
-- name: Enable password hash
-  ansible.builtin.lineinfile:
-    path: "{{ postfix_config }}"
-    line: "smtp_sasl_password_maps = lmdb:{{ postfix_password_file }}"
+#     - name: Enable SASL auth
+#       ansible.builtin.lineinfile:
+#         path: "{{ postfix_config }}"
+#         line: "smtp_sasl_auth_enable = yes"
 
-- name: Disable anonymous postfix
-  ansible.builtin.lineinfile:
-    path: "{{ postfix_config }}"
-    line: "smtp_sasl_security_options = noanonymous"
+#     - name: Enable reading password from sasl
+#       ansible.builtin.lineinfile:
+#         path: "{{ postfix_config }}"
+#         line: "smtp_sasl_password_maps = lmdb:{{ postfix_password_file }}"
 
-- name: Enforce TLS
-  ansible.builtin.lineinfile:
-    path: "{{ postfix_config }}"
-    line: smtp_tls_security_level = encrypt
+#     - name: Disable anonymous postfix
+#       ansible.builtin.lineinfile:
+#         path: "{{ postfix_config }}"
+#         line: "smtp_sasl_security_options = noanonymous"
 
-- name: Allow wrapper # needed because I'm connecting over port 465 instead of 587
-  ansible.builtin.lineinfile:
-    path: "{{ postfix_config }}"
-    line: smtp_tls_wrappermode = yes
+#     - name: Enforce TLS
+#       ansible.builtin.lineinfile:
+#         path: "{{ postfix_config }}"
+#         regexp: "^smtp_tls_security_level"
+#         line: "smtp_tls_security_level = encrypt"
 
-- name: Add relayhost
-  ansible.builtin.lineinfile:
-    path: "{{ postfix_config }}"
-    line: "relayhost = [{{ postfix_server_smtp }}]:{{ postfix_server_port }}"
-  notify: Restart Postfix
+#     - name: Allow wrapper # needed because I'm connecting over port 465 instead of 587
+#       ansible.builtin.lineinfile:
+#         path: "{{ postfix_config }}"
+#         line: smtp_tls_wrappermode = yes
+
+#     - name: Add relayhost
+#       ansible.builtin.lineinfile:
+#         path: "{{ postfix_config }}"
+#         line: "relayhost = [{{ postfix_server_smtp }}]:{{ postfix_server_port }}"
+
+# - name: Set up TLS
+#   notfiy: Restart Postfix
+#   block:
+#     - name: Run certbot
+#       ansible.builtin.command: "certbot certonly -n --standalone -d {{ inventory_hostname }}.{{ domain }} --server https://ca.localdomain:8443/acme/acme/directory --agree-tos --email cohen@matthewbriancohen.com"
+#       changed_when: false
+
+#     - name: Modify Lets Encrypt conf to set renewal at 14 days
+#       ansible.builtin.lineinfile:
+#         path: "/etc/letsencrypt/renewal/{{ inventory_hostname }}.{{ domain }}.conf"
+#         regexp: "renew_before_expiry"
+#         line: "renew_before_expiry = 14 days"
+
+#     - name: Enable certbot renewal timer
+#       ansible.builtin.systemd_service:
+#         name: certbot-renew
+#         enabled: true
+#         state: started
+
+#     - name: Use cert
+#       ansible.builtin.lineinfile:
+#         path: "{{ postfix_config }}"
+#         regexp: "^smtpd_tls_cert_file"
+#         line: "smtpd_tls_cert_file = /etc/letsencrypt/live/{{ inventory_hostname }}.{{ domain }}/fullchain.pem"
+
+#     - name: Use key
+#       ansible.builtin.lineinfile:
+#         path: "{{ postfix_config }}"
+#         regexp: "^smtpd_tls_key_file"
+#         line: "smtpd_tls_key_file = /etc/letsencrypt/live/{{ inventory_hostname }}.{{ domain }}/privkey.pem"

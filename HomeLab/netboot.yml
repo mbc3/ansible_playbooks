@@ -38,8 +38,8 @@
     - role: pxe
       tags: boot
 
-    - role: dnf
-      tags: proxy,dnf
-
     - role: serial
       tags: test
+
+    - role: dnf
+      tags: proxy,dnf

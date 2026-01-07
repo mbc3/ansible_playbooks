@@ -32,9 +32,6 @@
     - role: selinux
       tags: security
 
-    - role: dnf
-      tags: proxy,dnf
-
     - role: serial
       tags: test
 
@@ -53,5 +50,5 @@
     - role: caddy
       tags: web
 
-    - role: postfix
-      tags: mail
+    - role: dnf
+      tags: proxy,dnf

@@ -38,11 +38,11 @@
     - role: selinux
       tags: security
 
-    - role: dnf
-      tags: proxy,dnf
-
     - role: serial
       tags: test
 
     - role: debug
       tags: test
+
+    - role: dnf
+      tags: proxy,dnf
