@@ -55,10 +55,11 @@
         env:
           GF_ANALYTICS_REPORTING_ENABLED: false
           GF_SMTP_ENABLED: true
-          GF_SMTP_HOST: "mail.localdomain:25"
-          GF_STARTTLS_POLICY: "NoStartTLS"
-          GF_SKIP_VERIFY: true
+          GF_SMTP_HOST: "{{ grafana_smtp_mail_server }}"
+          GF_STARTTLS_POLICY: "OpportunisticStartTLS"
           GF_SMTP_FROM_ADDRESS: "no-reply@sleepycow.fun"
+          GF_SMTP_USER: "{{ grafana_smtp_user }}"
+          GF_SMTP_PASSWORD: "{{ grafana_smtp_password }}"
         quadlet_options:
           - "AutoUpdate=registry"
           - |

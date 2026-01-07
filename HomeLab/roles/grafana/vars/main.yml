@@ -3,3 +3,6 @@ grafana_user: "grafana"
 grafana_packages:
   - podman
   - systemd-container
+grafana_smtp_mail_server: "mail.sleepycow.fun:465"
+grafana_smtp_user: "email"
+grafana_smtp_password: "{{ vault_smtp_password }}"
