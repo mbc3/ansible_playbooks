@@ -21,7 +21,6 @@ prometheus_home_hosts:
   - services
   - hosted
   - proxy
-  - mail
 prometheus_mbc_hosts:
   - arch.internal
 prometheus_fw_hosts:
