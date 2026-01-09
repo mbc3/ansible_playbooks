@@ -3,8 +3,10 @@
   ansible.builtin.service_facts:
 - name: Install iperf
   ansible.builtin.dnf:
-    name: iperf3
+    name: "{{ item }}"
     state: present
+  loop: "{{ debug_packages }}"
+
 - name: Open up test port
   ansible.posix.firewalld:
     port: 9999/tcp
