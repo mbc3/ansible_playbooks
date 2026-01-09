@@ -3,7 +3,7 @@
   ansible.builtin.user:
     name: "{{ alloy_user }}"
     shell: /bin/bash
-    password: "{{ vault_grafana_password | password_hash('sha512', 'Dash0fSA1t') }}"
+    password: "{{ vault_grafana_password | password_hash('sha512', vault_password_salt) }}"
 
 - name: Install Podman
   block:

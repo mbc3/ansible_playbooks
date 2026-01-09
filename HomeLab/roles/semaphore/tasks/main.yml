@@ -16,7 +16,7 @@
     name: semaphore
     comment: Semaphore Service Account
     shell: /usr/bin/bash
-    password: "{{ vault_semaphore_semaphore_password | password_hash('sha512', 'Dash0fSA1t') }}"
+    password: "{{ vault_semaphore_semaphore_password | password_hash('sha512', vault_password_salt) }}"
 
 - name: Disallow semaphore user from SSH
   ansible.builtin.copy:
