@@ -1,7 +1,7 @@
 ---
 - name: Populate service facts
   ansible.builtin.service_facts:
-- name: Install iperf
+- name: Install debug tool
   ansible.builtin.dnf:
     name: "{{ item }}"
     state: present
