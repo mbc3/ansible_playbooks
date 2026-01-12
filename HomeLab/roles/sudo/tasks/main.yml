@@ -8,6 +8,7 @@
     commands: ALL
     host: ALL
     nopassword: true
+    validation: required # this enforces sudoers validation
 
 - name: Copy pty and log config
   ansible.builtin.copy:
