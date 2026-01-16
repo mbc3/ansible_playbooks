@@ -2,8 +2,9 @@
 Description=AIDE check
 
 [Timer]
-OnCalendar=daily
-RandomizedDelaySec={{ aide_random_delay_seconds }}
+OnCalendar=weekly
+RandomizedDelaySec={{ aide_random_delay_time }}
+FixedRandomDelay=true
 Persistent=true
 
 [Install]
