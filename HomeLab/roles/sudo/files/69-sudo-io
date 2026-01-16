@@ -1,0 +1,3 @@
+Defaults log_output
+Cmnd_Alias NOIOLOG = /usr/bin/sudoreplay,/usr/sbin/reboot,/usr/sbin/shutdown
+Defaults!NOIOLOG !log_output

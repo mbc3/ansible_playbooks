@@ -1,0 +1,7 @@
+---
+- name: Set sudo config
+  become: true
+  hosts: proxmox_all_lxc, proxmox_all_qemu
+
+  roles:
+    - role: sudo

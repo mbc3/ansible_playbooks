@@ -1,0 +1,5 @@
+[Unit]
+Description=Sudo IO-Replay Rotate
+[Service]
+Type=oneshot
+ExecStart=/usr/bin/find /var/log/sudo-io/ -type f -mtime +90 -delete -print
