@@ -1,0 +1,8 @@
+/var/log/sudo.log
+/var/log/sudo-io/*
+{
+    {{ sudo_rotate_length }}
+    missingok
+    rotate 0
+    maxsize {{ sudo_rotate_size }}
+}

@@ -1,2 +1,4 @@
 ---
 sudo_random_delay_time: 300
+sudo_rotate_length: "yearly"
+sudo_rotate_size: "1G"

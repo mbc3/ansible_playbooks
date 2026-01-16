@@ -26,25 +26,10 @@
     group: root
     mode: "0440"
 
-- name: Copy io replay rotate systemd unit file
-  ansible.builtin.copy:
-    src: sudo-io-replay-rotate.service
-    dest: /etc/systemd/system
-    owner: root
-    group: root
-    mode: "0644"
-
-- name: Copy io replay rotate timer
+- name: Copy sudo logrotate config
   ansible.builtin.template:
-    src: sudo-io-replay-rotate.timer.j2
-    dest: /etc/systemd/system/sudo-io-replay-rotate.timer
+    src: sudo.j2
+    dest: /etc/logrotate.d/sudo
     owner: root
     group: root
     mode: "0644"
-
-- name: Enable io replay rotate timer
-  ansible.builtin.systemd_service:
-    name: sudo-io-replay-rotate.timer
-    state: started
-    enabled: true
-    daemon_reload: true
