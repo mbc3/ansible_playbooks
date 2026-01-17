@@ -12,6 +12,14 @@
     name: "run aide check"
     state: absent
 
+- name: Copy aide config
+  ansible.builtin.copy:
+    src: aide.conf
+    dest: /etc/aide.conf
+    owner: root
+    group: root
+    mode: "0600"
+
 - name: Copy aide-check cgroup slice
   ansible.builtin.template:
     src: aide-check.slice.j2
