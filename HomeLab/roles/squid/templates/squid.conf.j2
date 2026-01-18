@@ -107,5 +107,7 @@ tls_outgoing_options options=NO_SSLv3,NO_TLSv1,NO_TLSv1_1 cipher={{ squid_cert_c
 sslcrtd_program /usr/lib64/squid/security_file_certgen -s /var/lib/ssl_db -M 4MB
 
 # how to handle https traffic
-ssl_bump stare all
+acl step1 at_step SslBump1
+ssl_bump peek step1
+# ssl_bump stare all # can uncomment this and comment out previous 2 lines -- need to learn difference
 ssl_bump bump all # can change this to "ssl_bump splice all" to just pass through https tunnel
