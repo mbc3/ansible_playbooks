@@ -1,0 +1,9 @@
+---
+opnsense_exporter_user: "grafana"
+opnsense_exporter_packages:
+  - podman
+  - systemd-container
+opnsense_exporter_port: "8080"
+opnsense_exporter_address: "opnsense.localdomain"
+opnsense_exporter_api_key: "{{ vault_opnsense_exporter_api_key }}"
+opnsense_exporter_api_secret: "{{ vault_opnsense_exporter_api_secret }}"

@@ -47,6 +47,9 @@
     - role: pve_exporter
       tags: pve,prometheus
 
+    - role: opnsense_exporter
+      tags: opnsense,prometheus
+
     - role: caddy
       tags: web
 

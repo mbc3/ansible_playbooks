@@ -1,0 +1,64 @@
+---
+- name: Create grafana account
+  ansible.builtin.user:
+    name: "{{ opnsense_exporter_user }}"
+    shell: /bin/bash
+    password: "{{ vault_grafana_password | password_hash('sha512', vault_password_salt) }}"
+
+- name: Install Podman
+  block:
+    - name: Install necessary packages
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ opnsense_exporter_packages }}"
+
+    - name: Enable podman auto-update service
+      ansible.builtin.systemd_service:
+        name: podman-auto-update.timer
+        enabled: true
+        state: started
+
+    - name: Enable linger
+      become: true
+      become_user: "{{ opnsense_exporter_user }}"
+      ansible.builtin.command: loginctl enable-linger "{{ opnsense_exporter_user }}"
+      changed_when: false
+
+- name: Set up Opnsense Exporter
+  become: true
+  become_user: "{{ opnsense_exporter_user }}"
+  notify: Restart Opnsense Exporter
+  block:
+    - name: Pull Opnsense Exporter image
+      containers.podman.podman_image:
+        name: ghcr.io/athennamind/opnsense-exporter
+        tag: latest
+
+    - name: Create Opnsense Exporter quadlet file
+      containers.podman.podman_container:
+        name: opnsense-exporter
+        image: ghcr.io/athennamind/opnsense-exporter:latest
+        network: host
+        state: quadlet
+        quadlet_filename: opnsense-exporter
+        quadlet_dir: "/home/{{ opnsense_exporter_user }}/.config/containers/systemd"
+        command:
+          - "--web.listen-address [::]:{{ opnsense_exporter_port }}"
+          - "--opnsense.protocol=https"
+          - "--opnsense.address={{ opnsense_exporter_address }}"
+          - "--exporter.instance-label=opnsense"
+          - "--opnsense.insecure" # remove if adding root CA to container
+        env:
+          OPNSENSE_EXPORTER_OPS_API_KEY: "{{ opnsense_exporter_api_key }}"
+          OPNSENSE_EXPORTER_OPS_API_SECRET: "{{ opnsense_exporter_api_secret }}"
+        quadlet_options:
+          - "AutoUpdate=registry"
+          - |
+            [Unit]
+            Wants=network-online.target
+            After=network-online.target
+            [Service]
+            Restart=always
+            [Install]
+            WantedBy=default.target

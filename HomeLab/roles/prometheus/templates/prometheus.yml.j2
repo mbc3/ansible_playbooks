@@ -39,3 +39,8 @@ scrape_configs:
       target: ["{{ prometheus_pve_host }}"]
       cluster: ["1"]
       node: ["1"]
+
+  - job_name: "opnsense"
+    static_configs:
+      - targets:
+        - localhost:{{ prometheus_opnsense_port }}

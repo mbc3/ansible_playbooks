@@ -1,0 +1,9 @@
+---
+- name: Restart Opnsense Exporter
+  become: true
+  become_user: "{{ opnsense_exporter_user }}"
+  ansible.builtin.systemd_service:
+    name: opnsense-exporter
+    scope: user
+    daemon_reload: true
+    state: restarted
