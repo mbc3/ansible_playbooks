@@ -1,6 +1,9 @@
 wazuh_packages:
   - certbot
   - postfix
+  - cyrus-sasl
+  - cyrus-sasl-plain
+  - s-nail
 wazuh_server_tls_certs:
   - "fullchain.pem"
   - "privkey.pem"
@@ -8,4 +11,4 @@ wazuh_server_tls_directory_src: "/etc/letsencrypt/live/wazuh.localdomain"
 wazuh_server_tls_directory_dest: "/etc/wazuh-dashboard/certs"
 wazuh_server_recipient: "cohen@matthewbriancohen.com"
 wazuh_server_sender: "no-reply@sleepycow.fun"
-wazuh_server_mail_server: "mail.sleepycow.fun:465"
+wazuh_server_mail_server: "localhost"

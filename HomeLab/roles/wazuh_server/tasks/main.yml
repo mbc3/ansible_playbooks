@@ -28,7 +28,37 @@
     line: <port>2514</port>
 
 - name: Enable email alerts
+  notify:
+    - Run postmap
+    - Restart postfix
   block:
+
+    - name: Enable postfix
+      ansible.builtin.systemd_service:
+        name: postfix
+        state: started
+        enabled: true
+
+    - name: Update postfix config
+      ansible.builtin.blockinfile:
+        name: /etc/postfix/main.cf
+        block: |
+          relayhost = [mail.sleepycow.fun]:465
+          smtp_sasl_auth_enable = yes
+          smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+          smtp_sasl_security_options = noanonymous
+          smtp_use_tls = yes
+          smtp_tls_wrappermode = yes
+          smtp_tls_security_level = encrypt
+
+    - name: Update sasl config
+      ansible.builtin.template:
+        src: sasl_passwd.j2
+        dest: /etc/postfix/sasl_passwd
+        owner: root
+        group: root
+        mode: "0600"
+
     - name: Enable email notifications
       ansible.builtin.lineinfile:
         path: /var/ossec/etc/ossec.conf

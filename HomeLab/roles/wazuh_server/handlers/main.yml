@@ -3,3 +3,12 @@
   ansible.builtin.systemd_service:
     name: firewalld
     state: restarted
+
+- name: Run postmap
+  ansible.builtin.command: postmap /etc/postfix/sasl_passwd
+  changed_when: false
+
+- name: Restart postfix
+  ansible.builtin.systemd_service:
+    name: postfix
+    state: restarted
