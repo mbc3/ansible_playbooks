@@ -19,6 +19,16 @@
     owner: root
     group: root
     mode: "0600"
+  when: ansible_facts["distribution_major_version"] == "10"
+
+- name: Copy aide config (RHEL9)
+  ansible.builtin.copy:
+    src: aide_rhel9.conf
+    dest: /etc/aide.conf
+    owner: root
+    group: root
+    mode: "0600"
+  when: ansible_facts["distribution_major_version"] == "9" # config uses options
 
 - name: Copy aide-check cgroup slice
   ansible.builtin.template:
