@@ -13,7 +13,6 @@ prometheus_home_hosts:
   - dns02
   - freeipa
   - files
-  - semaphore
   - openbao
   - wazuh
   - netboot
