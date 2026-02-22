@@ -1,30 +1,38 @@
 ---
-## TO DO: make this more robust so this will work on other distros, not just debian12
 ## NOTE: have to add the following lines
 ## to the bottom of /etc/pve/lxc/<container id>.conf
 ## lxc.cgroup2.devices.allow: c 10:200 rwm
 ## lxc.mount.entry: /dev/net/tun dev/net/tun none bind,create=file
 
-- name: Install GPG
-  ansible.builtin.apt:
-    name: gpg
-    state: present
+- name: Install Tailscale (Debian)
+  when: ansible_facts["distribution"] == "Debian"
+  block:
+    - name: Install GPG
+      ansible.builtin.apt:
+        name: gpg
+        state: present
 
-- name: Download Tailscale GPG Key
-  ansible.builtin.apt_key:
-    url: https://pkgs.tailscale.com/stable/debian/bookworm.noarmor.gpg
-    keyring: /usr/share/keyrings/tailscale-archive-keyring.gpg
-    state: present
+    - name: Download Tailscale GPG Key
+      ansible.builtin.apt_key:
+        url: https://pkgs.tailscale.com/stable/debian/bookworm.noarmor.gpg
+        keyring: /usr/share/keyrings/tailscale-archive-keyring.gpg
+        state: present
 
-- name: Install Tailscale repo
-  ansible.builtin.apt_repository:
-    repo: "deb [signed-by=/usr/share/keyrings/tailscale-archive-keyring.gpg] https://pkgs.tailscale.com/stable/debian bookworm main"
-    state: present
+    - name: Install Tailscale repo
+      ansible.builtin.apt_repository:
+        repo: "deb [signed-by=/usr/share/keyrings/tailscale-archive-keyring.gpg] https://pkgs.tailscale.com/stable/debian bookworm main"
+        state: present
+
+- name: Install Tailscale (RHEL)
+  when: ansible_facts["distribution"] == "AlmaLinux"
+  block:
+    - name: Add Tailscale repo
+      ansible.builtin.command: "dnf config-manager --add-repo {{ tailscale_dnf_repo }}"
+      changed_when: false
 
 - name: Install Tailscale
-  ansible.builtin.apt:
+  ansible.builtin.package:
     name: tailscale
-    update_cache: true
     state: present
 
 - name: Enable tailscaled
