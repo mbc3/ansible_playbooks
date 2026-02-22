@@ -44,6 +44,9 @@
     - role: tailscale
       tags: tailscale
 
+    - role: nfs_client
+      tags: nfs
+
     - role: mealie
       tags: cooking
 
