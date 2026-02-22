@@ -41,6 +41,9 @@
     - role: caddy
       tags: web
 
+    - role: tailscale
+      tags: tailscale
+
     - role: mealie
       tags: cooking
 
