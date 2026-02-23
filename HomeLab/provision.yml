@@ -13,6 +13,7 @@
     debian_package_list:
       - prometheus-node-exporter
       - vim
+      - sudo
 
   pre_tasks:
     - name: Update all packages
@@ -39,6 +40,7 @@
         name: ansible
         uid: 1069
         group: ansible
+        shell: /usr/bin/bash
         comment: Ansible Service Account
 
     - name: Copy Proxmox SSH key
