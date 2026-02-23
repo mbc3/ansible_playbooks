@@ -1,0 +1,69 @@
+---
+- name: Install Podman
+  block:
+    - name: Install necessary packages
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ stirling_pdf_packages }}"
+
+    - name: Enable podman auto-update service
+      ansible.builtin.systemd_service:
+        name: podman-auto-update.timer
+        enabled: true
+        state: started
+
+    - name: Enable linger
+      become: true
+      become_user: "{{ stirling_pdf_user }}"
+      ansible.builtin.command: loginctl enable-linger "{{ stirling_pdf_user }}"
+      changed_when: false
+
+- name: Create Stirling PDF bind mount
+  ansible.builtin.file:
+    state: directory
+    path: /opt/stirling-data
+    owner: "{{ stirling_pdf_user }}"
+    group: "{{ stirling_pdf_user }}"
+    mode: "0775"
+
+- name: Set up Stirling PDF
+  become: true
+  become_user: "{{ stirling_pdf_user }}"
+  notify: Restart Stirling PDF
+  block:
+    - name: Pull Stirling PDF image
+      containers.podman.podman_image:
+        name: docker.io/stirlingtools/stirling-pdf
+        tag: latest
+
+    - name: Create Stirling PDF quadlet file
+      containers.podman.podman_container:
+        name: stirling-pdf
+        image: docker.io/stirlingtools/stirling-pdf:latest
+        state: quadlet
+        quadlet_filename: stirling-pdf
+        quadlet_dir: "/home/{{ stirling_pdf_user }}/.config/containers/systemd"
+        volume:
+          - /opt/stirling-data:/configs:z
+        publish:
+          - 8080:8080
+        quadlet_options:
+          - "AutoUpdate=registry"
+          - |
+            [Unit]
+            Wants=network-online.target
+            After=network-online.target
+            [Service]
+            Restart=always
+            [Install]
+            WantedBy=default.target
+
+- name: Start Stirling PDF
+  become: true
+  become_user: "{{ stirling_pdf_user }}"
+  ansible.builtin.systemd_service:
+    name: stirling-pdf
+    daemon_reload: true
+    scope: user
+    state: started

@@ -1,7 +1,0 @@
----
-- name: Start Stirling PDF Systemd unit file
-  ansible.builtin.systemd_service:
-    name: stirling-pdf
-    state: started
-    scope: user
-    daemon_reload: true

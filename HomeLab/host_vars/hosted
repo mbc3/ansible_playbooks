@@ -4,3 +4,4 @@ caddy_services:
     cooking: "9925"
     search: "8081"
     up: "3001"
+    pdf: "8080"

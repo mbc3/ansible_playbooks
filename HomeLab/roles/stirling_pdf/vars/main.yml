@@ -1,0 +1,5 @@
+---
+stirling_pdf_packages:
+  - podman
+  - systemd-container
+stirling_pdf_user: selfie

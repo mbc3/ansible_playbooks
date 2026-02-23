@@ -56,5 +56,8 @@
     - role: uptime_kuma
       tags: monitoring
 
+    - role: stirling_pdf
+      tags: pdf
+
     - role: dnf
       tags: proxy,dnf
