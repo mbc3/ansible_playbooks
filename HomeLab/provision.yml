@@ -68,21 +68,15 @@
     - name: Alma/RHEL specific tasks
       when: ansible_facts["distribution"] != "Debian"
       block:
-        - name: Check if EPEL is installed
-          ansible.builtin.stat:
-            path: /etc/yum.repos.d/epel.repo
-          register: epel
-
         - name: Install EPEL repo
           ansible.builtin.dnf:
             name: epel-release
             state: present
 
         - name: Enable EPEL CRB
-          ansible.builtin.command: dnf config-manager --set-enabled crb
-          register: crb_output
-          changed_when: crb_output.rc != 0
-          when: not epel.stat.exists
+          community.general.dnf_config_manager:
+            name: crb
+            state: enabled
 
         - name: Install necessary packages
           ansible.builtin.dnf:
