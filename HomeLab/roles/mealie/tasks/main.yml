@@ -34,7 +34,7 @@
   block:
     - name: Pull mealie image
       containers.podman.podman_image:
-        name: ghcr.io/mealie-recipes/mealie
+        name: "{{ mealie_image }}"
         tag: latest
 
     - name: Create mealie podman network
@@ -54,7 +54,7 @@
     - name: Create mealie quadlet file
       containers.podman.podman_container:
         name: mealie
-        image: ghcr.io/mealie-recipes/mealie:latest
+        image: "{{ mealie_image }}:latest"
         network: mealie.network
         state: quadlet
         quadlet_filename: mealie-app
@@ -62,7 +62,7 @@
         volume:
           - /opt/mealie-data:/app/data/:z
         publish:
-          - 9925:9000
+          - "{{ mealie_port }}:9000"
         env:
           TZ: "America/Los_Angeles"
           BASE_URL: "https://cooking.hosted.localdomain"

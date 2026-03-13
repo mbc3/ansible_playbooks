@@ -4,3 +4,5 @@ uptime_kuma_user: "selfie"
 uptime_kuma_packages:
   - podman
   - systemd-container
+uptime_kuma_image: "docker.io/louislam/uptime-kuma"
+uptime_kuma_port: 3001

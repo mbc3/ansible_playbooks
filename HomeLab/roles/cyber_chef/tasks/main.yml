@@ -19,17 +19,17 @@
       ansible.builtin.command: loginctl enable-linger "{{ cyber_chef_user }}"
       changed_when: false
 
-- name: Set up cyber_chef
+- name: Set up cyber chef
   become: true
   become_user: "{{ cyber_chef_user }}"
-  notify: Restart cyber_chef
+  notify: Restart cyber chef
   block:
-    - name: Pull cyber_chef image
+    - name: Pull cyber chef image
       containers.podman.podman_image:
         name: "{{ cyber_chef_image }}"
         tag: latest
 
-    - name: Create cyber_chef quadlet file
+    - name: Create cyber chef quadlet file
       containers.podman.podman_container:
         name: cyber_chef
         image: "{{ cyber_chef_image }}:latest"
@@ -49,7 +49,7 @@
             [Install]
             WantedBy=default.target
 
-- name: Start cyber_chef
+- name: Start cyber chef
   become: true
   become_user: "{{ cyber_chef_user }}"
   ansible.builtin.systemd_service:

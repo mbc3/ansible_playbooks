@@ -34,20 +34,20 @@
   block:
     - name: Pull Stirling PDF image
       containers.podman.podman_image:
-        name: docker.io/stirlingtools/stirling-pdf
+        name: "{{ stirling_pdf_image }}"
         tag: latest
 
     - name: Create Stirling PDF quadlet file
       containers.podman.podman_container:
         name: stirling-pdf
-        image: docker.io/stirlingtools/stirling-pdf:latest
+        image: "{{ stirling_podf_image }}:latest"
         state: quadlet
         quadlet_filename: stirling-pdf
         quadlet_dir: "/home/{{ stirling_pdf_user }}/.config/containers/systemd"
         volume:
           - /opt/stirling-data:/configs:z
         publish:
-          - 8080:8080
+          - "{{ stirling_pdf_port }}:{{ stirling_pdf_port }}"
         quadlet_options:
           - "AutoUpdate=registry"
           - |

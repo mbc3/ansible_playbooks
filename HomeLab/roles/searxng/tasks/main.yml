@@ -26,18 +26,18 @@
   block:
     - name: Pull SearXNG image
       containers.podman.podman_image:
-        name: ghcr.io/searxng/searxng
+        name: "{{ ghcr.io/searxng/searxng }}"
         tag: latest
 
     - name: Create SearXNG quadlet file
       containers.podman.podman_container:
         name: searxng
-        image: ghcr.io/searxng/searxng:latest
+        image: "{{ ghcr.io/searxng/searxng }}:latest"
         state: quadlet
         quadlet_filename: searxng
         quadlet_dir: "/home/{{ searxng_user }}/.config/containers/systemd"
         ports:
-          - 8081:8080
+          - "{{ searxng_port }}:8080"
         quadlet_options:
           - "AutoUpdate=registry"
           - |

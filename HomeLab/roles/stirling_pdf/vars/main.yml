@@ -3,3 +3,5 @@ stirling_pdf_packages:
   - podman
   - systemd-container
 stirling_pdf_user: selfie
+stirling_pdf_image: "docker.io/stirlingtools/stirling-pdf"
+stirling_pdf_port: 8080

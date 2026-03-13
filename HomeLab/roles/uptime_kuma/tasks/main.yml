@@ -31,19 +31,19 @@
 
     - name: Pull Uptime Kuma image
       containers.podman.podman_image:
-        name: docker.io/louislam/uptime-kuma
+        name: "{{ uptime_kuma_image }}"
         tag: "{{ uptime_kuma_version }}"
 
     - name: Create Uptime Kuma quadlet file
       containers.podman.podman_container:
         name: uptime-kuma
-        image: "docker.io/louislam/uptime-kuma:{{ uptime_kuma_version }}"
+        image: "{{ uptime_kuma_image }}:{{ uptime_kuma_version }}"
         state: quadlet
         quadlet_filename: uptime-kuma
         quadlet_dir: "/home/{{ uptime_kuma_user }}/.config/containers/systemd"
         cap_add: "NET_RAW"
         ports:
-          - 3001:3001
+          - "{{ uptime_kuma_port }}:{{ uptime_kuma_port }}"
         volumes:
           - "uptime-kuma:/app/data"
         quadlet_options:

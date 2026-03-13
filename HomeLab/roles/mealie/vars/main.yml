@@ -3,3 +3,5 @@ mealie_packages:
   - podman
   - systemd-container
 mealie_user: selfie
+mealie_image: "ghcr.io/mealie-recipes/mealie"
+mealie_port: 9925
