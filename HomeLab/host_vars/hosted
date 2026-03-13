@@ -5,3 +5,4 @@ caddy_services:
     search: "8081"
     up: "3001"
     pdf: "8080"
+    cyberchef: "8082"

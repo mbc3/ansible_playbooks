@@ -59,5 +59,8 @@
     - role: stirling_pdf
       tags: pdf
 
+    - role: cyber_chef
+      tags: cyber
+
     - role: dnf
       tags: proxy,dnf

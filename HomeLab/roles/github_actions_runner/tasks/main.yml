@@ -1,0 +1,26 @@
+---
+- name: Make runner directory
+  ansible.builtin.file:
+    path: "{{ github_actions_runner_directory }}"
+    state: directory
+    owner: root
+    group: ansible
+    mode: "0770"
+
+- name: Download runner package
+  ansible.builtin.get_url:
+    url: "https://github.com/actions/runner/releases/download/v{{ github_actions_runner_version }}/actions-runner-linux-x64-{{ github_actions_runner_version }}.tar.gz"
+    dest: "{{ github_actions_runner_directory }}"
+    owner: root
+    group: ansible
+    mode: "0660"
+  register: runner_package
+
+- name: Unarchive runner package
+  ansible.builtin.unarchive:
+    src: "{{ runner_package.dest }}"
+    dest: "{{ github_actions_runner_directory }}"
+    owner: root
+    group: ansible
+    mode: "0770"
+    remote_src: true

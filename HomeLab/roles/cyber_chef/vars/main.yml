@@ -1,0 +1,7 @@
+---
+cyber_chef_packages:
+  - podman
+  - systemd-container
+cyber_chef_user: selfie
+cyber_chef_image: "ghcr.io/gchq/cyberchef"
+cyber_chef_port: 8082

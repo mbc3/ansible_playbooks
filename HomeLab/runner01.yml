@@ -16,3 +16,6 @@
 
     - role: ca_client
       tags: auth
+
+    - role: github_actions_runner
+      tags: runner
