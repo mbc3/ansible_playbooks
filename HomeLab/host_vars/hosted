@@ -6,3 +6,4 @@ caddy_services:
     up: "3001"
     pdf: "8080"
     cyberchef: "8082"
+    registry: "5000"

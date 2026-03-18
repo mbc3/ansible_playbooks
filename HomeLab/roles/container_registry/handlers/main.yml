@@ -1,0 +1,7 @@
+- name: Restart registry
+  become: true
+  become_user: "{{ container_registry_user }}"
+  ansible.builtin.systemd_service:
+    name: registry
+    state: restarted
+    scope: user

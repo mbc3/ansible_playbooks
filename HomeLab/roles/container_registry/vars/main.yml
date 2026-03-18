@@ -1,0 +1,6 @@
+---
+container_registry_directory: "/opt/registry"
+container_registry_user: selfie
+container_registry_image: "docker.io/library/registry"
+container_registry_version: "latest"
+container_registry_port: 5000

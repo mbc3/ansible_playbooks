@@ -62,5 +62,10 @@
     - role: cyber_chef
       tags: cyber
 
+    - role: container_registry
+      tags:
+        - container
+        - registry
+
     - role: dnf
       tags: proxy,dnf

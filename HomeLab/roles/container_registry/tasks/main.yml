@@ -1,0 +1,54 @@
+---
+- name: Install Podman
+  ansible.builtin.dnf:
+    name: podman
+    state: present
+
+- name: Make registry directory
+  ansible.builtin.file:
+    name: "{{ container_registry_directory }}"
+    state: directory
+    owner: "{{ container_registry_user }}"
+    group: "{{ container_registry_user }}"
+    mode: "0775"
+
+- name: Set up registry
+  become: true
+  become_user: "{{ container_registry_user }}"
+  notify: Restart registry
+  block:
+    - name: Pull registry image
+      containers.podman.podman_image:
+        name: "{{ container_registry_image }}"
+        tag: "{{ container_registry_version }}"
+
+    - name: Create registry quadlet file
+      containers.podman.podman_container:
+        name: registry
+        image: "{{ container_registry_image }}:{{ container_registry_version }}"
+        state: quadlet
+        quadlet_filename: registry
+        quadlet_dir: "/home/{{ container_registry_user }}/.config/containers/systemd"
+        volume:
+          - "{{ container_registry_directory }}:/var/lib/registry:z"
+        publish:
+          - "{{ container_registry_port }}:5000"
+        quadlet_options:
+          - "AutoUpdate=registry"
+          - |
+            [Unit]
+            Wants=network-online.target
+            After=network-online.target
+            [Service]
+            Restart=always
+            [Install]
+            WantedBy=default.target
+
+- name: Start registry
+  become: true
+  become_user: "{{ container_registry_user }}"
+  ansible.builtin.systemd_service:
+    name: registry
+    daemon_reload: true
+    scope: user
+    state: started
