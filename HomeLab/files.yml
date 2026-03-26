@@ -47,9 +47,6 @@
     - role: caddy
       tags: web
 
-    - role: wazuh_agent
-      tags: security
-
     - role: selinux
       tags: security
 

@@ -1,0 +1,63 @@
+---
+- name: Install Podman
+  block:
+    - name: Install necessary packages
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ forgejo_packages }}"
+
+    - name: Enable podman auto-update service
+      ansible.builtin.systemd_service:
+        name: podman-auto-update.timer
+        enabled: true
+        state: started
+
+- name: Set up forgejo
+  become: true
+  notify: Restart forgejo
+  block:
+    - name: Pull forgejo image
+      containers.podman.podman_image:
+        name: "{{ forgejo_image }}"
+        tag: latest
+
+    - name: Create forgejo podman volume
+      containers.podman.podman_volume:
+        name: forgejo-date
+        state: present
+
+    - name: Create forgejo network
+      containers.podman.podman_network:
+        name: forgejo
+
+    - name: Create forgejo quadlet file
+      loop: "{{ forgejo_ports }}"
+      containers.podman.podman_container:
+        name: forgejo
+        image: "{{ forgejo_image }}:latest"
+        state: quadlet
+        quadlet_filename: forgejo
+        quadlet_dir: /etc/containers/systemd
+        network: forgejo
+        volume:
+          - forgejo-data:/data:z
+        publish:
+          - "{{ item.key }}:{{ item.value }}"
+        quadlet_options:
+          - "AutoUpdate=registry"
+          - |
+            [Unit]
+            Wants=network-online.target
+            After=network-online.target
+            [Service]
+            Restart=always
+            [Install]
+            WantedBy=default.target
+
+- name: Start forgejo
+  become: true
+  ansible.builtin.systemd_service:
+    name: forgejo
+    daemon_reload: true
+    state: started

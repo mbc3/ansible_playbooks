@@ -29,9 +29,6 @@
     - role: aide
       tags: security
 
-    - role: wazuh_agent
-      tags: security
-
     - role: selinux
       tags: security
 

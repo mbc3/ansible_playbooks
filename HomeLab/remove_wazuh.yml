@@ -1,0 +1,11 @@
+---
+- name: Disable Wazuh Agent
+  hosts: proxmox_all_qemu
+  become: true
+
+  tasks:
+     - name: Disable Wazuh systemd
+       ansible.builtin.systemd_service:
+          name: wazuh-agent
+          enabled: false
+          state: stopped

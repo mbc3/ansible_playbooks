@@ -14,13 +14,13 @@ prometheus_home_hosts:
   - freeipa
   - files
   - openbao
-  - wazuh
   - netboot
   - netbox
   - services
   - hosted
   - proxy
   - runner01
+  - forgejo
 prometheus_mbc_hosts:
   - arch.internal
 prometheus_fw_hosts:
