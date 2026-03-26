@@ -37,3 +37,6 @@
 
     - role: dnf
       tags: proxy,dnf
+
+    - role: forgejo
+      tags: forgejo

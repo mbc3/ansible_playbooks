@@ -1,8 +1,4 @@
 forgejo_packages:
   - podman
   - systemd-container
-forgejo_ports:
-  {
-    3000: 3000,
-    222: 22,
-  }
+forgejo_image: "codeberg.org/forgejo/forgejo:14"

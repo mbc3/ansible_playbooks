@@ -32,10 +32,9 @@
         name: forgejo
 
     - name: Create forgejo quadlet file
-      loop: "{{ forgejo_ports }}"
       containers.podman.podman_container:
         name: forgejo
-        image: "{{ forgejo_image }}:latest"
+        image: "{{ forgejo_image }}"
         state: quadlet
         quadlet_filename: forgejo
         quadlet_dir: /etc/containers/systemd
@@ -43,7 +42,11 @@
         volume:
           - forgejo-data:/data:z
         publish:
-          - "{{ item.key }}:{{ item.value }}"
+          - 3000:3000
+          - 222:22
+        env:
+          USER_UID: 1000
+          USER_GUID: 1000
         quadlet_options:
           - "AutoUpdate=registry"
           - |
