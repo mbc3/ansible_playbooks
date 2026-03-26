@@ -1,0 +1,39 @@
+---
+- name: Install Forgejo
+  hosts: forgejo
+  become: true
+
+  roles:
+    - role: rsyslog
+      tags: logs
+
+    - role: auditd
+      tags: audit
+
+    - role: sshd
+
+    - role: sudo
+
+    - role: prometheus_client
+      tags: metrics
+
+    - role: freeipa_client
+      tags: auth
+
+    - role: ca_client
+      tags: auth
+
+    - role: aide
+      tags: security
+
+    - role: selinux
+      tags: security
+
+    - role: serial
+      tags: test
+
+    - role: debug
+      tags: test
+
+    - role: dnf
+      tags: proxy,dnf
