@@ -24,7 +24,7 @@
 
     - name: Create forgejo podman volume
       containers.podman.podman_volume:
-        name: forgejo-date
+        name: forgejo-data
         state: present
 
     - name: Create forgejo network
@@ -65,20 +65,18 @@
     daemon_reload: true
     state: started
 
-- name: Set up firewallwd service for ssh access
+- name: Add forgejo custom firewalld service
+  ansible.builtin.copy:
+    src: forgejo.xml
+    dest: /etc/firewalld/services/forgejo.xml
+    owner: root
+    group: root
+    mode: "0644"
   notify: Restart firewalld
-  block:
-    - name: Add forgejo custom firewalld service
-      ansible.builtin.copy:
-        src: forgejo.xml
-        dest: /etc/firewalld/services/forgejo.xml
-        owner: root
-        group: root
-        mode: "0644"
 
-    - name: Add forgejo firewalld service
-      ansible.posix.firewalld:
-        service: forgejo
-        permanent: true
-        immediate: true
-        state: enabled
+- name: Add forgejo firewalld service
+  ansible.posix.firewalld:
+    service: forgejo
+    permanent: true
+    immediate: true
+    state: enabled
