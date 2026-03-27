@@ -40,3 +40,6 @@
 
     - role: forgejo
       tags: forgejo
+
+    - role: caddy
+      tags: web
