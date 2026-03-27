@@ -6,3 +6,4 @@ uptime_kuma_packages:
   - systemd-container
 uptime_kuma_image: "docker.io/louislam/uptime-kuma"
 uptime_kuma_port: 3001
+

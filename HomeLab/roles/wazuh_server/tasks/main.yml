@@ -3,7 +3,7 @@
   ansible.builtin.dnf:
     name: "{{ item }}"
     state: present
-  loop: "{{ wazuh_packages }}"
+  loop: "{{ wazuh_server_packages }}"
 
 - name: Add wazuh custom firewalld service
   ansible.builtin.copy:

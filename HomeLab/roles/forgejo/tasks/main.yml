@@ -64,3 +64,21 @@
     name: forgejo
     daemon_reload: true
     state: started
+
+- name: Set up firewallwd service for ssh access
+  notify: Restart firewalld
+  block:
+    - name: Add forgejo custom firewalld service
+      ansible.builtin.copy:
+        src: forgejo.xml
+        dest: /etc/firewalld/services/forgejo.xml
+        owner: root
+        group: root
+        mode: "0644"
+
+    - name: Add forgejo firewalld service
+      ansible.posix.firewalld:
+        service: forgejo
+        permanent: true
+        immediate: true
+        state: enabled

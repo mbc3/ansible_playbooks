@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<service>
+<short>Forgejo</short>
+<description>Forgejo access for SSH into container</description>
+<port port="222" protocol="tcp"/>
+</service>
