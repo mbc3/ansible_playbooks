@@ -1,6 +1,0 @@
----
-- name: Install Rsyslog
-  hosts: home
-
-  roles:
-    - role: rsyslog
