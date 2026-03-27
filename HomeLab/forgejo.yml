@@ -43,3 +43,6 @@
 
     - role: caddy
       tags: web
+
+    - role: tailscale
+      tags: tailscale
