@@ -14,11 +14,11 @@
     owner: root
     group: ansible
     mode: "0660"
-  register: runner_package
+  register: github_actions_runner_package
 
 - name: Unarchive runner package
   ansible.builtin.unarchive:
-    src: "{{ runner_package.dest }}"
+    src: "{{ github_actionsrunner_package.dest }}"
     dest: "{{ github_actions_runner_directory }}"
     owner: root
     group: ansible
