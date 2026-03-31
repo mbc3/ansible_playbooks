@@ -17,5 +17,5 @@
     - role: ca_client
       tags: auth
 
-    - role: github_actions_runner
+    - role: forgejo_runner
       tags: runner

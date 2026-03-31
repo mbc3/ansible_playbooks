@@ -1,0 +1,17 @@
+[Unit]
+Description=Forgejo Runner
+Documentation=https://forgejo.org/docs/latest/admin/actions/
+
+[Service]
+ExecStart=/usr/local/bin/forgejo-runner daemon -c /home/{{ forgejo_runner_user }}/{{ forgejo_runner_config }}
+ExecReload=/bin/kill -s HUP $MAINPID
+
+# This user and working directory must already exist
+User={{ forgejo_runner_user }}
+WorkingDirectory=/home/{{ forgejo_runner_user }}
+Restart=on-failure
+TimeoutSec=0
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target

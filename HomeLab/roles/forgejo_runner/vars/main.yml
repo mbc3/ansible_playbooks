@@ -1,0 +1,12 @@
+---
+forgejo_runner_packages:
+  - git
+
+forgejo_runner_directory: "/opt/forgejo-runner"
+forgejo_runner_version: "12.7.3"
+forgejo_runner_binary_source: "https://code.forgejo.org/forgejo/runner/releases/download"
+forgejo_runner_user: "runner"
+forgejo_runner_config: "runner-config.yml"
+forgejo_runner_token: "QQXg82xzec_7aqlNC3p17gxj7rEIHUPrr7LtB31FB31"
+forgejo_runner_url: "https://repo.forgejo.localdomain"
+forgejo_runner_labels: "self-hosted:host"
