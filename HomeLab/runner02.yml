@@ -1,0 +1,21 @@
+---
+- name: Set up runner02 server
+  hosts: runner02
+  become: true
+
+  roles:
+    - role: rsyslog
+      tags: logs
+
+    - role: sshd
+
+    - role: sudo
+
+    - role: prometheus_client
+      tags: metrics
+
+    - role: ca_client
+      tags: auth
+
+   # - role: forgejo_runner
+   #   tags: runner
