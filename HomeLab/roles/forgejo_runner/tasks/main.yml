@@ -44,6 +44,9 @@
     name: "/home/{{ forgejo_runner_user }}/.runner"
   register: forgejo_runner_dot_runner
 
+  #MBC - where this breaks is because forgejo-runner puts the .runner
+  #file in the current working directory, which is the .ansible/tmp dir.
+  # that gets deleted after the tasks is run. TO DO: move it to home?
 #- name: Register runner
 #  become: true
 #  become_user: "{{ forgejo_runner_user }}"
@@ -66,13 +69,13 @@
   when: not forgejo_runner_dot_runner.stat.exists
 
 - name: Copy runner config
-  ansible.builtin.template:
-    src: runner-config.yml.j2
+  ansible.builtin.copy:
+    src: runner-config.yml
     dest: "/home/{{ forgejo_runner_user }}/{{ forgejo_runner_config }}"
     owner: "{{ forgejo_runner_user }}"
     group: "{{ forgejo_runner_user }}"
     mode: "0664"
-  #notify: Restart Forgejo runner
+  notify: Restart Forgejo runner
 
 - name: Slurp .runner file
   ansible.builtin.slurp:
@@ -87,7 +90,7 @@
 - name: Add UUID of runner to runner config
   ansible.builtin.lineinfile:
     path: "/home/{{ forgejo_runner_user }}/{{ forgejo_runner_config }}"
-    line: "   uuid: {{ forgejo_runner_dot_runner_slurp_uuid.msg }}"
+    line: "        uuid: {{ forgejo_runner_dot_runner_slurp_uuid.msg }}"
     state: present
     insertafter: "token"
 
@@ -98,11 +101,11 @@
     owner: root
     group: root
     mode: "0664"
-  #notify: Restart Forgejo runner
+  notify: Restart Forgejo runner
 
-#- name: Enable Forgejo runner systemd service
-#  ansible.builtin.systemd_service:
-#    name: forgejo-runner
-#    enabled: true
-#    state: started
-#    daemon_reload: true
+- name: Enable Forgejo runner systemd service
+  ansible.builtin.systemd_service:
+    name: forgejo-runner
+    enabled: true
+    state: started
+    daemon_reload: true
