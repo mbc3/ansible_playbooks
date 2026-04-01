@@ -44,28 +44,21 @@
     name: "/home/{{ forgejo_runner_user }}/.runner"
   register: forgejo_runner_dot_runner
 
-  #MBC - where this breaks is because forgejo-runner puts the .runner
-  #file in the current working directory, which is the .ansible/tmp dir.
-  # that gets deleted after the tasks is run. TO DO: move it to home?
-#- name: Register runner
-#  become: true
-#  become_user: "{{ forgejo_runner_user }}"
-#  ansible.builtin.expect:
-#    command: forgejo-runner register
-#    responses:
-#      "Enter the Forgejo instance URL":
-#        - "{{ forgejo_runner_url }}"
-#      "Enter the runner token":
-#        - "{{ forgejo_runner_token }}"
-#      "Enter the runner name":
-#        - "{{ inventory_hostname }}"
-#     "Enter the runner labels":
-#        - "{{ forgejo_runner_labels }}"
-# when: not forgejo_runner_dot_runner.stat.exists
-
-- name: Remind user to register runner
-  ansible.builtin.debug:
-    msg: "Please run forgejo-runner register as forgejo runner user!"
+- name: Register runner
+  become: true
+  become_user: "{{ forgejo_runner_user }}"
+  ansible.builtin.expect:
+    chdir: "/home/{{ forgejo_runner_user }}" # need to change dir so .runner file is created in home dir
+    command: forgejo-runner register
+    responses:
+      "Enter the Forgejo instance URL":
+        - "{{ forgejo_runner_url }}"
+      "Enter the runner token":
+        - "{{ forgejo_runner_token }}"
+      "Enter the runner name":
+        - "{{ inventory_hostname }}"
+      "Enter the runner labels":
+        - "{{ forgejo_runner_labels }}"
   when: not forgejo_runner_dot_runner.stat.exists
 
 - name: Copy runner config
@@ -76,23 +69,6 @@
     group: "{{ forgejo_runner_user }}"
     mode: "0664"
   notify: Restart Forgejo runner
-
-- name: Slurp .runner file
-  ansible.builtin.slurp:
-    src: "/home/{{ forgejo_runner_user }}/.runner"
-  register: forgejo_runner_dot_runner_slurp
-
-- name: Extract UUID
-  ansible.builtin.debug:
-    msg: "{{ forgejo_runner_dot_runner_slurp['content'] | b64decode | regex_search ('[0-9a-z]+-[0-9a-z]+-[0-9a-z]+-[0-9a-z]+-[0-9a-z]+') }}"
-  register: forgejo_runner_dot_runner_slurp_uuid
-
-- name: Add UUID of runner to runner config
-  ansible.builtin.lineinfile:
-    path: "/home/{{ forgejo_runner_user }}/{{ forgejo_runner_config }}"
-    line: "        uuid: {{ forgejo_runner_dot_runner_slurp_uuid.msg }}"
-    state: present
-    insertafter: "token"
 
 - name: Copy Forgejo runner systemd service
   ansible.builtin.template:
