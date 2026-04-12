@@ -1,0 +1,12 @@
+name: ansible-lint
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  linter:
+    runs-on: self-host
+    steps:
+      - name: Ansible Lint
+        run: ansible-lint

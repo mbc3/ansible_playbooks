@@ -1,6 +1,12 @@
 ---
 forgejo_runner_packages:
   - git
+  - ansible
+  - ansible-lint
+  - apt-transport-https
+  - ca-certificates
+  - curl
+  - gnupg
 
 forgejo_runner_directory: "/opt/forgejo-runner"
 forgejo_runner_version: "12.7.3"
