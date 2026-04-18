@@ -1,8 +1,9 @@
 ---
 - name: Install FreeIPA client and necessary packages
   ansible.builtin.package:
-    name:
+    name: "{{ item }}"
     state: present
+  loop: "{{ freeipa_client_packages }}"
 
 - name: Set hostname to be FQDN
   ansible.builtin.hostname:
@@ -10,27 +11,47 @@
     use: systemd
   when: inventory_hostname != "freeipa"
 
-- name: Have containers start chrony with the -x flag (RHEL)
-  ansible.builtin.lineinfile:
-    path: /etc/sysconfig/chronyd
-    regexp: "^OPTIONS"
-    line: 'OPTIONS="-F 2 -x"'
-    state: present
-  notify: Restart chrony
-  when:
-    - ansible_facts["distribution"] == "AlmaLinux"
-    - '"proxmox_all_lxc" in group_names'
 
-- name: Have containers start chrony with the -x flag (Deb)
-  ansible.builtin.lineinfile:
-    path: /etc/default/chrony
-    regexp: "^OPTIONS"
-    line: 'OPTIONS="-F 2 -x"'
-    state: present
-  notify: Restart chrony
+- name: RHEL tasks for lxc containers
+  when:
+    - ansible_facts["distribution"] != "Debian"
+    - '"proxmox_all_lxc" in group_names'
+  block:
+    - name: Have containers start chrony with the -x flag (RHEL)
+      ansible.builtin.lineinfile:
+        path: /etc/sysconfig/chronyd
+        regexp: "^OPTIONS"
+        line: 'OPTIONS="-F 2 -x"'
+        state: present
+      notify: Restart chrony
+
+    - name: Chrony restart (RHEL)
+      ansible.builtin.systemd_service:
+        name: chronyd
+        daemon_reload: true
+        state: restarted
+
+- name: Deb tasks for lxc containers
   when:
     - ansible_facts["distribution"] == "Debian"
     - '"proxmox_all_lxc" in group_names'
+  block:
+    - name: Have containers start chrony with the -x flag (Deb)
+      ansible.builtin.lineinfile:
+        path: /etc/default/chrony
+        regexp: "^DAEMON_OPTS"
+        line: 'DAEMON_OPTS="-F 1 -x"'
+        state: present
+      notify: Restart chrony
+      when:
+        - ansible_facts["distribution"] == "Debian"
+        - '"proxmox_all_lxc" in group_names'
+
+    - name: Chrony restart (Deb)
+      ansible.builtin.systemd_service:
+        name: chrony
+        daemon_reload: true
+        state: restarted
 
 - name: Check if FreeIPA user exists
   ansible.builtin.user:
