@@ -16,5 +16,8 @@
 
     - role: ca
 
+    - role: freeipa_client
+      tags: auth
+
     - role: dnf
       tags: proxy,dnf

@@ -1,7 +1,7 @@
 ---
-- name: Install FreeIPA client
-  ansible.builtin.dnf:
-    name: freeipa-client
+- name: Install FreeIPA client and necessary packages
+  ansible.builtin.package:
+    name:
     state: present
 
 - name: Set hostname to be FQDN
@@ -9,6 +9,28 @@
     name: "{{ inventory_hostname }}.{{ domain }}"
     use: systemd
   when: inventory_hostname != "freeipa"
+
+- name: Have containers start chrony with the -x flag (RHEL)
+  ansible.builtin.lineinfile:
+    path: /etc/sysconfig/chronyd
+    regexp: "^OPTIONS"
+    line: 'OPTIONS="-F 2 -x"'
+    state: present
+  notify: Restart chrony
+  when:
+    - ansible_facts["distribution"] == "AlmaLinux"
+    - '"proxmox_all_lxc" in group_names'
+
+- name: Have containers start chrony with the -x flag (Deb)
+  ansible.builtin.lineinfile:
+    path: /etc/default/chrony
+    regexp: "^OPTIONS"
+    line: 'OPTIONS="-F 2 -x"'
+    state: present
+  notify: Restart chrony
+  when:
+    - ansible_facts["distribution"] == "Debian"
+    - '"proxmox_all_lxc" in group_names'
 
 - name: Check if FreeIPA user exists
   ansible.builtin.user:

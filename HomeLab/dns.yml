@@ -17,6 +17,9 @@
     - role: ca_client
       tags: auth
 
+    - role: freeipa_client
+      tags: auth
+
     - role: pihole
 
     - role: tailscale

@@ -14,6 +14,9 @@
     - role: prometheus_client
       tags: metrics
 
+    - role: freeipa_client
+      tags: auth
+
     - role: ca_client
       tags: auth
 

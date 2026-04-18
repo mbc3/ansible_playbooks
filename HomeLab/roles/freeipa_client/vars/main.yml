@@ -1,4 +1,7 @@
 ---
+freeipa_client_packages:
+   - freeipa-client
+   - chrony
 freeipa_client_domain: "auth.localdomain"
 freeipa_client_fqdn: "freeipa.auth.localdomain"
 freeipa_client_admin_account: "admin"

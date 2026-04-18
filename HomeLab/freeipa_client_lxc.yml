@@ -1,0 +1,8 @@
+---
+- name: Put FreeIPA on LXC containers
+  become: true
+  hosts: proxmox_all_lxc
+
+  roles:
+    - role: freeipa_client
+      tags: auth
