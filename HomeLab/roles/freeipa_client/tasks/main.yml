@@ -11,10 +11,9 @@
     use: systemd
   when: inventory_hostname != "freeipa"
 
-
 - name: RHEL tasks for lxc containers
   when:
-    - ansible_facts["distribution"] != "Debian"
+    - ansible_facts["distribution"] == "AlmaLinux"
     - '"proxmox_all_lxc" in group_names'
   block:
     - name: Have containers start chrony with the -x flag (RHEL)
@@ -43,9 +42,6 @@
         line: 'DAEMON_OPTS="-F 1 -x"'
         state: present
       notify: Restart chrony
-      when:
-        - ansible_facts["distribution"] == "Debian"
-        - '"proxmox_all_lxc" in group_names'
 
     - name: Chrony restart (Deb)
       ansible.builtin.systemd_service:
