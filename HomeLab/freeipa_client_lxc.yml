@@ -6,3 +6,5 @@
   roles:
     - role: freeipa_client
       tags: auth
+    - role: sshd
+      tags: ssh
