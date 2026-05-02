@@ -97,3 +97,10 @@
     state: present
     user: "{{ freeipa_username }}"
     key: "{{ mbc_pub_key }}"
+
+- name: Copy public SSH keys
+  ansible.posix.authorized_key:
+    state: present
+    user: "{{ freeipa_username }}"
+    key: "{{ item }}"
+  loop: "{{ public_ssh_keys }}"

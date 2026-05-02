@@ -1,0 +1,8 @@
+---
+- name: Put FreeIPA on QEMU VMs
+  become: true
+  hosts: proxmox_all_qemu
+
+  roles:
+    - role: freeipa_client
+      tags: auth

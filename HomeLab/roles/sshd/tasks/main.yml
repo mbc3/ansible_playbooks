@@ -20,3 +20,15 @@
     group: root
     mode: "0644"
   notify: Restart SSHD
+
+- name: Copy Proxmox SSH key for ansible user
+  ansible.posix.authorized_key:
+    user: ansible
+    state: present
+    key: "{{ proxmox_pub_key }}"
+
+- name: Remove MBC SSH key from Ansible service account
+  ansible.posix.authorized_key:
+    user: ansible
+    state: absent
+    key: "{{ mbc_pub_key }}"
