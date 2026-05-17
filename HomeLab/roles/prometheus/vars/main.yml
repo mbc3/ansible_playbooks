@@ -6,7 +6,6 @@ prometheus_packages:
 prometheus_port: "9100"
 prometheus_systemd_port: "9558"
 prometheus_home_hosts:
-  - mediapi
   - logs
   - graphs
   - dns01
