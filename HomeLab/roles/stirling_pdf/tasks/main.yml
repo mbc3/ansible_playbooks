@@ -40,7 +40,7 @@
     - name: Create Stirling PDF quadlet file
       containers.podman.podman_container:
         name: stirling-pdf
-        image: "{{ stirling_podf_image }}:latest"
+        image: "{{ stirling_pdf_image }}:latest"
         state: quadlet
         quadlet_filename: stirling-pdf
         quadlet_dir: "/home/{{ stirling_pdf_user }}/.config/containers/systemd"

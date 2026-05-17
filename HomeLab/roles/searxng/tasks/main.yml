@@ -26,13 +26,13 @@
   block:
     - name: Pull SearXNG image
       containers.podman.podman_image:
-        name: "{{ ghcr.io/searxng/searxng }}"
+        name: "{{ searxng_image }}"
         tag: latest
 
     - name: Create SearXNG quadlet file
       containers.podman.podman_container:
         name: searxng
-        image: "{{ ghcr.io/searxng/searxng }}:latest"
+        image: "{{ searxng_image }}:latest"
         state: quadlet
         quadlet_filename: searxng
         quadlet_dir: "/home/{{ searxng_user }}/.config/containers/systemd"
