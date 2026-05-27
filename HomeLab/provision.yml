@@ -10,6 +10,7 @@
       - vim
       - lsof
       - iperf3
+      - sysstat
     debian_package_list:
       - prometheus-node-exporter
       - vim
@@ -106,6 +107,16 @@
         state: present
       notify: Enable QEMU guest agent
       when: "'proxmox_all_qemu' in group_names"
+
+  roles:
+    - role: chrony
+    - role: rsyslog
+    - role: sshd
+    - role: sudo
+    - role: prometheus_client
+    - role: freeipa_client
+    - role: ca_client
+    - role: debug
 
   handlers:
     - name: Display updated packages

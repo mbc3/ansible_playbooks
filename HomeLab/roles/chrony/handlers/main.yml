@@ -1,0 +1,10 @@
+---
+- name: Reload chrony sources
+  become: true
+  ansible.builtin.command: chronyc reload sources
+  changed_when: false
+
+- name: Restart chrony
+  ansible.builtin.systemd_service:
+    name: chronyd
+    state: restarted
