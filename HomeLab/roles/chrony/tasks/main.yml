@@ -2,7 +2,7 @@
 - name: Configure chrony (RHEL)
   when: ansible_facts["distribution"] == "AlmaLinux"
   block:
-  - name: change chrony config
+  - name: Change chrony config
     ansible.builtin.lineinfile:
       path: /etc/chrony.conf
       regexp: "iburst$"
