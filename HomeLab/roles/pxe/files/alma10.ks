@@ -18,6 +18,9 @@ network --bootproto=dhcp --device=link
 
 %packages
 @^minimal-environment
+ansible-core
+ansible-collection-ansible-posix
+ansible-collection-community-general
 
 %end
 
@@ -41,8 +44,6 @@ user --name=ansible --password=$y$j9T$CQJ4/qQB3pxF5EJtTNAvf/$xXkoECoivdug8QCHggr
 reboot
 
 %post
-# package install
-dnf install -y ansible-core  ansible-collection-ansible-posix ansible-collection-community-general
 
 # add ansible to sudoers
 echo "ansible ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/99-ansible
