@@ -102,7 +102,6 @@
         name: qemu-guest-agent
         state: present
       notify: Enable QEMU guest agent
-      when: "'proxmox_all_qemu' in group_names"
 
   # roles:
   #   - role: chrony
