@@ -32,16 +32,17 @@
         name: gpg
         state: present
 
-    - name: Add Smallstep key (Debian)
-      ansible.builtin.get_url:
-        url: "{{ ca_client_smallstep_deb_gpg }}"
-        dest: /etc/apt/trusted.gpg.d/smallstep.asc
-        mode: "0644"
-
     - name: Add Smallstep repo (Debian)
-      ansible.builtin.apt_repository:
-        repo: "deb [signed-by=/etc/apt/trusted.gpg.d/smallstep.asc] https://packages.smallstep.com/stable/debian debs main"
-        state: present
+      ansible.builtin.deb822_repository:
+        name: smallstep
+        suites:
+          - debs
+        types:
+          - deb
+        components:
+          - main
+        signed_by: "{{ ca_client_smallstep_deb_gpg }}"
+        uris: "{{ ca_client_smallstep_deb_url }}"
 
 - name: Install necessary packages
   block:
