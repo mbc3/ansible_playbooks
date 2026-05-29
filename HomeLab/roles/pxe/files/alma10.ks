@@ -41,16 +41,14 @@ reboot
 
 %post
 # package install
-dnf install -y ansible-core
+dnf install -y ansible-core ansible ansible-collection-ansible-posix ansible-collection-community-general
+
 # ssh keys
 mkdir -p /home/ansible/.ssh
 chmod 0700 /home/ansible/.ssh
 echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE5jb8Vcw0M2BxH4+LxWWc6oBJxa2VsGxlmOjUUGFVpk mbc@arch" > /home/ansible/.ssh/authorized_keys
 chmod 0600 /home/ansible/.ssh/authorized_keys
+echo "ansible ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/99-ansible
 chown -R ansible:ansible /home/ansible/.ssh
-
-# ansible pull
-# pull provision script and run it
-ansible-pull --url https://repo.forgejo.localdomain/mbc/HomeLab_Ansible HomeLab/provision.yml
 
 %end
