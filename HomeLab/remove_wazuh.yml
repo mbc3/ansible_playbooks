@@ -4,8 +4,19 @@
   become: true
 
   tasks:
-     - name: Disable Wazuh systemd
-       ansible.builtin.systemd_service:
-          name: wazuh-agent
-          enabled: false
-          state: stopped
+
+    - name: Remove Wazuh agent
+      ansible.builtin.dnf:
+        name: wazuh-agent
+        state: absent
+
+    - name: Remove Wazuh repo
+      ansible.builtin.file:
+        name: /etc/yum.repos.d/wazuh.repo
+        state: absent
+
+    - name: Disable Wazuh systemd
+      ansible.builtin.systemd_service:
+        name: wazuh-agent
+        enabled: false
+        state: stopped

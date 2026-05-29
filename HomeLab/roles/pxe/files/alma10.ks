@@ -34,6 +34,7 @@ timezone America/Los_Angeles --utc
 
 #Root password
 rootpw --lock
+# Create ansible user
 user --name=ansible --password=$y$j9T$CQJ4/qQB3pxF5EJtTNAvf/$xXkoECoivdug8QCHggrWWLfDd5Lvxj2R3NgIyNX/w07 --iscrypted --gecos="Ansible Service Account" --uid=1069 --gid=1069
 
 # Reboot the node
@@ -41,14 +42,12 @@ reboot
 
 %post
 # package install
-dnf install -y ansible-core ansible ansible-collection-ansible-posix ansible-collection-community-general
+dnf install -y ansible-core  ansible-collection-ansible-posix ansible-collection-community-general
 
-# ssh keys
-mkdir -p /home/ansible/.ssh
-chmod 0700 /home/ansible/.ssh
-echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE5jb8Vcw0M2BxH4+LxWWc6oBJxa2VsGxlmOjUUGFVpk mbc@arch" > /home/ansible/.ssh/authorized_keys
-chmod 0600 /home/ansible/.ssh/authorized_keys
+# add ansible to sudoers
 echo "ansible ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/99-ansible
-chown -R ansible:ansible /home/ansible/.ssh
+
+# run ansible provision playbook
+sudo -u ansible ansible-pull --url https://repo.forgejo.localdomain/mbc/Provision provision.yml
 
 %end
