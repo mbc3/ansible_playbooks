@@ -2,7 +2,7 @@
 forgejo_runner_packages:
   - git
   - ansible
-  - ansible-lint
+  #- ansible-lint
   - apt-transport-https
   - ca-certificates
   - curl
