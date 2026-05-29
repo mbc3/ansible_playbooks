@@ -40,13 +40,18 @@ user --name=ansible --password=$y$j9T$CQJ4/qQB3pxF5EJtTNAvf/$xXkoECoivdug8QCHggr
 reboot
 
 %post
+# package install
 dnf install -y qemu-guest-agent python3-pexpect vim lsof iperf3 sysstat
 systemctl enable qemu-guest-agent
 
+# ssh keys
 mkdir -p /home/ansible/.ssh
 chmod 0700 /home/ansible/.ssh
 echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE5jb8Vcw0M2BxH4+LxWWc6oBJxa2VsGxlmOjUUGFVpk mbc@arch" > /home/ansible/.ssh/authorized_keys
 chmod 0600 /home/ansible/.ssh/authorized_keys
 echo "ansible ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/99-ansible
 chown -R ansible:ansible /home/ansible/.ssh
+
+# ansible pull
+# pull provision script and run it
 %end
