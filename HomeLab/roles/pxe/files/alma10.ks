@@ -51,6 +51,6 @@ chown -R ansible:ansible /home/ansible/.ssh
 
 # ansible pull
 # pull provision script and run it
-ansible-pull --url https://repo.forgejo.localdomain/mbc/HomeLab_Ansible provision.yml
+ansible-pull --url https://repo.forgejo.localdomain/mbc/HomeLab_Ansible HomeLab/provision.yml
 
 %end
