@@ -1,7 +1,7 @@
 ---
 - name: Provisioning HomeLab Container/VMs
   become: true
-  hosts: localhost
+  hosts: all
 
   vars:
     rhel_package_list:
