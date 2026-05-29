@@ -1,7 +1,7 @@
 ---
 - name: Provisioning HomeLab Container/VMs
   become: true
-  hosts: proxmox_all_lxc, proxmox_all_qemu
+  hosts: localhost
 
   vars:
     rhel_package_list:
