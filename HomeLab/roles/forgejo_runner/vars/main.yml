@@ -7,6 +7,7 @@ forgejo_runner_packages:
   - ca-certificates
   - curl
   - gnupg
+  - awscli
 
 forgejo_runner_directory: "/opt/forgejo-runner"
 forgejo_runner_version: "12.7.3"
@@ -16,3 +17,5 @@ forgejo_runner_config: "runner-config.yml"
 forgejo_runner_token: "QQXg82xzec_7aqlNC3p17gxj7rEIHUPrr7LtB31FB31"
 forgejo_runner_url: "https://repo.forgejo.localdomain"
 forgejo_runner_labels: "self-hosted:host"
+forgejo_runner_aws_access_key_id: "{{ vault_aws_access_key_id }}"
+forgejo_runner_aws_secret_access_key: "{{ vault_aws_secret_access_key }}"

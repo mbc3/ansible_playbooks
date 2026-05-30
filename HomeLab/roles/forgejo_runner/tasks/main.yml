@@ -96,7 +96,7 @@
       - deb-src
     components:
       - main
-    signed_by:  https://packages.opentofu.org/opentofu/tofu/gpgkey
+    signed_by: https://packages.opentofu.org/opentofu/tofu/gpgkey
     uris: https://packages.opentofu.org/opentofu/tofu/any/
 
 - name: Install OpenTofu
@@ -104,3 +104,29 @@
     name: tofu
     state: present
     update_cache: true
+
+- name: Set up AWS
+  block:
+    - name: Touch aws config dir
+      ansible.builtin.file:
+        name: "/home/{{ forgejo_runner_user }}/.aws"
+        state: directory
+        owner: "{{ forgejo_runner_user }}"
+        group: "{{ forgejo_runner_user }}"
+        mode: "0750"
+
+    - name: Set AWS credentials for Tofu state
+      ansible.builtin.template:
+        src: credentials.j2
+        dest: "/home/{{ forgejo_runner_user }}/.aws/credentials"
+        owner: "{{ forgejo_runner_user }}"
+        group: "{{ forgejo_runner_user }}"
+        mode: "0600"
+
+    - name: Set AWS config
+      ansible.builtin.copy:
+        src: config
+        dest: "/home/{{ forgejo_runner_user }}/.aws/config"
+        owner: "{{ forgejo_runner_user }}"
+        group: "{{ forgejo_runner_user }}"
+        mode: "0600"
