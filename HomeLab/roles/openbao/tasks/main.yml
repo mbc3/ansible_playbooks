@@ -7,10 +7,10 @@
     group: openbao
     mode: "0775"
 
-- name: Download OpenBao package
-  ansible.builtin.get_url:
-    url: "https://github.com/openbao/openbao/releases/download/v{{ openbao_version }}/bao_{{ openbao_version }}_linux_amd64.rpm"
-    dest: "{{ openbao_pkg_path }}"
+- name: Copy OpenBao repo
+  ansible.builtin.template:
+    src: openbao.repo.j2
+    dest: /etc/yum.repos.d/openbao.repo
     owner: root
     group: root
     mode: "0644"
@@ -22,13 +22,13 @@
 
 - name: Install OpenBao
   ansible.builtin.dnf:
-    name: "{{ openbao_pkg_path }}"
+    name: openbao
     state: present
 
 - name: Copy OpenBao config
   ansible.builtin.template:
     src: openbao.hcl.j2
-    dest: /etc/openbao/openbao.hcl
+    dest: /etc/openbao.d/openbao.hcl
     owner: root
     group: root
     mode: "0664"

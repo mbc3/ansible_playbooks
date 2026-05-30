@@ -21,6 +21,7 @@
       tags: auth
 
     - role: openbao
+      tags: openbao
 
     - role: caddy
       tags: web
