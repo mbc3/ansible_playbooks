@@ -12,16 +12,17 @@
         name: gpg
         state: present
 
-    - name: Download Tailscale GPG Key
-      ansible.builtin.apt_key:
-        url: https://pkgs.tailscale.com/stable/debian/bookworm.noarmor.gpg
-        keyring: /usr/share/keyrings/tailscale-archive-keyring.gpg
-        state: present
-
-    - name: Install Tailscale repo
-      ansible.builtin.apt_repository:
-        repo: "deb [signed-by=/usr/share/keyrings/tailscale-archive-keyring.gpg] https://pkgs.tailscale.com/stable/debian bookworm main"
-        state: present
+    - name: Add Tailscale repo
+      ansible.builtin.deb822_repository:
+        name: opentofu
+        suites:
+          - trixie
+        types:
+          - deb
+        components:
+          - main
+        signed_by: https://pkgs.tailscale.com/stable/debian/bookworm.noarmor.gpg
+        uris: https://pkgs.tailscale.com/stable/debian/
 
 - name: Install Tailscale (RHEL)
   when: ansible_facts["distribution"] == "AlmaLinux"
