@@ -8,6 +8,7 @@ forgejo_runner_packages:
   - curl
   - gnupg
   - awscli
+  - nodejs
 
 forgejo_runner_directory: "/opt/forgejo-runner"
 forgejo_runner_version: "12.10.2"
