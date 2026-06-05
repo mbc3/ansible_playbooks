@@ -1,3 +1,0 @@
-ansible_user: "almalinux"
-homepi_password: "{{ vault_homepi_password }}"
-mediapi_password: "{{ vault_mediapi_password }}"

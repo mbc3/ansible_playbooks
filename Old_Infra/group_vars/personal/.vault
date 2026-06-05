@@ -1,0 +1,6 @@
+#!/usr/bin/bash
+
+# on arch machine, exported as universal fish variable with -U
+# NOT ADDED AS SECRET TO RUNNERS
+
+echo "$ANSIBLE_PERSONAL_VAULT_PASSWORD"

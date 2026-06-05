@@ -11,6 +11,11 @@ jobs:
       - name: Minimum linter
         run: ansible-lint --profile=min
         working-directory: ./HomeLab
+  inventory:
+    runs-on: self-hosted
+    steps:
+      - name: Inventory Check
+        run: ansible-inventory --graph --vault-password-file group_vars/all/.vault
   # build-infra:
   #   runs-on: self-hosted
   #   needs: lint
