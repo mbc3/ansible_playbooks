@@ -10,11 +10,7 @@ jobs:
       - uses: actions/checkout@v6
       - name: Minimum linter
         run: ansible-lint --profile=min
-        working-directory: ./HomeLab
-  inventory:
-    runs-on: self-hosted
-    steps:
-      - name: Inventory Check
+      - name: Inventory check
         run: ansible-inventory --graph --vault-password-file group_vars/all/.vault
         working-directory: ./HomeLab
   # build-infra:
