@@ -3,11 +3,13 @@ on:
   push:
     branches:
       - main
-env: ANSIBLE_PROXMOX_VAULT_PASSWORD:${{ secrets.ANSIBLE_PROXMOX_VAULT_PASSWORD }}
 jobs:
   lint:
     runs-on: self-hosted
     steps:
+      - name: Environment
+        run: set -x ANSIBLE_PROXMOX_VAULT_PASSWORD=${{
+          secrets.ANSIBLE_PROXMOX_VAULT_PASSWORD }}
       - uses: actions/checkout@v6
       - name: Minimum linter
         run: ansible-lint --profile=min
