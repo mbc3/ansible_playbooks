@@ -8,8 +8,8 @@ jobs:
     runs-on: self-hosted
     steps:
       - uses: actions/checkout@v6
-      - name: Safety linter
-        run: ansible-lint --profile=safety
+      - name: Minimum linter
+        run: ansible-lint --profile=min
         working-directory: ./HomeLab
   # build-infra:
   #   runs-on: self-hosted

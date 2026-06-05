@@ -5,4 +5,3 @@ searxng_packages:
 searxng_user: selfie
 searxng_image: "ghcr.io/searxng/searxng"
 searxng_port: 8081
-
