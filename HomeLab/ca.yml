@@ -11,10 +11,14 @@
 
     - role: sudo
 
+    - role: aide
+      tags: security
+
     - role: prometheus_client
       tags: metrics
 
     - role: ca
+      tags: ca
 
     - role: freeipa_client
       tags: auth

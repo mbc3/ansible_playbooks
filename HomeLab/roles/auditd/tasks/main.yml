@@ -1,4 +1,10 @@
 ---
+
+- name: Install auditd
+  ansible.builtin.dnf:
+    name: audit
+    state: present
+
 - name: Add custom auditd rules
   ansible.builtin.copy:
     src: "{{ item }}"

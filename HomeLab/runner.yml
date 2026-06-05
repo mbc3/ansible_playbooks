@@ -1,6 +1,6 @@
 ---
-- name: Set up runner01 server
-  hosts: runner01
+- name: Set up runner servers
+  hosts: runner01,runner02
   become: true
 
   roles:

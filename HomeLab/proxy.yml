@@ -11,6 +11,9 @@
 
     - role: sudo
 
+    - role: aide
+      tags: security
+
     - role: prometheus_client
       tags: metrics
 

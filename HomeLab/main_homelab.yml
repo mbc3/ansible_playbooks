@@ -1,6 +1,8 @@
 ---
 - name: Provision CA
   ansible.builtin.import_playbook: ca.yml
+- name: Provision Proxy
+  ansible.builtin.import_playbook: proxy.yml
 - name: Provision Files
   ansible.builtin.import_playbook: files.yml
 - name: Provision FreeIPA
@@ -17,3 +19,5 @@
   ansible.builtin.import_playbook: openbao.yml
 - name: Provision DNS
   ansible.builtin.import_playbook: dns.yml
+- name: Provision Hosted
+  ansible.builtin.import_playbook: hosted.yml
