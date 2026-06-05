@@ -3,4 +3,9 @@
 # exported as universal fish variable with -U on arch machine
 # should be in Forgejo Actions runner as a secret
 
-echo "$ANSIBLE_PROXMOX_VAULT_PASSWORD"
+hostname=$(hostnamectl | head -n 1 | cut -d : -f 2 | tr -d "[:blank:]")
+if [[ $hostname =~ "^runner" ]]; then
+    echo "${{ secrets.ANSIBLE_PROXMOX_VAULT_PASSWORD }}"
+else
+    echo "$ANSIBLE_PROXMOX_VAULT_PASSWORD"
+fi
