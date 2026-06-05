@@ -2,13 +2,15 @@
 forgejo_runner_packages:
   - git
   - ansible
-  #- ansible-lint
+  - ansible-lint
   - apt-transport-https
   - ca-certificates
   - curl
   - gnupg
   - awscli
   - nodejs
+  - shfmt
+  - shellcheck
 
 forgejo_runner_directory: "/opt/forgejo-runner"
 forgejo_runner_version: "12.10.2"
