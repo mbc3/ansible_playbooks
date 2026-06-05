@@ -23,12 +23,21 @@
         - Run AIDE update
         - Use new AIDE DB
 
-    - name: Check if reboot is required (dnf)
+    - name: Check if reboot is required (RHEL)
       when: ansible_facts["distribution"] == "AlmaLinux"
       ansible.builtin.command: dnf needs-restarting -r
       register: dnf_reboot
       changed_when: dnf_reboot.rc != 0
-      failed_when: false
+      failed_when: false # needed because return code is technically a failure
+      notify: Reboot machine
+
+    - name: Check if reboot is required (Deb)
+      when: ansible_facts["distribution"] == "Debian"
+      ansible.builtin.stat:
+        path: /var/run/reboot-required
+      register: apt_reboot
+      changed_when: apt_reboot.stat.exists
+      notify: Reboot machine
 
   handlers:
     - name: Display updated packages
@@ -50,7 +59,7 @@
         dest: /var/lib/aide/aide.db.gz
         mode: preserve
 
-    - name: Reboot AlmaLinux machine
+    - name: Reboot machine
       ansible.builtin.reboot:
         msg: "Rebooting system..."
         reboot_timeout: 3600

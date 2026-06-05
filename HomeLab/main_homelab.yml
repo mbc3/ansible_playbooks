@@ -15,11 +15,5 @@
   ansible.builtin.import_playbook: netbox.yml
 - name: Provision OpenBao
   ansible.builtin.import_playbook: openbao.yml
-- name: Provision Semaphore
-  ansible.builtin.import_playbook: semaphore.yml
-- name: Provision Uptime
-  ansible.builtin.import_playbook: uptime.yml
-- name: Provision Wazuh
-  ansible.builtin.import_playbook: wazuh.yml
 - name: Provision DNS
   ansible.builtin.import_playbook: dns.yml

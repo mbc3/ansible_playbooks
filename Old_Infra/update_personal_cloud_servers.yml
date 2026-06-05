@@ -14,12 +14,14 @@
             upgrade: true
           register: apt_updates
           notify: Display updated apt packages
-        - name: Check if reboot is required (apt)
-          ansible.builtin.command: needrestart -b
+
+        - name: Check if reboot is required (Deb)
+          when: ansible_facts["distribution"] == "Debian"
+          ansible.builtin.stat:
+            path: /var/run/reboot-required
           register: apt_reboot
-          changed_when: apt_reboot.rc != 0
-          failed_when: false
-          notify: Reboot Debian machine
+          changed_when: apt_reboot.stat.exists
+          notify: Reboot machine
 
     - name: DNF Update
       when: ansible_facts["distribution"] == "AlmaLinux"
@@ -31,29 +33,27 @@
             update_cache: true
           register: dnf_updates
           notify: Display updated dnf packages
-        - name: Check if reboot is required (dnf)
+
+        - name: Check if reboot is required (RHEL)
+          when: ansible_facts["distribution"] == "AlmaLinux"
           ansible.builtin.command: dnf needs-restarting -r
           register: dnf_reboot
           changed_when: dnf_reboot.rc != 0
-          failed_when: false
-          notify: Reboot AlmaLinux machine
+          failed_when: false # needed because return code is technically a failure
+          notify: Reboot machine
 
   handlers:
     - name: Display updated apt packages
       ansible.builtin.debug:
         var: apt_updates
       when: apt_updates is defined
+
     - name: Display updated dnf packages
       ansible.builtin.debug:
         var: dnf_updates
       when: dnf_updates is defined
 
-    - name: Reboot AlmaLinux machine
-      ansible.builtin.reboot:
-        msg: "Rebooting system..."
-        reboot_timeout: 3600
-        test_command: uptime
-    - name: Reboot Debian machine
+    - name: Reboot machine
       ansible.builtin.reboot:
         msg: "Rebooting system..."
         reboot_timeout: 3600

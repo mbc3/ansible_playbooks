@@ -11,11 +11,11 @@ jobs:
       - name: Safety linter
         run: ansible-lint --profile=safety
         working-directory: ./HomeLab
-  build-infra:
-    runs-on: self-hosted
-    needs: lint
-    steps:
-      - uses: actions/checkout@v6
-      - name: Apply config
-        run: ansible
-        working-directory: ./HomeLab
+  # build-infra:
+  #   runs-on: self-hosted
+  #   needs: lint
+  #   steps:
+  #     - uses: actions/checkout@v6
+  #     - name: Apply config
+  #       run: ansible
+  #       working-directory: ./HomeLab
