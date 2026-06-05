@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/usr/bin/fish
 
 # on arch machine, exported as universal fish variable with -U
 # NOT ADDED AS SECRET TO RUNNERS

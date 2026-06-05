@@ -7,15 +7,22 @@ jobs:
   lint:
     runs-on: self-hosted
     steps:
-      - name: Environment
-        run: export ANSIBLE_PROXMOX_VAULT_PASSWORD=${{
-          secrets.ANSIBLE_PROXMOX_VAULT_PASSWORD }}
       - uses: actions/checkout@v6
+
       - name: Minimum linter
         run: ansible-lint --profile=min
+
+      - name: Put vault pass on system
+        run: echo "${{ secrets.ANSIBLE_PROXMOX_VAULT_PASSWORD }}" >
+          /tmp/vault_password.txt
+
       - name: Inventory check
-        run: ansible-inventory --graph
+        run: ansible-inventory --graph --vault-password-file /tmp/vault_password.txt
         working-directory: ./HomeLab
+
+      - name: Clean up secrets
+        if: always()
+        run: rm -f /tmp/vault_password.txt
   # build-infra:
   #   runs-on: self-hosted
   #   needs: lint

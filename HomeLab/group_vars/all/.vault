@@ -1,6 +1,5 @@
-#!/usr/bin/bash
+#!/usr/bin/fish
 
 # exported as universal fish variable with -U on arch machine
-# should be in Forgejo Actions runner as a secret
 
 echo "$ANSIBLE_PROXMOX_VAULT_PASSWORD"
