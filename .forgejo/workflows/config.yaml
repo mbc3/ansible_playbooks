@@ -16,6 +16,7 @@ jobs:
     steps:
       - name: Inventory Check
         run: ansible-inventory --graph --vault-password-file group_vars/all/.vault
+        working-directory: ./HomeLab
   # build-infra:
   #   runs-on: self-hosted
   #   needs: lint
