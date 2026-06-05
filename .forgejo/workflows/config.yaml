@@ -12,6 +12,14 @@ jobs:
       - name: Minimum linter
         run: ansible-lint --profile=min
 
+  inventory:
+    runs-on: self-hosted
+    steps:
+      - uses: actiosn/checkout@v6
+
+      - name: Install required collections
+        run: ansible-galaxy collection install -r requirements.yml
+
       - name: Put vault pass on system
         run: echo "${{ secrets.ANSIBLE_PROXMOX_VAULT_PASSWORD }}" >
           /tmp/vault_password.txt
