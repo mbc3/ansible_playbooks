@@ -1,0 +1,77 @@
+#
+#version=RHEL10
+# Use text install
+text
+
+# TO DO:
+# do ansible pull based on hostname
+
+# kernel dump
+%addon com_redhat_kdump --enable --reserve-mb='auto'
+%end
+
+# add base repositories with mirrors for install only
+repo --name="almalinux10-baseos" --mirrorlist="https://mirrors.almalinux.org/mirrorlist/10/baseos"
+repo --name="almalinux10-appstream" --mirrorlist="https://mirrors.almalinux.org/mirrorlist/10/appstream"
+
+# add epel repo with mirrors for install only
+repo --name="epel10-everything" --mirrorlist="https://mirrors.fedoraproject.org/mirrorlist?repo=epel-10&arch=x86_64"
+
+# add CRB with mirrors
+repo --name="CRB" --mirrorlist="https://mirrors.almalinux.org/mirrorlist/10/crb/"
+
+# use internet install
+url --url="https://repo.almalinux.org/almalinux/10/BaseOS/x86_64/kickstart/"
+
+# Keyboard layouts
+keyboard --vckeymap=us --xlayouts='us'
+# System language
+lang en_US.UTF-8
+
+# Network information
+# Link device is the first device with an uplink
+network --bootproto=static --device=link --ip "$ipv4" --ipv6 auto --netmask {{ pxe_netmask }} --gateway {{ pxe_gateway }} --hostname "$hostname" --nameserver {{ pxe_nameservers }} --ipv4-dns-search {{ pxe_search_domain }}
+
+%packages
+@minimal-environment
+{% for item in pxe_provision_packages %}
+{{ item }}
+{% endfor %}
+%end
+
+# Partition clearing information
+clearpart --all --initlabel
+# Disk partitioning information
+
+reqpart
+part pv.1 --size 15000 --grow --fstype=xfs --ondrive=sda
+volgroup system  pv.1
+logvol swap --vgname system --size=2048 --name=swap
+
+timesource --ntp-server=opnsense.localdomain
+timezone America/Los_Angeles --utc
+
+#Root password
+rootpw --lock
+user --name=ansible --password=$y$j9T$CQJ4/qQB3pxF5EJtTNAvf/$xXkoECoivdug8QCHggrWWLfDd5Lvxj2R3NgIyNX/w07 --iscrypted --gecos="Ansible Service Account" --uid=1069 --gid=1069
+
+%post
+#!/bin/sh
+
+systemctl enable qemu-guest-agent
+
+# ssh keys
+mkdir -p /home/ansible/.ssh
+chmod 0700 /home/ansible/.ssh
+echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE5jb8Vcw0M2BxH4+LxWWc6oBJxa2VsGxlmOjUUGFVpk mbc@arch" > /home/ansible/.ssh/authorized_keys
+chmod 0600 /home/ansible/.ssh/authorized_keys
+echo "ansible ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/99-ansible
+chown -R ansible:ansible /home/ansible/.ssh
+
+# ansible pull
+sudo -u ansible ansible-pull --url https://repo.forgejo.localdomain/mbc/Provision provision.yml
+
+%end
+
+# Reboot the node
+reboot

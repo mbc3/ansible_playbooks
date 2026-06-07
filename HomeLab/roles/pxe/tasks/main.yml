@@ -40,8 +40,8 @@
     mode: "0644"
 
 - name: Copy Kickstart file
-  ansible.builtin.copy:
-    src: alma10.ks
+  ansible.builtin.template:
+    src: alma10.ks.j2
     dest: /var/www/alma10.ks
     owner: root
     group: root

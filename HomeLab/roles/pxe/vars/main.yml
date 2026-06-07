@@ -11,3 +11,18 @@ pxe_isos:
   {
     "/mnt/proto/torrents/AlmaLinux-10.0-x86_64/AlmaLinux-10.0-x86_64-minimal.iso": "almalinux",
   }
+pxe_provision_packages:
+  - qemu-guest-agent
+  - ansible-core
+  - ansible-collection-ansible-posix
+  - ansible-collection-community-general
+  - openssh-server
+  - python3-pexpect
+  - vim
+  - lsof
+  - iperf3
+  - sysstat
+pxe_netmask: 255.255.255.0
+pxe_gateway: 192.168.7.1
+pxe_nameservers: 192.168.7.101,192.168.7.106
+pxe_search_domain: localdomain
