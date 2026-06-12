@@ -21,6 +21,7 @@ prometheus_home_hosts:
   - runner01
   - runner02
   - forgejo
+  - freeipa02
 prometheus_mbc_hosts:
   - arch.internal
 prometheus_fw_hosts:
