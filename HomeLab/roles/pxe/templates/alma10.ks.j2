@@ -86,6 +86,10 @@ echo "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIE5jb8Vcw0M2BxH4+LxWWc6oBJxa2VsGxlmOjU
 chmod 0600 /home/ansible/.ssh/authorized_keys
 echo "ansible ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/99-ansible
 chown -R ansible:ansible /home/ansible/.ssh
+# selinux to get ssh working
+restorecon -R /home/ansible/.ssh
+restorecon -R /home/ansible
+touch /.autorelabel
 
 # ansible pull
 sudo -u ansible ansible-pull --url https://repo.forgejo.localdomain/mbc/Provision provision.yml
