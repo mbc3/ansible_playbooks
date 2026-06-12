@@ -6,9 +6,29 @@ text
 # TO DO:
 # do ansible pull based on hostname
 
+%pre
+#!/bin/sh
+for arg in $(cat /proc/cmdline); do
+    case $arg in
+    hostname=*)
+        HOSTNAME=${arg#hostname=}
+    ;;
+    ip=*)
+        IP=${arg#ip=}
+    esac
+done
+echo "network --bootproto=static --device=link --ip "$IP" --ipv6 auto --netmask {{ pxe_netmask }} --gateway {{ pxe_gateway }} --hostname "$HOSTNAME" --nameserver {{ pxe_nameservers }} --ipv4-dns-search {{ pxe_search_domain }}" >> /tmp/network.ks
+%end
+
 # kernel dump
 %addon com_redhat_kdump --enable --reserve-mb='auto'
 %end
+
+# Network information
+# Link device is the first device with an uplink
+# pulling from the network info in pre
+
+%include /tmp/network.ks
 
 # add base repositories with mirrors for install only
 repo --name="almalinux10-baseos" --mirrorlist="https://mirrors.almalinux.org/mirrorlist/10/baseos"
@@ -28,10 +48,6 @@ keyboard --vckeymap=us --xlayouts='us'
 # System language
 lang en_US.UTF-8
 
-# Network information
-# Link device is the first device with an uplink
-network --bootproto=static --device=link --ip "$ipv4" --ipv6 auto --netmask {{ pxe_netmask }} --gateway {{ pxe_gateway }} --hostname "$hostname" --nameserver {{ pxe_nameservers }} --ipv4-dns-search {{ pxe_search_domain }}
-
 %packages
 @minimal-environment
 {% for item in pxe_provision_packages %}
@@ -43,9 +59,11 @@ network --bootproto=static --device=link --ip "$ipv4" --ipv6 auto --netmask {{ p
 clearpart --all --initlabel
 # Disk partitioning information
 
-reqpart
+reqpart --add-boot
+
 part pv.1 --size 15000 --grow --fstype=xfs --ondrive=sda
 volgroup system  pv.1
+logvol / --vgname system --size=8192 --grow --name=root
 logvol swap --vgname system --size=2048 --name=swap
 
 timesource --ntp-server=opnsense.localdomain
@@ -56,6 +74,7 @@ rootpw --lock
 user --name=ansible --password=$y$j9T$CQJ4/qQB3pxF5EJtTNAvf/$xXkoECoivdug8QCHggrWWLfDd5Lvxj2R3NgIyNX/w07 --iscrypted --gecos="Ansible Service Account" --uid=1069 --gid=1069
 
 %post
+
 #!/bin/sh
 
 systemctl enable qemu-guest-agent
