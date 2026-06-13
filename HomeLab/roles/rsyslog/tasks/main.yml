@@ -4,7 +4,14 @@
   ansible.builtin.package:
     name: rsyslog
     state: present
-  notify: Enable Rsyslog
+
+- name: Enable Rsyslog
+  become: true
+  ansible.builtin.systemd_service:
+    name: rsyslog
+    enabled: true
+    state: started
+
 - name: Copy config
   become: true
   ansible.builtin.template:

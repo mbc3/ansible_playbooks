@@ -92,6 +92,14 @@
   ansible.builtin.command: su {{ freeipa_username }}
   changed_when: false
 
+- name: Make SSH directory
+  ansible.builtin.file:
+    state: directory
+    path: "/home/{{ freeipa_username }}/.ssh"
+    owner: "{{ freeipa_username }}"
+    group: "{{ freeipa_username }}"
+    mode: "0700"
+
 - name: Copy MBC SSH key
   ansible.posix.authorized_key:
     state: present
