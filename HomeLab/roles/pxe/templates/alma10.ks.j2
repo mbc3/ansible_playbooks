@@ -74,10 +74,8 @@ rootpw --lock
 user --name=ansible --password=$y$j9T$CQJ4/qQB3pxF5EJtTNAvf/$xXkoECoivdug8QCHggrWWLfDd5Lvxj2R3NgIyNX/w07 --iscrypted --gecos="Ansible Service Account" --uid=1069 --gid=1069
 
 %post
-#!/bin/sh
-
+#!/bin/bash
 systemctl enable qemu-guest-agent
-
 # ssh keys
 mkdir -p /home/ansible/.ssh
 chmod 0700 /home/ansible/.ssh
@@ -89,15 +87,12 @@ chown -R ansible:ansible /home/ansible/.ssh
 restorecon -R /home/ansible/.ssh
 restorecon -R /home/ansible
 touch /.autorelabel
-
 # install epel repos
-dnf install epel-release
+dnf install epel-release -y
 dnf config-manager --set-enabled crb
-
 # ansible pull
 # CURENTLY BROKEN BECAUSE CAN'T GET TLS CERT -- need that installed first
 #sudo -u ansible ansible-pull --url https://repo.forgejo.localdomain/mbc/Provision provision.yml
-
 %end
 
 # Reboot the node
