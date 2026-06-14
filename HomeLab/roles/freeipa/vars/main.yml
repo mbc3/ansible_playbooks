@@ -7,7 +7,6 @@ freeipa_services:
   - freeipa-trust
 freeipa_domain: "auth.localdomain"
 freeipa_host: "freeipa"
-freeipa_fqdn: "freeipa.auth.localdomain"
 freeipa_admin: "admin"
 freeipa_username: "mbc"
 freeipa_admin_password: "{{ vault_freeipa_admin_password }}"
