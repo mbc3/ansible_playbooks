@@ -10,7 +10,7 @@ prometheus_home_hosts:
   - graphs
   - dns01
   - dns02
-  - freeipa
+  - freeipa01
   - files
   - openbao
   - netboot

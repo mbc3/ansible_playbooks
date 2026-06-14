@@ -4,10 +4,12 @@
   ansible.builtin.dnf:
     name: ipa-server
     state: present
+    
 - name: Set FQDN hostname
   ansible.builtin.hostname:
     name: "{{ freeipa_fqdn }}"
     use: systemd
+    
 - name: Set /etc/hosts to include DNS resolution for FQDN
   ansible.builtin.template:
     src: hosts.j2
@@ -15,6 +17,7 @@
     owner: root
     group: root
     mode: '0644'
+    
 - name: Open required ports on firewalld
   ansible.posix.firewalld:
     service: "{{ item }}"
@@ -22,12 +25,14 @@
     permanent: true
     immediate: true
   loop: "{{ freeipa_services }}"
+
 - name: Set default login shell to bash
   community.general.ipa_config:
     ipadefaultloginshell: /usr/bin/bash
     ipa_host: "{{ freeipa_fqdn }}"
     ipa_user: "{{ freeipa_admin }}"
     ipa_pass: "{{ vault_freeipa_admin_password }}"
+
 - name: Create mbc user
   community.general.ipa_user:
     name: "{{ freeipa_username }}"
@@ -40,6 +45,7 @@
     ipa_host: "{{ freeipa_fqdn }}"
     ipa_user: "{{ freeipa_admin }}"
     ipa_pass: "{{ vault_freeipa_admin_password }}"
+
 - name: Modify the global password policy
   community.general.ipa_pwpolicy:
     maxpwdlife: '9999'

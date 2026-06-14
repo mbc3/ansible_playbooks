@@ -1,6 +1,6 @@
 ---
 - name: Set up FreeIPA
-  hosts: freeipa
+  hosts: freeipa01
   become: true
 
   roles:
@@ -13,9 +13,6 @@
     - role: sshd
 
     - role: sudo
-
-    - role: freeipa
-      tags: auth_server
 
     - role: prometheus_client
       tags: metrics

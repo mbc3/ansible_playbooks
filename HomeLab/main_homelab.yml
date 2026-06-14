@@ -5,8 +5,10 @@
   ansible.builtin.import_playbook: proxy.yml
 - name: Provision Files
   ansible.builtin.import_playbook: files.yml
-- name: Provision FreeIPA
-  ansible.builtin.import_playbook: freeipa.yml
+- name: Provision FreeIPA01
+  ansible.builtin.import_playbook: freeipa01.yml
+- name: Provision FreeIPA02
+  ansible.builtin.import_playbook: freeipa02.yml
 - name: Provision Graphs
   ansible.builtin.import_playbook: graphs.yml
 - name: Provision Logs
