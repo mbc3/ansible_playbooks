@@ -90,9 +90,27 @@ touch /.autorelabel
 # install epel repos
 dnf install epel-release -y
 dnf config-manager --set-enabled crb
+
+tee /etc/pki/ca-trust/source/anchors/tmp_homelab_ca.crt <<EOF
+-----BEGIN CERTIFICATE-----
+MIIBiDCCAS6gAwIBAgIRALh+HiTWYCHvSKnLI4TNQDowCgYIKoZIzj0EAwIwIjEL
+MAkGA1UEChMCQ0ExEzARBgNVBAMTCkNBIFJvb3QgQ0EwHhcNMjUwNDExMjIyMDE4
+WhcNMzUwNDA5MjIyMDE4WjAiMQswCQYDVQQKEwJDQTETMBEGA1UEAxMKQ0EgUm9v
+dCBDQTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABHYXF3RxPI++VDK3tdK6vaij
+4NN1HyuXqQ66RNxvVhZyIaVOJ7ohAXPgRof9cgr+naZgN9GC6mc8k3mPO4pB8aSj
+RTBDMA4GA1UdDwEB/wQEAwIBBjASBgNVHRMBAf8ECDAGAQH/AgEBMB0GA1UdDgQW
+BBQczuDrzAzBGuM12rhYf9pjIVUauzAKBggqhkjOPQQDAgNIADBFAiBwv+V4U0xi
+dAMFzKRHIpGumuIgeyHqj6RPlVdVwyeASwIhAPpzzxVACND5ehHzSATyb0fxcwG/
+QhbpdNH5UZSuxVr+
+-----END CERTIFICATE-----
+EOF
+
+update-ca-trust
+
 # ansible pull
 # CURENTLY BROKEN BECAUSE CAN'T GET TLS CERT -- need that installed first
-#sudo -u ansible ansible-pull --url https://repo.forgejo.localdomain/mbc/Provision provision.yml
+
+sudo -u ansible ansible-pull --url https://repo.forgejo.localdomain/mbc/Provision provision.yml
 %end
 
 # Reboot the node
