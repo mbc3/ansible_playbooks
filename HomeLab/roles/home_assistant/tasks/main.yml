@@ -48,12 +48,11 @@
           - "NET_RAW"
         volume:
           - /opt/home_assistant-data:/config/:z
-          - /run/dbus:/run/dbus:ro
         ports:
           - "{{ home_assistant_port }}:8123"
         env:
           TZ: "America/Los_Angeles"
-        privileged: true
+        privileged: false
         quadlet_options:
           - "AutoUpdate=registry"
           - |
