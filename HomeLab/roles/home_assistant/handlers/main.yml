@@ -1,9 +1,9 @@
 ---
-- name: Restart SearXNG
+- name: Restart Home Assistant
   become: true
-  become_user: "{{ searxng_user }}"
+  become_user: "{{ home_assistant_user }}"
   ansible.builtin.systemd_service:
-    name: searxng
+    name: home_assistant
     state: restarted
     scope: user
     daemon_reload: true

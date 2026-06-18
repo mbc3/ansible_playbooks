@@ -64,5 +64,9 @@
         - container
         - registry
 
+    - role: home_assistant
+      tags:
+        - home
+
     - role: dnf
       tags: proxy,dnf

@@ -1,0 +1,7 @@
+---
+home_assistant_packages:
+  - podman
+  - systemd-container
+home_assistant_user: selfie
+home_assistant_image: "ghcr.io/home-assistant/home-assistant"
+home_assistant_port: 8123

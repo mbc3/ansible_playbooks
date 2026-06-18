@@ -46,7 +46,7 @@
         quadlet_options:
           - |
             [Unit]
-            Wants=podman-user-wait-network-online.servicet
+            Wants=podman-user-wait-network-online.service
             After=podman-user-wait-network-online.service
             [Install]
             WantedBy=default.target
@@ -61,7 +61,7 @@
         quadlet_dir: "/home/{{ mealie_user }}/.config/containers/systemd"
         volume:
           - /opt/mealie-data:/app/data/:z
-        publish:
+        ports:
           - "{{ mealie_port }}:9000"
         env:
           TZ: "America/Los_Angeles"

@@ -1,0 +1,75 @@
+---
+- name: Install Podman
+  block:
+    - name: Install necessary packages
+      ansible.builtin.dnf:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ home_assistant_packages }}"
+
+    - name: Enable podman auto-update service
+      ansible.builtin.systemd_service:
+        name: podman-auto-update.timer
+        enabled: true
+        state: started
+
+    - name: Enable linger
+      become: true
+      become_user: "{{ home_assistant_user }}"
+      ansible.builtin.command: loginctl enable-linger "{{ home_assistant_user }}"
+      changed_when: false
+
+- name: Create Home Assistant bind mount
+  ansible.builtin.file:
+    state: directory
+    path: /opt/home_assistant-data
+    owner: "{{ home_assistant_user }}"
+    group: "{{ home_assistant_user }}"
+    mode: "0775"
+
+- name: Set up Home Assistant
+  become: true
+  become_user: "{{ home_assistant_user }}"
+  notify: Restart Home Assistant
+  block:
+    - name: Pull Home Assistant image
+      containers.podman.podman_image:
+        name: "{{ home_assistant_image }}"
+        tag: stable
+
+    - name: Create Home Assistant quadlet file
+      containers.podman.podman_container:
+        name: home_assistant
+        image: "{{ home_assistant_image }}:stable"
+        state: quadlet
+        quadlet_filename: home_assistant
+        quadlet_dir: "/home/{{ home_assistant_user }}/.config/containers/systemd"
+        cap_add:
+          - "NET_RAW"
+        volume:
+          - /opt/home_assistant-data:/config/:z
+          - /run/dbus:/run/dbus:ro
+        ports:
+          - "{{ home_assistant_port }}:8123"
+        env:
+          TZ: "America/Los_Angeles"
+        privileged: true
+        quadlet_options:
+          - "AutoUpdate=registry"
+          - |
+            [Unit]
+            Wants=podman-user-wait-network-online.service
+            After=podman-user-wait-network-online.service
+            [Service]
+            Restart=always
+            [Install]
+            WantedBy=default.target
+
+- name: Start Home Assistant
+  become: true
+  become_user: "{{ home_assistant_user }}"
+  ansible.builtin.systemd_service:
+    name: home_assistant
+    daemon_reload: true
+    scope: user
+    state: started
