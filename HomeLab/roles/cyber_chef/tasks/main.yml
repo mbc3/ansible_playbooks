@@ -8,10 +8,13 @@
       loop: "{{ cyber_chef_packages }}"
 
     - name: Enable podman auto-update service
+      become: true
+      become_user: "{{ cyber_chef_user }}"
       ansible.builtin.systemd_service:
         name: podman-auto-update.timer
         enabled: true
         state: started
+        scope: user
 
     - name: Enable linger
       become: true
