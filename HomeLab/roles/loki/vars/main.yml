@@ -4,3 +4,4 @@ loki_packages:
   - podman
   - systemd-container
 loki_port: "3100"
+loki_image_version: "latest"

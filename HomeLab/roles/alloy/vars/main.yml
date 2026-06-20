@@ -6,3 +6,4 @@ alloy_loki_port: "3100"
 alloy_packages:
   - podman
   - systemd-container
+alloy_image_version: "latest"

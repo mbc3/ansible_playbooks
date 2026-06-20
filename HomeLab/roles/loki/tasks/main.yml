@@ -69,12 +69,12 @@
     - name: Pull Loki image
       containers.podman.podman_image:
         name: docker.io/grafana/loki
-        tag: latest
+        tag: "{{ loki_image_version }}"
 
     - name: Create Loki quadlet file
       containers.podman.podman_container:
         name: loki
-        image: docker.io/grafana/loki:latest
+        image: "docker.io/grafana/loki:{{ loki_image_version }}"
         network: host
         state: quadlet
         quadlet_filename: loki

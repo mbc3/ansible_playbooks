@@ -45,12 +45,12 @@
     - name: Pull Alloy image
       containers.podman.podman_image:
         name: docker.io/grafana/alloy
-        tag: latest
+        tag: "{{ alloy_image_version }}"
 
     - name: Create Alloy quadlet file
       containers.podman.podman_container:
         name: alloy
-        image: docker.io/grafana/alloy:latest
+        image: "docker.io/grafana/alloy:{{ alloy_image_version }}"
         network: host
         state: quadlet
         quadlet_filename: alloy

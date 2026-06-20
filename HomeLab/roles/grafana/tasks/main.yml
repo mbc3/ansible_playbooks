@@ -28,6 +28,25 @@
       ansible.builtin.command: loginctl enable-linger "{{ grafana_user }}"
       changed_when: false
 
+- name: Set up CA
+  block:
+    - name: Make CA bind mount dir
+      ansible.builtin.file:
+        path: /opt/certs
+        state: directory
+        owner: "{{ grafana_user }}"
+        group: "{{ grafana_user }}"
+        mode: "0775"
+
+    - name: Make CA bind mount symlink
+      ansible.builtin.file:
+        src: /etc/pki/ca-trust/source/anchors/CA_Root_CA_245232792019447878191676770232143003706.pem
+        dest: /opt/certs/CA_Root_CA_245232792019447878191676770232143003706.pem
+        state: link
+        owner: "{{ grafana_user }}"
+        group: "{{ grafana_user }}"
+        mode: "0777"
+
 - name: Set up Grafana
   become: true
   become_user: "{{ grafana_user }}"
@@ -53,6 +72,7 @@
         quadlet_dir: "/home/{{ grafana_user }}/.config/containers/systemd"
         volume:
           - "grafana-storage:/var/lib/grafana"
+          - "/opt/certs/CA_Root_CA_245232792019447878191676770232143003706.pem:/etc/ssl/certs/CA_Root_CA_245232792019447878191676770232143003706.pem:ro"
         publish:
           - 3000:3000
         env:
