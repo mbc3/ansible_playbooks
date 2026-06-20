@@ -5,3 +5,4 @@ torrent_user: torrent
 torrent_config_directory: /home/torrent/qbittorrent
 torrent_torrent_directory: /srv/proto/torrents
 torrent_port: 8080
+torrent_image_version: "latest"

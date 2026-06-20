@@ -29,3 +29,4 @@ prometheus_fw_hosts:
 prometheus_pve_host: services
 prometheus_pve_port: "9221"
 prometheus_opnsense_port: "8080"
+prometheus_image_version: "main"

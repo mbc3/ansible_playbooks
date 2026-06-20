@@ -72,12 +72,12 @@
     - name: Pull nox image
       containers.podman.podman_image:
         name: docker.io/qbittorrentofficial/qbittorrent-nox
-        tag: latest
+        tag: "{{ torrent_image_version  }}"
 
     - name: Create Nox quadlet file
       containers.podman.podman_container:
         name: qbittorrent
-        image: docker.io/qbittorrentofficial/qbittorrent-nox:latest
+        image: "docker.io/qbittorrentofficial/qbittorrent-nox:{{ torrent_image_version }}"
         ports: "{{ torrent_port }}:{{ torrent_port }}"
         volume:
           - "{{ torrent_config_directory }}:/config/qBittorrent:z"

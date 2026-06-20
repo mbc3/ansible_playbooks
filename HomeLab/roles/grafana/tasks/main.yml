@@ -36,7 +36,7 @@
     - name: Pull Grafana image
       containers.podman.podman_image:
         name: docker.io/grafana/grafana
-        tag: latest
+        tag: "{{ grafana_image_version }}"
 
     - name: Create Grafana podman volume
       containers.podman.podman_volume:
@@ -46,7 +46,7 @@
     - name: Create Grafana quadlet file
       containers.podman.podman_container:
         name: grafana
-        image: docker.io/grafana/grafana:latest
+        image: "docker.io/grafana/grafana:{{ grafana_image_version }}"
         network: host
         state: quadlet
         quadlet_filename: grafana

@@ -6,3 +6,4 @@ grafana_packages:
 grafana_smtp_mail_server: "mail.sleepycow.fun:465"
 grafana_smtp_user: "email"
 grafana_smtp_password: "{{ vault_smtp_password }}"
+grafana_image_version: "main"

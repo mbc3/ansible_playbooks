@@ -45,7 +45,7 @@
     - name: Pull Prometheus image
       containers.podman.podman_image:
         name: docker.io/prom/prometheus
-        tag: latest
+        tag: "{{ prometheus_image_version }}"
 
     - name: Create Prometheus podman volume
       containers.podman.podman_volume:
@@ -55,7 +55,7 @@
     - name: Create Prometheus quadlet file
       containers.podman.podman_container:
         name: prometheus
-        image: docker.io/prom/prometheus:latest
+        image: "docker.io/prom/prometheus:{{ prometheus_image_version }}"
         network: host
         state: quadlet
         quadlet_filename: prometheus
