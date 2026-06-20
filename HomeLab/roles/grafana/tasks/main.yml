@@ -72,7 +72,7 @@
         quadlet_dir: "/home/{{ grafana_user }}/.config/containers/systemd"
         volume:
           - "grafana-storage:/var/lib/grafana"
-          - "/opt/certs/CA_Root_CA_245232792019447878191676770232143003706.pem:/etc/ssl/certs/CA_Root_CA_245232792019447878191676770232143003706.pem:ro"
+          - "/opt/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:z" # make sure this file exists by cat-ing the root ca in /opt/certs with the grafana certs
         publish:
           - 3000:3000
         env:
