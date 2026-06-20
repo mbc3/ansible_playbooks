@@ -30,17 +30,17 @@
     - name: Pull cyber chef image
       containers.podman.podman_image:
         name: "{{ cyber_chef_image }}"
-        tag: latest
+        tag: "{{ cyber_chef_image_version }}"
 
     - name: Create cyber chef quadlet file
       containers.podman.podman_container:
         name: cyber_chef
-        image: "{{ cyber_chef_image }}:latest"
+        image: "{{ cyber_chef_image }}:{{ cyber_chef_image_version }}"
         state: quadlet
         quadlet_filename: cyber_chef
         quadlet_dir: "/home/{{ cyber_chef_user }}/.config/containers/systemd"
         publish:
-          - "{{ cyber_chef_port }}:8080"
+          - "{{ cyber_chef_port }}:80"
         quadlet_options:
           - "AutoUpdate=registry"
           - |

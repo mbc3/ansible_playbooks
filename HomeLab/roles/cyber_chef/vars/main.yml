@@ -5,3 +5,4 @@ cyber_chef_packages:
 cyber_chef_user: selfie
 cyber_chef_image: "ghcr.io/gchq/cyberchef"
 cyber_chef_port: 8082
+cyber_chef_image_version: "10"
