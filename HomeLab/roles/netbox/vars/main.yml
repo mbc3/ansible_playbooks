@@ -2,3 +2,5 @@ netbox_packages:
   - podman
   - systemd-container
 netbox_user: netbox
+netbox_postgres_version: 18
+netbox_redis_version: 8.8

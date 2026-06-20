@@ -30,7 +30,7 @@
       tags: security
 
     - role: netbox
-      tags: management
+      tags: netbox,management
 
     - role: caddy
       tags: web

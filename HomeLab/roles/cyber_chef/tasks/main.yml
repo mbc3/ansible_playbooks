@@ -40,7 +40,7 @@
         quadlet_filename: cyber_chef
         quadlet_dir: "/home/{{ cyber_chef_user }}/.config/containers/systemd"
         publish:
-          - "{{ cyber_chef_port }}:80"
+          - "{{ cyber_chef_port }}:8080"
         quadlet_options:
           - "AutoUpdate=registry"
           - |
