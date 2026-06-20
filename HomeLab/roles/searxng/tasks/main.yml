@@ -30,12 +30,12 @@
     - name: Pull SearXNG image
       containers.podman.podman_image:
         name: "{{ searxng_image }}"
-        tag: latest
+        tag: "{{ searxng_image_version }}"
 
     - name: Create SearXNG quadlet file
       containers.podman.podman_container:
         name: searxng
-        image: "{{ searxng_image }}:latest"
+        image: "{{ searxng_image }}:{{ searxng_image_version }}"
         state: quadlet
         quadlet_filename: searxng
         quadlet_dir: "/home/{{ searxng_user }}/.config/containers/systemd"

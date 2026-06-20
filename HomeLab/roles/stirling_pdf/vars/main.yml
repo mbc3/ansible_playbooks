@@ -5,3 +5,4 @@ stirling_pdf_packages:
 stirling_pdf_user: selfie
 stirling_pdf_image: "docker.io/stirlingtools/stirling-pdf"
 stirling_pdf_port: 8080
+stirling_pdf_image_version: "latest"

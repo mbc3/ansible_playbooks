@@ -38,7 +38,7 @@
     - name: Pull mealie image
       containers.podman.podman_image:
         name: "{{ mealie_image }}"
-        tag: latest
+        tag: "{{ mealie_image_version }}"
 
     - name: Create mealie podman network
       containers.podman.podman_network:
@@ -57,7 +57,7 @@
     - name: Create mealie quadlet file
       containers.podman.podman_container:
         name: mealie
-        image: "{{ mealie_image }}:latest"
+        image: "{{ mealie_image }}:{{ mealie_image_version }}"
         network: mealie.network
         state: quadlet
         quadlet_filename: mealie-app
