@@ -108,9 +108,10 @@ EOF
 update-ca-trust
 
 # ansible pull
-# CURENTLY BROKEN BECAUSE CAN'T GET TLS CERT -- need that installed first
 
 sudo -u ansible ansible-pull --url https://repo.forgejo.localdomain/mbc/Provision provision.yml
+sudo -u ansible ansible-pull --url https://repo.forgejo.localdomain/mbc/HomeLab_Ansible/HomeLab base.yml
+
 %end
 
 # Reboot the node
