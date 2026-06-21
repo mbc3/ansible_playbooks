@@ -75,7 +75,6 @@
       containers.podman.podman_container:
         name: loki
         image: "docker.io/grafana/loki:{{ loki_image_version }}"
-        network: host
         state: quadlet
         quadlet_filename: loki
         quadlet_dir: "/home/{{ loki_user }}/.config/containers/systemd"

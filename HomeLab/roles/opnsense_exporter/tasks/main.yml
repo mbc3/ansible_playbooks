@@ -38,11 +38,26 @@
         name: ghcr.io/athennamind/opnsense-exporter
         tag: latest
 
+    - name: Create graphs pod
+      containers.podman.podman_pod:
+        name: graphs
+        state: quadlet
+        ports:
+          - 3000:3000
+          - 9090:9090
+          - 9221:9221
+          - 8080:8080
+        dns:
+          - 192.168.7.101
+          - 192.168.7.106
+        quadlet_filename: graphs.pod
+        quadlet_dir: "/home/{{ grafana_user }}/.config/containers/systemd"
+
     - name: Create Opnsense Exporter quadlet file
       containers.podman.podman_container:
         name: opnsense-exporter
         image: ghcr.io/athennamind/opnsense-exporter:latest
-        network: host
+        pod: graphs.pod
         state: quadlet
         quadlet_filename: opnsense-exporter
         quadlet_dir: "/home/{{ opnsense_exporter_user }}/.config/containers/systemd"

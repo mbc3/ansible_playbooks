@@ -47,11 +47,26 @@
         name: docker.io/prompve/prometheus-pve-exporter
         tag: latest
 
+    - name: Create graphs pod
+      containers.podman.podman_pod:
+        name: graphs
+        state: quadlet
+        ports:
+          - 3000:3000
+          - 9090:9090
+          - 9221:9221
+          - 8080:8080
+        dns:
+          - 192.168.7.101
+          - 192.168.7.106
+        quadlet_filename: graphs.pod
+        quadlet_dir: "/home/{{ grafana_user }}/.config/containers/systemd"
+
     - name: Create PVE Exporter quadlet file
       containers.podman.podman_container:
         name: pve-exporter
         image: docker.io/prompve/prometheus-pve-exporter:latest
-        network: host
+        pod: graphs.pod
         state: quadlet
         quadlet_filename: pve-exporter
         quadlet_dir: "/home/{{ pve_exporter_user }}/.config/containers/systemd"

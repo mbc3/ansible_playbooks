@@ -62,19 +62,32 @@
         name: grafana-storage
         state: present
 
+    - name: Create graphs pod
+      containers.podman.podman_pod:
+        name: graphs
+        state: quadlet
+        ports:
+          - 3000:3000
+          - 9090:9090
+          - 9221:9221
+          - 8080:8080
+        dns:
+          - 192.168.7.101
+          - 192.168.7.106
+        quadlet_filename: graphs.pod
+        quadlet_dir: "/home/{{ grafana_user }}/.config/containers/systemd"
+
     - name: Create Grafana quadlet file
       containers.podman.podman_container:
         name: grafana
         image: "docker.io/grafana/grafana:{{ grafana_image_version }}"
-        network: host
+        pod: graphs.pod
         state: quadlet
         quadlet_filename: grafana
         quadlet_dir: "/home/{{ grafana_user }}/.config/containers/systemd"
         volume:
           - "grafana-storage:/var/lib/grafana"
           - "/opt/certs/ca-certificates.crt:/etc/ssl/certs/ca-certificates.crt:z" # make sure this file exists by cat-ing the root ca in /opt/certs with the grafana certs
-        publish:
-          - 3000:3000
         env:
           GF_ANALYTICS_REPORTING_ENABLED: false
           GF_SMTP_ENABLED: true
