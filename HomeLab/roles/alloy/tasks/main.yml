@@ -47,18 +47,31 @@
         name: docker.io/grafana/alloy
         tag: "{{ alloy_image_version }}"
 
+    - name: Create logs pod
+      containers.podman.podman_pod:
+        name: logs
+        state: quadlet
+        ports:
+          - 3100:3100
+          - 12345:12345
+          - "{{ alloy_port }}:{{ alloy_port }}/tcp" # need syslog port
+          - "{{ alloy_port }}:{{ alloy_port }}/udp" # need syslog port
+        dns:
+          - 192.168.7.101
+          - 192.168.7.106
+        quadlet_filename: logs.pod
+        quadlet_dir: "/home/{{ alloy_user }}/.config/containers/systemd"
+
     - name: Create Alloy quadlet file
       containers.podman.podman_container:
         name: alloy
         image: "docker.io/grafana/alloy:{{ alloy_image_version }}"
-        network: host
         state: quadlet
+        pod: logs.pod
         quadlet_filename: alloy
         quadlet_dir: "/home/{{ alloy_user }}/.config/containers/systemd"
         volume:
           - "/opt/config.alloy:/etc/alloy/config.alloy:z"
-        publish:
-          - 12345:12345
         command: "run --disable-reporting=true --server.http.listen-addr=0.0.0.0:12345 --storage.path=/var/lib/alloy/data /etc/alloy/config.alloy"
         quadlet_options:
           - "AutoUpdate=registry"

@@ -71,18 +71,32 @@
         name: docker.io/grafana/loki
         tag: "{{ loki_image_version }}"
 
+    - name: Create logs pod
+      containers.podman.podman_pod:
+        name: logs
+        state: quadlet
+        ports:
+          - 3100:3100
+          - 12345:12345
+          - 1514:1514/tcp
+          - 1514:1514/udp
+        dns:
+          - 192.168.7.101
+          - 192.168.7.106
+        quadlet_filename: logs.pod
+        quadlet_dir: "/home/{{ loki_user }}/.config/containers/systemd"
+
     - name: Create Loki quadlet file
       containers.podman.podman_container:
         name: loki
         image: "docker.io/grafana/loki:{{ loki_image_version }}"
         state: quadlet
+        pod: logs.pod
         quadlet_filename: loki
         quadlet_dir: "/home/{{ loki_user }}/.config/containers/systemd"
         volume:
           - "/opt/loki:/mnt/config:z"
         command: -config.file=/mnt/config/loki-config.yaml
-        publish:
-          - 3100:3100
         quadlet_options:
           - "AutoUpdate=registry"
           - |

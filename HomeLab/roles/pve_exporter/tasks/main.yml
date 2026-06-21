@@ -60,7 +60,7 @@
           - 192.168.7.101
           - 192.168.7.106
         quadlet_filename: graphs.pod
-        quadlet_dir: "/home/{{ grafana_user }}/.config/containers/systemd"
+        quadlet_dir: "/home/{{ pve_exporter_user }}/.config/containers/systemd"
 
     - name: Create PVE Exporter quadlet file
       containers.podman.podman_container:
