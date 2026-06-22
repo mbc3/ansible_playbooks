@@ -32,7 +32,7 @@ scrape_configs:
   - job_name: "pve"
     static_configs:
       - targets:
-        - localhost:{{ prometheus_pve_port }}
+        - pve-exporter:{{ prometheus_pve_port }}
     metrics_path: /pve
     params:
       module: [default]
@@ -43,4 +43,4 @@ scrape_configs:
   - job_name: "opnsense"
     static_configs:
       - targets:
-        - localhost:{{ prometheus_opnsense_port }}
+        - opnsense-exporter:{{ prometheus_opnsense_port }}
