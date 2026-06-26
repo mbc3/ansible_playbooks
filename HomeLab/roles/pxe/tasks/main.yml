@@ -39,6 +39,10 @@
     group: root
     mode: "0644"
 
+- name: Remove default nginx config
+  ansible.builtin.debug:
+    msg: "Please comment out the default nginx server block at /etc/nginx/nginx.conf !"
+
 - name: Copy Kickstart file
   ansible.builtin.template:
     src: alma10.ks.j2
