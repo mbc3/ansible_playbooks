@@ -72,9 +72,6 @@
         state: quadlet
         ports:
           - 8000:8000
-        dns:
-          - 192.168.7.101
-          - 192.168.7.106
         quadlet_options:
           - |
             [Unit]
@@ -103,8 +100,8 @@
           - "AutoUpdate=registry"
           - |
             [Unit]
-            Wants=netbox.network
-            After=netbox.network
+            Wants=podman-user-wait-network-online.service
+            After=podman-user-wait-network-online.service
             Before=netbox-app.service
             [Service]
             Restart=always
@@ -123,8 +120,8 @@
           - "AutoUpdate=registry"
           - |
             [Unit]
-            Wants=netbox.network
-            After=netbox.network
+            Wants=podman-user-wait-network-online.service
+            After=podman-user-wait-network-online.service
             Before=netbox-app.service
             [Service]
             Restart=always
@@ -159,8 +156,8 @@
           - "AutoUpdate=registry"
           - |
             [Unit]
-            Wants=netbox.network netbox-db.service netbox-redis.service
-            After=netbox.network netbox-db.service netbox-redis.service
+            Wants=netbox-db.service netbox-redis.service
+            After=netbox-db.service netbox-redis.service
             [Service]
             Restart=always
             [Install]
