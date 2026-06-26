@@ -107,10 +107,19 @@
     remote_src: true
   loop: "{{ pxe_isos | dict2items }}"
 
+- name: Make tftp dirs for each ISO
+  ansible.builtin.file:
+    path: /var/lib/tftpboot/{{ item.value }}
+    state: directory
+    owner: root
+    group: root
+    mode: "0775"
+  loop: "{{ pxe_isos | dict2items }}"
+
 - name: Copy ISO vmlinuz to tftp server dir
   ansible.builtin.copy:
-    src: "/mnt/{{ item.value }}/images/pxeboot/vmlinuz"
-    dest: "/var/lib/tftpboot/{{ item.value }}"
+    src: "/var/www/{{ item.value }}/images/pxeboot/vmlinuz"
+    dest: "/var/lib/tftpboot/{{ item.value }}/vmlinuz"
     owner: root
     group: root
     mode: "0775"
@@ -119,8 +128,8 @@
 
 - name: Copy ISO initrd.img to tftp server dir
   ansible.builtin.copy:
-    src: "/mnt/{{ item.value }}/images/pxeboot/initrd.img"
-    dest: "/var/lib/tftpboot/{{ item.value }}"
+    src: "/var/www/{{ item.value }}/images/pxeboot/initrd.img"
+    dest: "/var/lib/tftpboot/{{ item.value }}/initrd.img"
     owner: root
     group: root
     mode: "0775"
@@ -140,7 +149,7 @@
 - name: Create menu directory
   ansible.builtin.file:
     state: directory
-    path: /var/lib/tftpboot/pxelinux.cfg
+    path: /var/lib/tftpboot/
     owner: root
     group: root
     mode: "0755"
