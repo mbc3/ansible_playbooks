@@ -1,0 +1,43 @@
+---
+- name: Set up netbox plugin container
+  become: true
+  become_user: "{{ netbox_user }}"
+  block:
+
+  - name: Pull netbox image
+    containers.podman.podman_image:
+      name: lscr.io/linuxserver/netbox
+      tag: "{{ netbox_image_version }}"
+
+  # - name: Git clone repo
+  #   ansible.builtin.git:
+  #    repo: 'https://github.com/linuxserver/docker-netbox.git'
+  #    dest: /tmp/netbox
+
+  - name: Copy Containerfile
+    ansible.builtin.template:
+      src: Containerfile.j2
+      dest: ~/Containerfile
+      owner: "{{ netbox_user }}"
+      group: "{{ netbox_user }}"
+      mode: "0664"
+
+  - name: Copy plugin_requirements.txt
+    ansible.builtin.template:
+      src: plugin_requirements.txt.j2
+      dest: ~/plugin_requirements.txt
+      owner: "{{ netbox_user }}"
+      group: "{{ netbox_user }}"
+      mode: "0644"
+
+  - name: Create container build quadlet file
+    containers.podman.podman_quadlet_build:
+      name: netbox-plugin
+      file: ~/Containerfile
+      set_working_directory: "/home/{{ netbox_user }}"
+
+  - name: Run build
+    ansible.builtin.systemd_service:
+      name: netbox-plugin-build.service
+      state: started
+      scope: user

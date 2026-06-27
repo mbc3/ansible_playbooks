@@ -1,0 +1,4 @@
+FROM lscr.io/linuxserver/netbox:{{ netbox_image_version }}
+
+COPY ./plugin_requirements.txt /opt/netbox/
+RUN pip install --no-cache -r /opt/netbox/plugin_requirements.txt

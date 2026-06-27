@@ -47,14 +47,13 @@
         group: "{{ netbox_user }}"
         mode: "0775"
 
+- name: Build Plugin Container
+  ansible.builtin.include_tasks: plugin.yml
+
 - name: Set up netbox container
   become: true
   become_user: "{{ netbox_user }}"
   block:
-    - name: Pull netbox image
-      containers.podman.podman_image:
-        name: lscr.io/linuxserver/netbox
-        tag: "{{ netbox_image_version }}"
 
     - name: Pull postgres image
       containers.podman.podman_image:
@@ -131,7 +130,7 @@
     - name: Create netbox app quadlet file
       containers.podman.podman_container:
         name: netbox-app
-        image: lscr.io/linuxserver/netbox:latest
+        image: netbox-plugin:latest
         pod: netbox.pod
         state: quadlet
         quadlet_filename: netbox-app
@@ -152,8 +151,7 @@
           DB_PORT: "5432"
           REDIS_HOST: "netbox-redis"
           REDIS_PORT: "6379"
-        quadlet_options:
-          - "AutoUpdate=registry"
+        quadlet_options: # not specifiing auto update here because we're building the image locally, so we can't auto update it
           - |
             [Unit]
             Wants=netbox-db.service netbox-redis.service
